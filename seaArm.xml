@@ -1,7 +1,7 @@
 <root>
 <mobilebase>
 	<cadEngine>
-		<git>https://gist.github.com/4ef911736d351f44aa1fa178d50c897c.git</git>
+		<git>https://github.com/madhephaestus/SeriesElasticActuator.git</git>
 		<file>seaLinkGen.groovy</file>
 	</cadEngine>
 	<driveEngine>
@@ -14,7 +14,7 @@
 
 <name>TrobotArm</name>
 	<cadEngine>
-		<git>https://gist.github.com/4ef911736d351f44aa1fa178d50c897c.git</git>
+		<git>https://github.com/madhephaestus/SeriesElasticActuator.git</git>
 		<file>seaLinkGen.groovy</file>
 	</cadEngine>
 	<kinematics>
