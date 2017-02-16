@@ -44,74 +44,9 @@ return new ICadGenerator(){
 	
 	@Override 
 	public ArrayList<CSG> generateBody(MobileBase base ){
-		
-		String legStr =""
-		for(DHParameterKinematics l:getLimbDHChains(base)){
-			legStr+=l.getRobotToFiducialTransform(). getXml();
-		}
-		if(bodyMap.get(legStr)!=null){
-			println "Body cached"
-			for(CSG csg:bodyMap.get(legStr))
-				csg.setManipulator(base.getRootListener());
-			return bodyMap.get(legStr)
-		}
-		println "Generating body"
-		ArrayList<CSG> cutouts=new ArrayList<>();
-		ArrayList<CSG> attach=new ArrayList<>();
-		
-		ArrayList<CSG>  bodyParts = new ArrayList<CSG>()
-		double bodyHeight = 0;
 		ArrayList<CSG> attachmentParts = new ArrayList<CSG>()
-		for(DHParameterKinematics l:base.getLegs()){
-			TransformNR position = l.getRobotToFiducialTransform();
-			Transform csgTrans = TransformFactory.nrToCSG(position)
-			for(CSG attachment:	generateCad(l,0)){
-				CSG movedCorner = attachment
-					.transformed(csgTrans)// this moves the part to its placement where it will be in the final model
-				attachmentParts.add(movedCorner)
-				if(movedCorner.getMaxZ()>bodyHeight){
-					bodyHeight=movedCorner.getMaxZ()
-				}
-			}
-		}
 		
-		CSG bodyBlob = attachmentParts
-						.get(0)
-						.union(attachmentParts)
-		CSG bodyExtrude = bodyBlob
-						.movez(bodyHeight+thickness.getMM())
-						.union(bodyBlob)
-						.hull()
-		//add(bodyParts,bodyExtrude,base.getRootListener())
-		CSG bodyCube = new Cube(	(-bodyExtrude.getMinX()+bodyExtrude.getMaxX())*2,// X dimention
-								 (-bodyExtrude.getMinY()+bodyExtrude.getMaxY())*2,// Y dimention
-								thickness.getMM()//  Z dimention
-							).toCSG()// this converts from the geometry to an object we can work with
-							.movez(bodyHeight-thickness.getMM())// recess the body plate to overlap with the connection interface from the limbs
-		//add(bodyParts,bodyCube,base.getRootListener())					
-		
-		CSG bodyPlate=bodyCube	
-					.intersect(bodyExtrude)
-		bodyPlate.setManufactuing(new PrepForManufacturing() {
-					public CSG prep(CSG arg0) {
-						return arg0.toZMin();
-					}
-				});
-		add(bodyParts,bodyPlate,base.getRootListener())
-		
-		bodyMap.put(legStr,bodyParts)
-
-		for(CSG vitamin: bodyParts){
-			vitamin.setManufactuing({CSG arg0 ->
-	
-				return new Cube(	0.001,// X dimention
-								0.001,// Y dimention
-								0.001//  Z dimention
-								).toCSG()// this converts from the geometry to an object we can work with
-								.toZMin()
-			});
-		}
-		return bodyParts;
+		return attachmentParts;
 	}
 	@Override 
 	public ArrayList<CSG> generateCad(DHParameterKinematics sourceLimb, int linkIndex) {
