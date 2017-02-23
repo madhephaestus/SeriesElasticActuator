@@ -68,9 +68,9 @@
 	<rotz>-0.0</rotz></imuFromCentroid>
 
 	<DHParameters>
-		<Delta>0.0</Delta>
+		<Delta>89.1566265060241</Delta>
 		<Theta>0.0</Theta>
-		<Radius>60.0</Radius>
+		<Radius>0.0</Radius>
 		<Alpha>-90.0</Alpha>
 	</DHParameters>
 
@@ -196,7 +196,7 @@
 
 <baseToZframe>
 	<x>0.0</x>
-	<y>80.9523809523809</y>
+	<y>0.0</y>
 	<z>-1.7975039446312048E-14</z>
 	<rotw>1.0</rotw>
 	<rotx>-2.7755575615628907E-17</rotx>
