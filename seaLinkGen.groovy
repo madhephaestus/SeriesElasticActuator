@@ -7,6 +7,7 @@ import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
 import javafx.scene.paint.Color;
 import eu.mihosoft.vrl.v3d.Transform;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
+import eu.mihosoft.vrl.v3d.Transform;
 
 return new ICadGenerator(){
 	HashMap<String , HashMap<String,ArrayList<CSG>>> map =  new HashMap<>();
@@ -113,17 +114,15 @@ return new ICadGenerator(){
 
 	private CSG reverseDHValues(CSG incoming,DHLink dh ){
 		println "Reversing "+dh
-		return incoming.movez(dh.getD())	
-		//.rotz(Math.toDegrees(dh.getTheta()))
-		.movex(-dh.getR())
-		.rotx(Math.toDegrees(dh.getAlpha()))
+		TransformNR step = new TransformNR(dh.DhStep(0))
+		Transform move = TransformFactory.nrToCSG(step)
+		return incoming.transformed(move)
 	}
 	
 	private CSG moveDHValues(CSG incoming,DHLink dh ){
-		return incoming.rotx(Math.toDegrees(-dh.getAlpha()))
-					.movex(-dh.getR())
-					//.rotz(Math.toDegrees(-dh.getTheta()))
-					.movez(-dh.getD())
+		TransformNR step = new TransformNR(dh.DhStep(0))
+		Transform move = TransformFactory.nrToCSG(step.inverse())
+		return incoming.transformed(move)
 		
 	}
 
