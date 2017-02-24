@@ -98,6 +98,7 @@ return new ICadGenerator(){
 				add(csg,servoReference,dh.getListener())
 			else{
 				// load the end of limb
+				add(csg,new Sphere(10).toCSG(),dh.getListener())
 			}
 			
 		}
@@ -120,8 +121,8 @@ return new ICadGenerator(){
 	}
 	
 	private CSG moveDHValues(CSG incoming,DHLink dh ){
-		TransformNR step = new TransformNR(dh.DhStep(0))
-		Transform move = TransformFactory.nrToCSG(step.inverse())
+		TransformNR step = new TransformNR(dh.DhStep(0)).inverse()
+		Transform move = TransformFactory.nrToCSG(step)
 		return incoming.transformed(move)
 		
 	}
