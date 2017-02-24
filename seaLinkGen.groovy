@@ -98,7 +98,8 @@ return new ICadGenerator(){
 				add(csg,servoReference,dh.getListener())
 			else{
 				// load the end of limb
-				add(csg,new Sphere(10).toCSG(),dh.getListener())
+				// Target point
+				add(csg,new Sphere(5).toCSG(),dh.getListener())
 			}
 			
 		}
