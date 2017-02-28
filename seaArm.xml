@@ -9,10 +9,10 @@
 		<file>WalkingDriveEngine.groovy</file>
 	</driveEngine>
 
-<name>TrobotArmGroup</name>
+<name>SeriesElasticActuator</name>
 <appendage>
 
-<name>TrobotArm</name>
+<name>SeriesElasticActuatortArm</name>
 	<cadEngine>
 		<git>https://github.com/madhephaestus/SeriesElasticActuator.git</git>
 		<file>seaLinkGen.groovy</file>
