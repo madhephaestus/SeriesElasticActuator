@@ -13,12 +13,8 @@ return new ICadGenerator(){
 	HashMap<String , HashMap<String,ArrayList<CSG>>> map =  new HashMap<>();
 	HashMap<String,ArrayList<CSG>> bodyMap =  new HashMap<>();
 	LengthParameter thickness 		= new LengthParameter("Material Thickness",3.15,[10,1])
-	LengthParameter headDiameter 		= new LengthParameter("Head Dimeter",100,[200,50])
-	LengthParameter snoutLen 		= new LengthParameter("Snout Length",63,[200,50])
-	LengthParameter jawHeight 		= new LengthParameter("Jaw Height",32,[200,10])
-	LengthParameter eyeCenter 		= new LengthParameter("Eye Center Distance",headDiameter.getMM()/2,[headDiameter.getMM(),headDiameter.getMM()/2])
-	StringParameter servoSizeParam 			= new StringParameter("hobbyServo Default","towerProMG91",Vitamins.listVitaminSizes("hobbyServo"))
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M3",Vitamins.listVitaminSizes("capScrew"))
+	CSG bolt = Vitamins.get( "capScrew",boltSizeParam.getStrValue());
 
 	HashMap<String, Object>  boltMeasurments = Vitamins.getConfiguration( "capScrew",boltSizeParam.getStrValue())
 	HashMap<String, Object>  nutMeasurments = Vitamins.getConfiguration( "nut",boltSizeParam.getStrValue())
@@ -99,7 +95,7 @@ return new ICadGenerator(){
 			else{
 				// load the end of limb
 				// Target point
-				add(csg,new Sphere(5).toCSG(),dh.getListener())
+				add(csg,handMount(),dh.getListener())
 			}
 			
 		}
@@ -112,6 +108,50 @@ return new ICadGenerator(){
 		
 		
 		return csg;
+	}
+
+	private CSG handMount(){
+		
+		CSG mountPlate = new Cube(5,30,70).toCSG()
+		CSG centerHole =new Cylinder(10.2/2,10.2/2,10,(int)30)
+							.toCSG()
+							.movez(-5)
+							.roty(90)
+							
+		
+		mountPlate=mountPlate
+					.difference(centerHole)
+					.difference(bolt
+								.roty(90)
+								.toZMin()
+								.movez(55.4/2)
+								.toYMin()
+								.movey(17.2/2)
+					)
+					.difference(bolt
+								.roty(90)
+								.toZMax()
+								.movez(-55.4/2)
+								.toYMin()
+								.movey(17.2/2)
+					)
+					.difference(bolt
+								.roty(90)
+								.toZMax()
+								.movez(-55.4/2)
+								.toYMax()
+								.movey(-17.2/2)
+					)
+					.difference(bolt
+								.roty(90)
+								.toZMin()
+								.movez(55.4/2)
+								.toYMax()
+								.movey(-17.2/2)
+					)
+		// offset the claw mount so the tip is at the kinematic center
+		mountPlate=mountPlate.movex(-54.4)
+		return mountPlate
 	}
 
 	private CSG reverseDHValues(CSG incoming,DHLink dh ){
