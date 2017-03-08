@@ -128,6 +128,7 @@ return new ICadGenerator(){
 							
 		
 		mountPlate=mountPlate
+					.toXMin()
 					.difference(centerHole)
 					.difference(bolt
 								.roty(90)
