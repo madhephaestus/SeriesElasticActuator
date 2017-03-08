@@ -1,4 +1,5 @@
 import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
+import eu.mihosoft.vrl.v3d.parametrics.*;
 
 double magnetDiameter =6.0
 double magnetThickness = 2.5
@@ -10,7 +11,7 @@ double boardLong = 28
 double boardShort = 22
 double cornerOffset = (boardShort-(chipToLongSide*2))/2
 double bearingOffset = magnetThickness+magnetOffset+1
-
+LengthParameter printerOffset 		= new LengthParameter("printerOffset",0.5,[1.2,0])
 CSG bearing = Vitamins.get("ballBearing","608zz")
 			.movez(bearingOffset)
 HashMap<String, Object>  bearingData = Vitamins.getConfiguration("ballBearing","608zz")
