@@ -63,4 +63,4 @@ board=board.union(bolt
 		.union(magnet)
 		.union(bearing)
 		.union(bearingCutterSlot)
-return [board]
+return board
