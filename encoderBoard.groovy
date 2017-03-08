@@ -59,4 +59,5 @@ board=board.union(bolt
 				)
 		.union(magnet)
 		.union(bearing)
-return [board,bearingCutterSlot]
+		.union(bearingCutterSlot)
+return [board]

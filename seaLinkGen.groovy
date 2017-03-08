@@ -13,6 +13,7 @@ return new ICadGenerator(){
 	HashMap<String , HashMap<String,ArrayList<CSG>>> map =  new HashMap<>();
 	HashMap<String,ArrayList<CSG>> bodyMap =  new HashMap<>();
 	LengthParameter thickness 		= new LengthParameter("Material Thickness",3.15,[10,1])
+	LengthParameter printerOffset 		= new LengthParameter("printerOffset",0.5,[1.2,0])
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M3",Vitamins.listVitaminSizes("capScrew"))
 	CSG bolt = Vitamins.get( "capScrew",boltSizeParam.getStrValue());
 
@@ -95,7 +96,9 @@ return new ICadGenerator(){
 			else{
 				// load the end of limb
 				// Target point
-				add(csg,handMount(),dh.getListener())
+				CSG handMountPart = handMount()
+				add(csg,handMountPart,dh.getListener())
+				
 			}
 			
 		}
