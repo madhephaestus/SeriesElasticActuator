@@ -17,6 +17,7 @@ double bearingOffset = magnetThickness+magnetOffset+1
 double bearingHole =  bearingData.innerDiameter
 double bearingHoleWithOffset =(bearingHole - printerOffset.getMM())/2
 CSG bearing = Vitamins.get("ballBearing","608zz")
+			.makeKeepaway(printerOffset.getMM())
 			.movez(bearingOffset)
 
 CSG bearingCutterSlot = new Cube(bearingHole,bearingHole,bearingOffset +bearingData.width).toCSG()
