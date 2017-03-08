@@ -9,6 +9,8 @@ import eu.mihosoft.vrl.v3d.Transform;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import eu.mihosoft.vrl.v3d.Transform;
 
+Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
+
 return new ICadGenerator(){
 	HashMap<String , HashMap<String,ArrayList<CSG>>> map =  new HashMap<>();
 	HashMap<String,ArrayList<CSG>> bodyMap =  new HashMap<>();
@@ -22,6 +24,7 @@ return new ICadGenerator(){
             "encoderBoard.groovy" , // file to load
             null// no parameters (see next tutorial)
             );
+     CSG spring = Vitamins.get( "torsionSpring","Torsion-9271K621");
 	HashMap<String, Object>  boltMeasurments = Vitamins.getConfiguration( "capScrew",boltSizeParam.getStrValue())
 	HashMap<String, Object>  nutMeasurments = Vitamins.getConfiguration( "nut",boltSizeParam.getStrValue())
 	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
@@ -29,6 +32,7 @@ return new ICadGenerator(){
 	double nutDimeMeasurment = nutMeasurments.get("width")
 	double nutThickMeasurment = nutMeasurments.get("height")
 	DHParameterKinematics neck=null;
+	CSG previousServo = null;
 	/**
 	 * Gets the all dh chains.
 	 *
@@ -93,12 +97,19 @@ return new ICadGenerator(){
 		
 		
 		if(linkIndex==0){
-			add(csg,servoReference.clone(),sourceLimb.getRootListener())
-			add(csg,servoReference,dh.getListener())
+			CSG baseServo =servoReference.clone()
+			CSG secondLinkServo =servoReference.clone()
+			
+			previousServo = secondLinkServo
+			add(csg,baseServo,sourceLimb.getRootListener())
+			add(csg,secondLinkServo,dh.getListener())
 		}else{
-			if(linkIndex<dhLinks.size()-1)
-				add(csg,servoReference,dh.getListener())
-			else{
+			if(linkIndex<dhLinks.size()-1){
+				CSG thirdPlusLinkServo =servoReference.clone()
+				
+				previousServo = thirdPlusLinkServo
+				add(csg,thirdPlusLinkServo,dh.getListener())
+			}else{
 				// load the end of limb
 				// Target point
 				CSG handMountPart = handMount()
@@ -107,8 +118,10 @@ return new ICadGenerator(){
 			}
 			
 		}
+
+		CSG forceSenseEncoder = moveDHValues(encoder,dh)
 		
-		add(csg,moveDHValues(encoder.clone(),dh),dh.getListener())
+		add(csg,forceSenseEncoder,dh.getListener())
 
 		if(neck ==sourceLimb ){
 			
