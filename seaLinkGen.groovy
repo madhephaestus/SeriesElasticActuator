@@ -16,7 +16,12 @@ return new ICadGenerator(){
 	LengthParameter printerOffset 		= new LengthParameter("printerOffset",0.5,[1.2,0])
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M3",Vitamins.listVitaminSizes("capScrew"))
 	CSG bolt = Vitamins.get( "capScrew",boltSizeParam.getStrValue());
-
+	CSG encoder = (CSG) ScriptingEngine
+					 .gitScriptRun(
+            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+            "encoderBoard.groovy" , // file to load
+            null// no parameters (see next tutorial)
+            );
 	HashMap<String, Object>  boltMeasurments = Vitamins.getConfiguration( "capScrew",boltSizeParam.getStrValue())
 	HashMap<String, Object>  nutMeasurments = Vitamins.getConfiguration( "nut",boltSizeParam.getStrValue())
 	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
@@ -103,7 +108,7 @@ return new ICadGenerator(){
 			
 		}
 		
-		add(csg,moveDHValues(horn,dh),dh.getListener())
+		add(csg,moveDHValues(encoder.clone(),dh),dh.getListener())
 
 		if(neck ==sourceLimb ){
 			
