@@ -101,6 +101,7 @@ return new ICadGenerator(){
 		ArrayList<DHLink> dhLinks=sourceLimb.getChain().getLinks();
 		DHLink dh = dhLinks.get(linkIndex);
 		HashMap<String, Object> shaftmap = Vitamins.getConfiguration(conf.getShaftType(),conf.getShaftSize())
+		println conf.getShaftType() +" "+conf.getShaftSize()+" "+shaftmap
 		double hornOffset = 	shaftmap.get("hornThickness")	
 		
 		// creating the servo

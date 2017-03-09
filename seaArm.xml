@@ -45,7 +45,7 @@
 		</vitamin>
 		<vitamin>
 			<name>shaft</name>
-			<type>hobbyServo</type>
+			<type>hobbyServoHorn</type>
 			<id>hv6214mg_6</id>
 		</vitamin>
 
@@ -99,7 +99,7 @@
 		</vitamin>
 		<vitamin>
 			<name>shaft</name>
-			<type>hobbyServo</type>
+			<type>hobbyServoHorn</type>
 			<id>hv6214mg_6</id>
 		</vitamin>
 
@@ -153,7 +153,7 @@
 		</vitamin>
 		<vitamin>
 			<name>shaft</name>
-			<type>hobbyServo</type>
+			<type>hobbyServoHorn</type>
 			<id>hv6214mg_6</id>
 		</vitamin>
 
