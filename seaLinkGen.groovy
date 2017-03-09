@@ -37,7 +37,7 @@ return new ICadGenerator(){
 	double nutDimeMeasurment = nutMeasurments.get("width")
 	double nutThickMeasurment = nutMeasurments.get("height")
 	//https://www.mcmaster.com/#standard-dowel-pins/=16olhp3
-	double pinRadius = 5.0/2.0
+	double pinRadius = (5.0/2.0)+printerOffset.getMM()
 	double pinLength = 36
 	
 	DHParameterKinematics neck=null;
