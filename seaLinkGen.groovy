@@ -18,8 +18,8 @@ return new ICadGenerator(){
 	LengthParameter printerOffset 			= new LengthParameter("printerOffset",0.5,[1.2,0])
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M3",Vitamins.listVitaminSizes("capScrew"))
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","608zz",Vitamins.listVitaminSizes("ballBearing"))
-	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS36T",Vitamins.listVitaminSizes("vexGear"))
-	StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
+	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS60T",Vitamins.listVitaminSizes("vexGear"))
+	StringParameter gearBParam 				= new StringParameter("Gear B","HS60T",Vitamins.listVitaminSizes("vexGear"))
 	
      String springType = "Torsion-9271K133"
      HashMap<String, Object>  springData = Vitamins.getConfiguration("torsionSpring",springType)
@@ -32,11 +32,12 @@ return new ICadGenerator(){
 	double gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
 	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
 	double springHeight = springData.numOfCoils*springData.wireDiameter
-	double linkMaterialThickness = 10 
+	double linkMaterialThickness = 19 
 	double boltDimeMeasurment = boltMeasurments.get("outerDiameter")
 	double nutDimeMeasurment = nutMeasurments.get("width")
 	double nutThickMeasurment = nutMeasurments.get("height")
 	//https://www.mcmaster.com/#standard-dowel-pins/=16olhp3
+	// PN: 93600A586		
 	double pinRadius = (5.0+printerOffset.getMM())/2
 	double pinLength = 36
 	
@@ -51,13 +52,14 @@ return new ICadGenerator(){
 	CSG previousEncoder = null
 	CSG loadBearingPin =new Cylinder(pinRadius,pinRadius,pinLength,(int)30).toCSG() 
 						.movez(-pinLength/2)
-	CSG encoder = (CSG) ScriptingEngine
+	CSG encoderSimple = (CSG) ScriptingEngine
 					 .gitScriptRun(
             "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
             "encoderBoard.groovy" , // file to load
             null// no parameters (see next tutorial)
             )
-            .movez(-springHeight-linkMaterialThickness)
+     CSG encoder =   encoderSimple .movez(-(springHeight/2)-linkMaterialThickness)
+	double encoderBearingHeight = encoderSimple.getMaxZ()
 	/**
 	 * Gets the all dh chains.
 	 *
@@ -73,11 +75,27 @@ return new ICadGenerator(){
 		}
 		return copy;
 	}
-	
 	@Override 
 	public ArrayList<CSG> generateBody(MobileBase base ){
 		ArrayList<CSG> attachmentParts = new ArrayList<CSG>()
+		double maxz = 0.001
+		for(DHParameterKinematics l:getLimbDHChains(base)){
+			double thisZ = l.getRobotToFiducialTransform().getZ()
+			if(thisZ>maxz)
+				maxz=thisZ
+		}
+		LinkConfiguration conf = base.getAppendages() .get(0).getLinkConfiguration(0);
+		HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
+		CSG servoReference=   Vitamins.get(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
+		.transformed(new Transform().rotZ(90))
+		double servoNub = servoMeasurments.tipOfShaftToBottomOfFlange - servoMeasurments.bottomOfFlangeToTopOfBody
+		double servoTop = servoReference.getMaxZ()-servoNub
+		double topLevel = maxz -(springHeight/2)-linkMaterialThickness+servoTop-2
+		CSG baseShape = new Cube(10,10,topLevel).toCSG()
+						.toZMin()
+
 		
+		attachmentParts.add(baseShape)
 		return attachmentParts;
 	}
 	@Override 
@@ -122,18 +140,18 @@ return new ICadGenerator(){
 					.movez(hornOffset)
 					.movey(-gearDistance)
 		servoReference=servoReference
-			.movez(-springHeight-linkMaterialThickness)			
+			.movez(-springHeight/2-linkMaterialThickness)			
 			.movey(-gearDistance)
 			.rotz(90+Math.toDegrees(dh.getTheta()))
-		for(int i=0;i<3;i++){
+		for(int i=0;i<2;i++){
 			gearA=gearA
-				.union(horn
+				.difference(horn
 							.movez(hornOffset*i)
 							)
 		}
 		CSG myGearA = gearA
 					.rotz(90+Math.toDegrees(dh.getTheta()))
-					.movez(-springHeight-linkMaterialThickness+servoTop)	
+					.movez(-(springHeight/2)-linkMaterialThickness+servoTop)	
 		
 		if(linkIndex==0){
 			CSG baseServo =servoReference.clone()
@@ -181,7 +199,7 @@ return new ICadGenerator(){
 									,dh)
 		CSG myGearB = moveDHValues(gearB
 					.rotz(5)
-					.movez(-springHeight-linkMaterialThickness+servoTop)	
+					.movez(-(springHeight/2)-linkMaterialThickness+servoTop)	
 					,dh)
 		CSG myPin = moveDHValues(loadBearingPin,dh)
 		
