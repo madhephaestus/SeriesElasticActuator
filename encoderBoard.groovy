@@ -16,7 +16,8 @@ double cornerOffset = (boardShort-(chipToLongSide*2))/2
 double bearingOffset = magnetThickness+magnetOffset+1
 double bearingHole =  bearingData.innerDiameter
 double bearingHoleWithOffset =(bearingHole - printerOffset.getMM())/2
-CSG bearing = Vitamins.get("ballBearing","608zz")
+StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","608zz",Vitamins.listVitaminSizes("ballBearing"))
+CSG bearing = Vitamins.get("ballBearing",bearingSizeParam.getStrValue())
 			.makeKeepaway(printerOffset.getMM())
 			.movez(bearingOffset)
 

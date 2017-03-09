@@ -17,22 +17,33 @@ return new ICadGenerator(){
 	LengthParameter thickness 		= new LengthParameter("Material Thickness",3.15,[10,1])
 	LengthParameter printerOffset 		= new LengthParameter("printerOffset",0.5,[1.2,0])
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M3",Vitamins.listVitaminSizes("capScrew"))
+	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","608zz",Vitamins.listVitaminSizes("ballBearing"))
+
+     String springType = "Torsion-9271K133"
+     HashMap<String, Object>  springData = Vitamins.getConfiguration("torsionSpring",springType)
+	HashMap<String, Object>  bearingData = Vitamins.getConfiguration("ballBearing",bearingSizeParam.getStrValue())			
+	HashMap<String, Object>  boltMeasurments = Vitamins.getConfiguration( "capScrew",boltSizeParam.getStrValue())
+	HashMap<String, Object>  nutMeasurments = Vitamins.getConfiguration( "nut",boltSizeParam.getStrValue())
+	double gearDistance =30
+	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
+	double springHeight = springData.numOfCoils*springData.wireDiameter
+	double linkMaterialThickness = 10 
+	double boltDimeMeasurment = boltMeasurments.get("outerDiameter")
+	double nutDimeMeasurment = nutMeasurments.get("width")
+	double nutThickMeasurment = nutMeasurments.get("height")
+	DHParameterKinematics neck=null;
 	CSG bolt = Vitamins.get( "capScrew",boltSizeParam.getStrValue());
+	CSG spring = Vitamins.get( "torsionSpring",springType)	
+				.movez(-springHeight/2)
+	CSG previousServo = null;
+	CSG previousEncoder = null
 	CSG encoder = (CSG) ScriptingEngine
 					 .gitScriptRun(
             "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
             "encoderBoard.groovy" , // file to load
             null// no parameters (see next tutorial)
-            );
-     CSG spring = Vitamins.get( "torsionSpring","Torsion-9271K621");
-	HashMap<String, Object>  boltMeasurments = Vitamins.getConfiguration( "capScrew",boltSizeParam.getStrValue())
-	HashMap<String, Object>  nutMeasurments = Vitamins.getConfiguration( "nut",boltSizeParam.getStrValue())
-	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
-	double boltDimeMeasurment = boltMeasurments.get("outerDiameter")
-	double nutDimeMeasurment = nutMeasurments.get("width")
-	double nutThickMeasurment = nutMeasurments.get("height")
-	DHParameterKinematics neck=null;
-	CSG previousServo = null;
+            )
+            .movez(-springHeight-linkMaterialThickness)
 	/**
 	 * Gets the all dh chains.
 	 *
@@ -92,23 +103,34 @@ return new ICadGenerator(){
 		CSG horn = Vitamins.get(conf.getShaftType(),conf.getShaftSize())	
 		
 		servoReference=servoReference
-			.movez(-servoTop)
-
+			.movez(-springHeight-linkMaterialThickness)			
+			.movey(-gearDistance)
+			.rotz(90+Math.toDegrees(dh.getTheta()))
 		
 		
 		if(linkIndex==0){
 			CSG baseServo =servoReference.clone()
 			CSG secondLinkServo =servoReference.clone()
+			CSG linkEncoder = encoder.clone()
+						.rotz(-Math.toDegrees(dh.getTheta()))
+			CSG baseEncoder = encoder.clone()
 			
+			previousEncoder = linkEncoder
 			previousServo = secondLinkServo
 			add(csg,baseServo,sourceLimb.getRootListener())
+			add(csg,baseEncoder,sourceLimb.getRootListener())
 			add(csg,secondLinkServo,dh.getListener())
+			add(csg,linkEncoder,dh.getListener())
 		}else{
 			if(linkIndex<dhLinks.size()-1){
 				CSG thirdPlusLinkServo =servoReference.clone()
-				
+				CSG linkEncoder = encoder.clone()
+									.rotz(-Math.toDegrees(dh.getTheta()))
+
+				previousEncoder = linkEncoder
 				previousServo = thirdPlusLinkServo
 				add(csg,thirdPlusLinkServo,dh.getListener())
+				add(csg,linkEncoder,dh.getListener())
 			}else{
 				// load the end of limb
 				// Target point
@@ -119,13 +141,19 @@ return new ICadGenerator(){
 			
 		}
 
-		CSG forceSenseEncoder = moveDHValues(encoder,dh)
+		CSG forceSenseEncoder = moveDHValues(encoder
+									.rotz(-Math.toDegrees(dh.getTheta()))
+									.rotx(180)
+									
+		,dh)
+		
+		CSG springMoved = moveDHValues(spring
+									.rotz(-Math.toDegrees(dh.getTheta()))
+									.rotz(linkIndex==0?180:0)
+									,dh)
 		
 		add(csg,forceSenseEncoder,dh.getListener())
-
-		if(neck ==sourceLimb ){
-			
-		}
+		add(csg,springMoved,dh.getListener())
 		
 		
 		return csg;
