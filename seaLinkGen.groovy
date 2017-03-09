@@ -10,21 +10,26 @@ import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import eu.mihosoft.vrl.v3d.Transform;
 
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
-
+CSGDatabase.clear()
 return new ICadGenerator(){
 	HashMap<String , HashMap<String,ArrayList<CSG>>> map =  new HashMap<>();
 	HashMap<String,ArrayList<CSG>> bodyMap =  new HashMap<>();
-	LengthParameter thickness 		= new LengthParameter("Material Thickness",3.15,[10,1])
-	LengthParameter printerOffset 		= new LengthParameter("printerOffset",0.5,[1.2,0])
+	LengthParameter thickness 				= new LengthParameter("Material Thickness",3.15,[10,1])
+	LengthParameter printerOffset 			= new LengthParameter("printerOffset",0.5,[1.2,0])
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M3",Vitamins.listVitaminSizes("capScrew"))
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","608zz",Vitamins.listVitaminSizes("ballBearing"))
-
+	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS36T",Vitamins.listVitaminSizes("vexGear"))
+	StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
+	
      String springType = "Torsion-9271K133"
      HashMap<String, Object>  springData = Vitamins.getConfiguration("torsionSpring",springType)
 	HashMap<String, Object>  bearingData = Vitamins.getConfiguration("ballBearing",bearingSizeParam.getStrValue())			
 	HashMap<String, Object>  boltMeasurments = Vitamins.getConfiguration( "capScrew",boltSizeParam.getStrValue())
 	HashMap<String, Object>  nutMeasurments = Vitamins.getConfiguration( "nut",boltSizeParam.getStrValue())
-	double gearDistance =30
+	HashMap<String, Object>  gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
+	HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
+	
+	double gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
 	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
 	double springHeight = springData.numOfCoils*springData.wireDiameter
 	double linkMaterialThickness = 10 
@@ -32,6 +37,9 @@ return new ICadGenerator(){
 	double nutDimeMeasurment = nutMeasurments.get("width")
 	double nutThickMeasurment = nutMeasurments.get("height")
 	DHParameterKinematics neck=null;
+	CSG gearA = Vitamins.get( "vexGear",gearAParam.getStrValue())
+				.movey(-gearDistance)
+	CSG gearB = Vitamins.get( "vexGear",gearBParam.getStrValue());
 	CSG bolt = Vitamins.get( "capScrew",boltSizeParam.getStrValue());
 	CSG spring = Vitamins.get( "torsionSpring",springType)	
 				.movez(-springHeight/2)
@@ -106,7 +114,9 @@ return new ICadGenerator(){
 			.movez(-springHeight-linkMaterialThickness)			
 			.movey(-gearDistance)
 			.rotz(90+Math.toDegrees(dh.getTheta()))
-		
+		CSG myGearA = gearA
+					.rotz(90+Math.toDegrees(dh.getTheta()))
+					.movez(-springHeight-linkMaterialThickness+servoTop)	
 		
 		if(linkIndex==0){
 			CSG baseServo =servoReference.clone()
@@ -117,8 +127,13 @@ return new ICadGenerator(){
 			
 			previousEncoder = linkEncoder
 			previousServo = secondLinkServo
+
+			
+			add(csg,myGearA,sourceLimb.getRootListener())
 			add(csg,baseServo,sourceLimb.getRootListener())
 			add(csg,baseEncoder,sourceLimb.getRootListener())
+			// first link parts
+			add(csg,myGearA.clone(),dh.getListener())
 			add(csg,secondLinkServo,dh.getListener())
 			add(csg,linkEncoder,dh.getListener())
 		}else{
@@ -129,6 +144,8 @@ return new ICadGenerator(){
 
 				previousEncoder = linkEncoder
 				previousServo = thirdPlusLinkServo
+				
+				add(csg,myGearA.clone(),dh.getListener())
 				add(csg,thirdPlusLinkServo,dh.getListener())
 				add(csg,linkEncoder,dh.getListener())
 			}else{
@@ -151,7 +168,11 @@ return new ICadGenerator(){
 									.rotz(-Math.toDegrees(dh.getTheta()))
 									.rotz(linkIndex==0?180:0)
 									,dh)
-		
+		CSG myGearB = moveDHValues(gearB
+					.rotz(5)
+					.movez(-springHeight-linkMaterialThickness+servoTop)	
+					,dh)
+		add(csg,myGearB,dh.getListener())
 		add(csg,forceSenseEncoder,dh.getListener())
 		add(csg,springMoved,dh.getListener())
 		
