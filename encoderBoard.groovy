@@ -2,6 +2,9 @@ import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
 import eu.mihosoft.vrl.v3d.parametrics.*;
 
 LengthParameter printerOffset 		= new LengthParameter("printerOffset",0.5,[1.2,0])
+StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","608zz",Vitamins.listVitaminSizes("ballBearing"))
+
+HashMap<String, Object>  bearingData = Vitamins.getConfiguration("ballBearing",bearingSizeParam.getStrValue())
 
 
 double magnetDiameter =6.0 - printerOffset.getMM()
@@ -16,9 +19,9 @@ double cornerOffset = (boardShort-(chipToLongSide*2))/2
 double bearingOffset = magnetThickness+magnetOffset+1
 double bearingHole =  bearingData.innerDiameter
 double bearingHoleWithOffset =(bearingHole - printerOffset.getMM())/2
-StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","608zz",Vitamins.listVitaminSizes("ballBearing"))
 
-HashMap<String, Object>  bearingData = Vitamins.getConfiguration("ballBearing",bearingSizeParam.getStrValue())
+
+
 CSG bearing = Vitamins.get("ballBearing",bearingSizeParam.getStrValue())
 			.makeKeepaway(printerOffset.getMM())
 			.movez(bearingOffset)
