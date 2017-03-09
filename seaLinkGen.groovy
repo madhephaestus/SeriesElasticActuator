@@ -36,6 +36,10 @@ return new ICadGenerator(){
 	double boltDimeMeasurment = boltMeasurments.get("outerDiameter")
 	double nutDimeMeasurment = nutMeasurments.get("width")
 	double nutThickMeasurment = nutMeasurments.get("height")
+	//https://www.mcmaster.com/#standard-dowel-pins/=16olhp3
+	double pinRadius = 5.0/2.0
+	double pinLength = 36
+	
 	DHParameterKinematics neck=null;
 	CSG gearA = Vitamins.get( "vexGear",gearAParam.getStrValue())
 				.movey(-gearDistance)
@@ -45,6 +49,8 @@ return new ICadGenerator(){
 				.movez(-springHeight/2)
 	CSG previousServo = null;
 	CSG previousEncoder = null
+	CSG loadBearingPin =new Cylinder(pinRadius,pinRadius,pinLength,(int)30).toCSG() 
+						.movez(-pinLength/2)
 	CSG encoder = (CSG) ScriptingEngine
 					 .gitScriptRun(
             "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
@@ -101,6 +107,7 @@ return new ICadGenerator(){
 		ArrayList<DHLink> dhLinks=sourceLimb.getChain().getLinks();
 		DHLink dh = dhLinks.get(linkIndex);
 		HashMap<String, Object> shaftmap = Vitamins.getConfiguration(conf.getShaftType(),conf.getShaftSize())
+		
 		println conf.getShaftType() +" "+conf.getShaftSize()+" "+shaftmap
 		double hornOffset = 	shaftmap.get("hornThickness")	
 		
@@ -167,8 +174,10 @@ return new ICadGenerator(){
 					.rotz(5)
 					.movez(-springHeight-linkMaterialThickness+servoTop)	
 					,dh)
-		add(csg,myGearB,dh.getListener())
+		CSG myPin = moveDHValues(loadBearingPin,dh)
 		
+		add(csg,myPin,dh.getListener())
+		add(csg,myGearB,dh.getListener())
 		add(csg,springMoved,dh.getListener())
 		
 		
