@@ -121,31 +121,20 @@ return new ICadGenerator(){
 		if(linkIndex==0){
 			CSG baseServo =servoReference.clone()
 			CSG secondLinkServo =servoReference.clone()
-			CSG linkEncoder = encoder.clone()
-						.rotz(-Math.toDegrees(dh.getTheta()))
-			CSG forceSenseEncoder = encoder
-									.rotz(180-Math.toDegrees(dh.getTheta()))
-									.rotx(180)
 			CSG baseForceSenseEncoder = encoder
 									.rotz(180-Math.toDegrees(dh.getTheta()))
 									.rotx(180)
 			CSG baseEncoder = encoder.clone()
 			
-			previousEncoder = linkEncoder
-			previousServo = secondLinkServo
-
+			previousEncoder = baseEncoder
+			previousServo = baseServo
 			
 			add(csg,myGearA,sourceLimb.getRootListener())
 			add(csg,baseServo,sourceLimb.getRootListener())
 			add(csg,baseEncoder,sourceLimb.getRootListener())
 			add(csg,baseForceSenseEncoder,sourceLimb.getRootListener())
-			// first link parts
-			add(csg,myGearA.clone(),dh.getListener())
-			add(csg,secondLinkServo,dh.getListener())
-			add(csg,linkEncoder,dh.getListener())
-			add(csg,forceSenseEncoder,dh.getListener())
-		}else{
-			if(linkIndex<dhLinks.size()-1){
+		}
+		if(linkIndex<dhLinks.size()-1){
 				CSG forceSenseEncoder = encoder
 									.rotz(180-Math.toDegrees(dh.getTheta()))
 									.rotx(180)
@@ -156,7 +145,6 @@ return new ICadGenerator(){
 
 				previousEncoder = linkEncoder
 				previousServo = thirdPlusLinkServo
-				
 				add(csg,myGearA.clone(),dh.getListener())
 				add(csg,thirdPlusLinkServo,dh.getListener())
 				add(csg,linkEncoder,dh.getListener())
@@ -168,9 +156,6 @@ return new ICadGenerator(){
 				add(csg,handMountPart,dh.getListener())
 				
 			}
-			
-		}
-
 		
 		
 		CSG springMoved = moveDHValues(spring
