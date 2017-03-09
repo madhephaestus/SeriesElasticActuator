@@ -19,7 +19,7 @@ return new ICadGenerator(){
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M3",Vitamins.listVitaminSizes("capScrew"))
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","608zz",Vitamins.listVitaminSizes("ballBearing"))
 	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS36T",Vitamins.listVitaminSizes("vexGear"))
-	StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
+	StringParameter gearBParam 				= new StringParameter("Gear B","HS60T",Vitamins.listVitaminSizes("vexGear"))
 	
      String springType = "Torsion-9271K133"
      HashMap<String, Object>  springData = Vitamins.getConfiguration("torsionSpring",springType)
@@ -123,6 +123,12 @@ return new ICadGenerator(){
 			CSG secondLinkServo =servoReference.clone()
 			CSG linkEncoder = encoder.clone()
 						.rotz(-Math.toDegrees(dh.getTheta()))
+			CSG forceSenseEncoder = encoder
+									.rotz(180-Math.toDegrees(dh.getTheta()))
+									.rotx(180)
+			CSG baseForceSenseEncoder = encoder
+									.rotz(180-Math.toDegrees(dh.getTheta()))
+									.rotx(180)
 			CSG baseEncoder = encoder.clone()
 			
 			previousEncoder = linkEncoder
@@ -132,12 +138,18 @@ return new ICadGenerator(){
 			add(csg,myGearA,sourceLimb.getRootListener())
 			add(csg,baseServo,sourceLimb.getRootListener())
 			add(csg,baseEncoder,sourceLimb.getRootListener())
+			add(csg,baseForceSenseEncoder,sourceLimb.getRootListener())
 			// first link parts
 			add(csg,myGearA.clone(),dh.getListener())
 			add(csg,secondLinkServo,dh.getListener())
 			add(csg,linkEncoder,dh.getListener())
+			add(csg,forceSenseEncoder,dh.getListener())
 		}else{
 			if(linkIndex<dhLinks.size()-1){
+				CSG forceSenseEncoder = encoder
+									.rotz(180-Math.toDegrees(dh.getTheta()))
+									.rotx(180)
+	
 				CSG thirdPlusLinkServo =servoReference.clone()
 				CSG linkEncoder = encoder.clone()
 									.rotz(-Math.toDegrees(dh.getTheta()))
@@ -148,6 +160,7 @@ return new ICadGenerator(){
 				add(csg,myGearA.clone(),dh.getListener())
 				add(csg,thirdPlusLinkServo,dh.getListener())
 				add(csg,linkEncoder,dh.getListener())
+				add(csg,forceSenseEncoder,dh.getListener())
 			}else{
 				// load the end of limb
 				// Target point
@@ -158,22 +171,18 @@ return new ICadGenerator(){
 			
 		}
 
-		CSG forceSenseEncoder = moveDHValues(encoder
-									.rotz(-Math.toDegrees(dh.getTheta()))
-									.rotx(180)
-									
-		,dh)
+		
 		
 		CSG springMoved = moveDHValues(spring
 									.rotz(-Math.toDegrees(dh.getTheta()))
-									.rotz(linkIndex==0?180:0)
+									//.rotz(linkIndex==0?180:0)
 									,dh)
 		CSG myGearB = moveDHValues(gearB
 					.rotz(5)
 					.movez(-springHeight-linkMaterialThickness+servoTop)	
 					,dh)
 		add(csg,myGearB,dh.getListener())
-		add(csg,forceSenseEncoder,dh.getListener())
+		
 		add(csg,springMoved,dh.getListener())
 		
 		
