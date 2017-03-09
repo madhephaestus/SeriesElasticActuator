@@ -19,7 +19,7 @@ return new ICadGenerator(){
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M3",Vitamins.listVitaminSizes("capScrew"))
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","608zz",Vitamins.listVitaminSizes("ballBearing"))
 	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS36T",Vitamins.listVitaminSizes("vexGear"))
-	StringParameter gearBParam 				= new StringParameter("Gear B","HS60T",Vitamins.listVitaminSizes("vexGear"))
+	StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
 	
      String springType = "Torsion-9271K133"
      HashMap<String, Object>  springData = Vitamins.getConfiguration("torsionSpring",springType)
@@ -107,21 +107,30 @@ return new ICadGenerator(){
 		ArrayList<DHLink> dhLinks=sourceLimb.getChain().getLinks();
 		DHLink dh = dhLinks.get(linkIndex);
 		HashMap<String, Object> shaftmap = Vitamins.getConfiguration(conf.getShaftType(),conf.getShaftSize())
-		
+		HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
 		println conf.getShaftType() +" "+conf.getShaftSize()+" "+shaftmap
 		double hornOffset = 	shaftmap.get("hornThickness")	
-		
+		double servoNub = servoMeasurments.tipOfShaftToBottomOfFlange - servoMeasurments.bottomOfFlangeToTopOfBody
 		// creating the servo
 		CSG servoReference=   Vitamins.get(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
 		.transformed(new Transform().rotZ(90))
 		
-		double servoTop = servoReference.getMaxZ()
+		double servoTop = servoReference.getMaxZ()-servoNub
+						
 		CSG horn = Vitamins.get(conf.getShaftType(),conf.getShaftSize())	
-		
+					.rotx(180)
+					.movez(hornOffset)
+					.movey(-gearDistance)
 		servoReference=servoReference
 			.movez(-springHeight-linkMaterialThickness)			
 			.movey(-gearDistance)
 			.rotz(90+Math.toDegrees(dh.getTheta()))
+		for(int i=0;i<3;i++){
+			gearA=gearA
+				.union(horn
+							.movez(hornOffset*i)
+							)
+		}
 		CSG myGearA = gearA
 					.rotz(90+Math.toDegrees(dh.getTheta()))
 					.movez(-springHeight-linkMaterialThickness+servoTop)	
