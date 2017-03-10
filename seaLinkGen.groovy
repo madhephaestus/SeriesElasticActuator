@@ -19,7 +19,7 @@ return new ICadGenerator(){
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M3",Vitamins.listVitaminSizes("capScrew"))
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","608zz",Vitamins.listVitaminSizes("ballBearing"))
 	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS60T",Vitamins.listVitaminSizes("vexGear"))
-	StringParameter gearBParam 				= new StringParameter("Gear B","HS60T",Vitamins.listVitaminSizes("vexGear"))
+	StringParameter gearBParam 				= new StringParameter("Gear B","HS36T",Vitamins.listVitaminSizes("vexGear"))
 	
      String springType = "Torsion-9271K133"
      HashMap<String, Object>  springData = Vitamins.getConfiguration("torsionSpring",springType)
@@ -121,12 +121,13 @@ return new ICadGenerator(){
 			            )
 			            .movez(servoPlane)
 		double encoderKeepawayDistance= encoderBaseKeepaway.getMaxX()
-
+		/*
 		for (int i=1;i<3;i++){
 			servoReference=servoReference
 						.union(servoReference
 								.movez(servoMeasurments.flangeThickness*i))
 		}
+		*/
 		CSG keepawayBottomX = new Cube(basexLength+(keepAwayDistance*3)+encoderKeepawayDistance,
 							baseyLength-(keepAwayDistance*2),
 							keepAwayDistance)
@@ -137,9 +138,10 @@ return new ICadGenerator(){
 							keepAwayDistance)
 							.toCSG()
 							.toZMin()
-		CSG baseShape = new Cube(basexLength+(keepAwayDistance*2)+encoderKeepawayDistance,
+		CSG baseShape = new RoundedCube(basexLength+(keepAwayDistance*2)+encoderKeepawayDistance,
 							baseyLength+(keepAwayDistance*2),
 							topLevel)
+						.cornerRadius(3)
 						.toCSG()
 						.toZMin()
 						.difference([keepawayBottomY,keepawayBottomX])
