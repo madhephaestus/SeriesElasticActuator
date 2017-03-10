@@ -42,6 +42,9 @@ return new ICadGenerator(){
 	double pinLength = 36
 
 	double encoderCapRodRadius =5
+	double capPinSpacing = gearAMeasurments.diameter*0.75
+	double bearingDiameter = bearingData.outerDiameter
+	double encoderToEncoderDistance = (springHeight/2)+linkMaterialThickness
 	
 	DHParameterKinematics neck=null;
 	CSG gearA = Vitamins.get( "vexGear",gearAParam.getStrValue())
@@ -55,6 +58,7 @@ return new ICadGenerator(){
 	CSG encoderCap=null;
 	CSG loadBearingPin =new Cylinder(pinRadius,pinRadius,pinLength,(int)30).toCSG() 
 						.movez(-pinLength/2)
+						
 	CSG encoderSimple = (CSG) ScriptingEngine
 					 .gitScriptRun(
             "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
@@ -67,9 +71,11 @@ return new ICadGenerator(){
 			            "encoderBoard.groovy" , // file to load
 			            [10]// create a keepaway version
 			            )
-			            .movez(-(springHeight/2)-linkMaterialThickness)
-     CSG encoder =   encoderSimple .movez(-(springHeight/2)-linkMaterialThickness)
+			            .movez(-encoderToEncoderDistance)
+     CSG encoder =   encoderSimple .movez(-encoderToEncoderDistance)
 	double encoderBearingHeight = encoderSimple.getMaxZ()
+	double topPlateOffset = encoderToEncoderDistance*2-encoderBearingHeight*2
+	double centerLinkToBearingTop = encoderToEncoderDistance-encoderBearingHeight
 	/**
 	 * Gets the all dh chains.
 	 *
@@ -230,7 +236,7 @@ return new ICadGenerator(){
 			add(csg,myGearA,sourceLimb.getRootListener())
 			//add(csg,baseServo,sourceLimb.getRootListener())
 			//add(csg,baseEncoder,sourceLimb.getRootListener())
-			add(csg,baseForceSenseEncoder,sourceLimb.getRootListener())
+			//add(csg,baseForceSenseEncoder,sourceLimb.getRootListener())
 		}
 		if(linkIndex<dhLinks.size()-1){
 				CSG forceSenseEncoder = encoder
@@ -323,14 +329,30 @@ return new ICadGenerator(){
 		if(encoderCap!=null)
 			return encoderCap
 		double pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
-		CSG pin  =new Cylinder(encoderCapRodRadius,encoderCapRodRadius,40,(int)30).toCSG()
+		double bearingHolder = bearingDiameter/2 + encoderCapRodRadius
+		CSG pin  =new Cylinder(encoderCapRodRadius,encoderCapRodRadius,encoderBearingHeight,(int)30).toCSG()
 					.movex(-pinOffset)
-		double angle 	=Math.toDegrees(Math.atan2(gearAMeasurments.diameter*0.75,pinOffset))
-		encoderCap=pin
+		double angle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
+		
+		CSG capPinSet=pin
 					.rotz(angle)
 					.union(pin.rotz(-angle))
 		
-		
+		CSG center  =new Cylinder(bearingHolder,bearingHolder,encoderBearingHeight,(int)30).toCSG()
+		CSG pinColumn =pin .union(pin
+									.movez(topPlateOffset))
+								.hull() 
+		CSG bottomBlock = capPinSet.union(center).hull()
+						//.toZMax()
+						.movez(topPlateOffset)
+						.difference(encoderKeepaway
+								.rotx(180)
+								.movez(encoderToEncoderDistance-encoderBearingHeight)
+								
+								)
+						.union(pinColumn.rotz(angle))
+						.union(pinColumn.rotz(-angle))
+		encoderCap = bottomBlock
 		return encoderCap
 	}
 	private CSG reverseDHValues(CSG incoming,DHLink dh ){
