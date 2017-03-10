@@ -69,4 +69,21 @@ board=board.union(bolt
 		.union(magnet)
 		.union(bearing)
 		.union(bearingCutterSlot)
+
+if (args ==  null)
+	return board
+
+if(args == null)
+	args = [100]
+CSG shaddow = new Cube(	boardShort+6,// X dimention
+			boardLong+6,// Y dimention
+			args.get(0)//  Z dimention
+			).toCSG()
+			.toZMax()
+			
+			.toYMin()
+			.movey(-chipToShortside-cornerOffset-3)
+board=board
+	.union([bearingHoleInner,shaddow])
+
 return board
