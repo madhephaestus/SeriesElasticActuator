@@ -69,10 +69,10 @@ board=board.union(bolt
 		.union(magnet)
 		.union(bearing)
 		.union(bearingCutterSlot)
-/*
+
 if (args ==  null)
 	return board
-*/
+
 if(args == null)
 	args = [100]
 CSG shaddow = new Cube(	boardShort+6,// X dimention

@@ -127,18 +127,28 @@ return new ICadGenerator(){
 						.union(servoReference
 								.movez(servoMeasurments.flangeThickness*i))
 		}
-		
-		
+		CSG keepawayBottomX = new Cube(basexLength+(keepAwayDistance*3)+encoderKeepawayDistance,
+							baseyLength,
+							keepAwayDistance)
+						.toCSG()
+						.toZMin()
+		CSG keepawayBottomY = new Cube(basexLength+encoderKeepawayDistance,
+							baseyLength+(keepAwayDistance*3),
+							keepAwayDistance)
+							.toCSG()
+							.toZMin()
 		CSG baseShape = new Cube(basexLength+(keepAwayDistance*2)+encoderKeepawayDistance,
 							baseyLength+(keepAwayDistance*2),
 							topLevel)
 						.toCSG()
 						.toZMin()
-						.toXMax()
-						.toYMin()
-						.movey(-servoCentering-keepAwayDistance)
-						.movex(keepAwayDistance+encoderKeepawayDistance)
-						.difference([encoderBaseKeepaway,servoReference])
+						.difference([keepawayBottomY,keepawayBottomX])
+		baseShape=baseShape				
+				.toXMax()
+				.toYMin()
+				.movey(-servoCentering-keepAwayDistance)
+				.movex(keepAwayDistance+encoderKeepawayDistance)
+				.difference([encoderBaseKeepaway,servoReference])
 		
 		attachmentParts.add(baseShape)
 		return attachmentParts;
