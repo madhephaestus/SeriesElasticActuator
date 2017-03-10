@@ -128,11 +128,11 @@ return new ICadGenerator(){
 								.movez(servoMeasurments.flangeThickness*i))
 		}
 		CSG keepawayBottomX = new Cube(basexLength+(keepAwayDistance*3)+encoderKeepawayDistance,
-							baseyLength,
+							baseyLength-(keepAwayDistance*2),
 							keepAwayDistance)
 						.toCSG()
 						.toZMin()
-		CSG keepawayBottomY = new Cube(basexLength+encoderKeepawayDistance,
+		CSG keepawayBottomY = new Cube(basexLength+encoderKeepawayDistance-(keepAwayDistance*2),
 							baseyLength+(keepAwayDistance*3),
 							keepAwayDistance)
 							.toCSG()
