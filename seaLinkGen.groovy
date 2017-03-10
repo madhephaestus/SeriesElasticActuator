@@ -58,6 +58,13 @@ return new ICadGenerator(){
             "encoderBoard.groovy" , // file to load
             null// no parameters (see next tutorial)
             )
+     CSG encoderKeepaway = (CSG) ScriptingEngine
+					 .gitScriptRun(
+			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+			            "encoderBoard.groovy" , // file to load
+			            [10]// create a keepaway version
+			            )
+			            .movez(-(springHeight/2)-linkMaterialThickness)
      CSG encoder =   encoderSimple .movez(-(springHeight/2)-linkMaterialThickness)
 	double encoderBearingHeight = encoderSimple.getMaxZ()
 	/**
@@ -92,6 +99,13 @@ return new ICadGenerator(){
 		double servoTop = servoReference.getMaxZ()-servoNub
 		double topLevel = maxz -(springHeight/2)-linkMaterialThickness+servoTop-2
 		double basexLength = gearDistance
+		
+		CSG encoderBaseKeepaway = (CSG) ScriptingEngine
+					 .gitScriptRun(
+			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+			            "encoderBoard.groovy" , // file to load
+			            [topLevel+5]// create a keepaway version
+			            )
 		CSG baseShape = new Cube(basexLength,10,topLevel).toCSG()
 						.toZMin()
 						.toXMax()
