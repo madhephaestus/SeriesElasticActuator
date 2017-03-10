@@ -91,8 +91,10 @@ return new ICadGenerator(){
 		double servoNub = servoMeasurments.tipOfShaftToBottomOfFlange - servoMeasurments.bottomOfFlangeToTopOfBody
 		double servoTop = servoReference.getMaxZ()-servoNub
 		double topLevel = maxz -(springHeight/2)-linkMaterialThickness+servoTop-2
-		CSG baseShape = new Cube(10,10,topLevel).toCSG()
+		double basexLength = gearDistance
+		CSG baseShape = new Cube(basexLength,10,topLevel).toCSG()
 						.toZMin()
+						.toXMax()
 
 		
 		attachmentParts.add(baseShape)
