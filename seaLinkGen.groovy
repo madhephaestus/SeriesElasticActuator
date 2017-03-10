@@ -19,7 +19,7 @@ return new ICadGenerator(){
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M3",Vitamins.listVitaminSizes("capScrew"))
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","608zz",Vitamins.listVitaminSizes("ballBearing"))
 	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS60T",Vitamins.listVitaminSizes("vexGear"))
-	StringParameter gearBParam 				= new StringParameter("Gear B","HS36T",Vitamins.listVitaminSizes("vexGear"))
+	StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
 	
      String springType = "Torsion-9271K133"
      HashMap<String, Object>  springData = Vitamins.getConfiguration("torsionSpring",springType)
@@ -40,6 +40,8 @@ return new ICadGenerator(){
 	// PN: 93600A586		
 	double pinRadius = (5.0+printerOffset.getMM())/2
 	double pinLength = 36
+
+	double encoderCapRodRadius =5
 	
 	DHParameterKinematics neck=null;
 	CSG gearA = Vitamins.get( "vexGear",gearAParam.getStrValue())
@@ -50,6 +52,7 @@ return new ICadGenerator(){
 				.movez(-springHeight/2)
 	CSG previousServo = null;
 	CSG previousEncoder = null
+	CSG encoderCap=null;
 	CSG loadBearingPin =new Cylinder(pinRadius,pinRadius,pinLength,(int)30).toCSG() 
 						.movez(-pinLength/2)
 	CSG encoderSimple = (CSG) ScriptingEngine
@@ -106,8 +109,9 @@ return new ICadGenerator(){
 		double topLevel = maxz -(springHeight/2)-linkMaterialThickness +encoderBearingHeight
 		double servoPlane = topLevel - encoderBearingHeight
 		double basexLength = gearDistance + servoMeasurments.servoThinDimentionThickness/2
-		double baseyLength = servoMeasurments.flangeLongDimention 
-		double servoCentering = servoMeasurments.shaftToShortSideFlandgeEdge
+		//double baseyLength = servoMeasurments.flangeLongDimention 
+		double servoCentering = servoMeasurments.flangeLongDimention -servoMeasurments.shaftToShortSideFlandgeEdge
+		double baseyLength = servoCentering*2
 		double keepAwayDistance =5
 		
 		servoReference=servoReference
@@ -151,8 +155,10 @@ return new ICadGenerator(){
 				.movey(-servoCentering-keepAwayDistance)
 				.movex(keepAwayDistance+encoderKeepawayDistance)
 				.difference([encoderBaseKeepaway,servoReference])
-		
+		CSG baseCap = getEncoderCap()
+					.movez(topLevel)
 		attachmentParts.add(baseShape)
+		attachmentParts.add(baseCap)
 		return attachmentParts;
 	}
 	@Override 
@@ -313,6 +319,20 @@ return new ICadGenerator(){
 		return mountPlate
 	}
 
+	private CSG getEncoderCap(){
+		if(encoderCap!=null)
+			return encoderCap
+		double pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
+		CSG pin  =new Cylinder(encoderCapRodRadius,encoderCapRodRadius,40,(int)30).toCSG()
+					.movex(-pinOffset)
+		double angle 	=Math.toDegrees(Math.atan2(gearAMeasurments.diameter*0.75,pinOffset))
+		encoderCap=pin
+					.rotz(angle)
+					.union(pin.rotz(-angle))
+		
+		
+		return encoderCap
+	}
 	private CSG reverseDHValues(CSG incoming,DHLink dh ){
 		println "Reversing "+dh
 		TransformNR step = new TransformNR(dh.DhStep(0))
