@@ -96,6 +96,8 @@ return new ICadGenerator(){
 		ArrayList<DHLink> dhLinks=sourceLimb.getChain().getLinks();
 		DHLink dh = dhLinks.get(0);
 		HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
+		LengthParameter tailLength		= new LengthParameter("Cable Cut Out Length",maxz,[500,0.01])
+		tailLength.setMM(maxz)
 		CSG servoReference=   Vitamins.get(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
 								.rotz(180+Math.toDegrees(dh.getTheta()))
 		
@@ -209,7 +211,7 @@ return new ICadGenerator(){
 			
 			add(csg,myGearA,sourceLimb.getRootListener())
 			//add(csg,baseServo,sourceLimb.getRootListener())
-			add(csg,baseEncoder,sourceLimb.getRootListener())
+			//add(csg,baseEncoder,sourceLimb.getRootListener())
 			add(csg,baseForceSenseEncoder,sourceLimb.getRootListener())
 		}
 		if(linkIndex<dhLinks.size()-1){
