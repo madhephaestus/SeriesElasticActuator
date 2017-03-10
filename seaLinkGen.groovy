@@ -91,25 +91,52 @@ return new ICadGenerator(){
 			if(thisZ>maxz)
 				maxz=thisZ
 		}
-		LinkConfiguration conf = base.getAppendages() .get(0).getLinkConfiguration(0);
+		DHParameterKinematics sourceLimb=base.getAppendages() .get(0)
+		LinkConfiguration conf = sourceLimb.getLinkConfiguration(0);
+		ArrayList<DHLink> dhLinks=sourceLimb.getChain().getLinks();
+		DHLink dh = dhLinks.get(0);
 		HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
 		CSG servoReference=   Vitamins.get(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
-		.transformed(new Transform().rotZ(90))
+								.rotz(180+Math.toDegrees(dh.getTheta()))
+		
 		double servoNub = servoMeasurments.tipOfShaftToBottomOfFlange - servoMeasurments.bottomOfFlangeToTopOfBody
 		double servoTop = servoReference.getMaxZ()-servoNub
-		double topLevel = maxz -(springHeight/2)-linkMaterialThickness+servoTop-2
-		double basexLength = gearDistance
+		double topLevel = maxz -(springHeight/2)-linkMaterialThickness +encoderBearingHeight
+		double servoPlane = topLevel - encoderBearingHeight
+		double basexLength = gearDistance + servoMeasurments.servoThinDimentionThickness/2
+		double baseyLength = servoMeasurments.flangeLongDimention 
+		double servoCentering = servoMeasurments.shaftToShortSideFlandgeEdge
+		double keepAwayDistance =5
 		
+		servoReference=servoReference
+					.movez(servoPlane)
+					.movex(-gearDistance)
 		CSG encoderBaseKeepaway = (CSG) ScriptingEngine
 					 .gitScriptRun(
 			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
 			            "encoderBoard.groovy" , // file to load
 			            [topLevel+5]// create a keepaway version
 			            )
-		CSG baseShape = new Cube(basexLength,10,topLevel).toCSG()
+			            .movez(servoPlane)
+		double encoderKeepawayDistance= encoderBaseKeepaway.getMaxX()
+
+		for (int i=1;i<3;i++){
+			servoReference=servoReference
+						.union(servoReference
+								.movez(servoMeasurments.flangeThickness*i))
+		}
+		
+		
+		CSG baseShape = new Cube(basexLength+(keepAwayDistance*2)+encoderKeepawayDistance,
+							baseyLength+(keepAwayDistance*2),
+							topLevel)
+						.toCSG()
 						.toZMin()
 						.toXMax()
-
+						.toYMin()
+						.movey(-servoCentering-keepAwayDistance)
+						.movex(keepAwayDistance+encoderKeepawayDistance)
+						.difference([encoderBaseKeepaway,servoReference])
 		
 		attachmentParts.add(baseShape)
 		return attachmentParts;
@@ -181,7 +208,7 @@ return new ICadGenerator(){
 			previousServo = baseServo
 			
 			add(csg,myGearA,sourceLimb.getRootListener())
-			add(csg,baseServo,sourceLimb.getRootListener())
+			//add(csg,baseServo,sourceLimb.getRootListener())
 			add(csg,baseEncoder,sourceLimb.getRootListener())
 			add(csg,baseForceSenseEncoder,sourceLimb.getRootListener())
 		}
