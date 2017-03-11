@@ -41,8 +41,8 @@ return new ICadGenerator(){
 	double pinRadius = (5.0+printerOffset.getMM())/2
 	double pinLength = 36
 
-	double encoderCapRodRadius =5
-	double capPinSpacing = gearAMeasurments.diameter*0.75
+	double encoderCapRodRadius =8
+	double capPinSpacing = gearAMeasurments.diameter*0.75+encoderCapRodRadius
 	double bearingDiameter = bearingData.outerDiameter
 	double encoderToEncoderDistance = (springHeight/2)+linkMaterialThickness
 	
@@ -95,6 +95,7 @@ return new ICadGenerator(){
 	public ArrayList<CSG> generateBody(MobileBase base ){
 		ArrayList<CSG> attachmentParts = new ArrayList<CSG>()
 		double maxz = 0.001
+		double cornerRadius = 3
 		for(DHParameterKinematics l:getLimbDHChains(base)){
 			double thisZ = l.getRobotToFiducialTransform().getZ()
 			if(thisZ>maxz)
@@ -117,8 +118,11 @@ return new ICadGenerator(){
 		double basexLength = gearDistance + servoMeasurments.servoThinDimentionThickness/2
 		//double baseyLength = servoMeasurments.flangeLongDimention 
 		double servoCentering = servoMeasurments.flangeLongDimention -servoMeasurments.shaftToShortSideFlandgeEdge
+		double minimumWidth = (capPinSpacing-encoderCapRodRadius-cornerRadius)
+		if(servoCentering<minimumWidth)
+			servoCentering=minimumWidth
 		double baseyLength = servoCentering*2
-		double keepAwayDistance =5
+		double keepAwayDistance =10
 		
 		servoReference=servoReference
 					.movez(servoPlane)
@@ -151,7 +155,7 @@ return new ICadGenerator(){
 		CSG baseShape = new RoundedCube(basexLength+(keepAwayDistance*2)+encoderKeepawayDistance,
 							baseyLength+(keepAwayDistance*2),
 							topLevel)
-						.cornerRadius(3)
+						.cornerRadius(cornerRadius)
 						.toCSG()
 						.toZMin()
 						.difference([keepawayBottomY,keepawayBottomX])
@@ -242,7 +246,8 @@ return new ICadGenerator(){
 				CSG forceSenseEncoder = encoder
 									.rotz(180-Math.toDegrees(dh.getTheta()))
 									.rotx(180)
-	
+				CSG baseEncoderCap = getEncoderCap().clone()
+								.movez(-centerLinkToBearingTop)
 				CSG thirdPlusLinkServo =servoReference.clone()
 				CSG linkEncoder = encoder.clone()
 									.rotz(-Math.toDegrees(dh.getTheta()))
@@ -252,7 +257,8 @@ return new ICadGenerator(){
 				add(csg,myGearA.clone(),dh.getListener())
 				add(csg,thirdPlusLinkServo,dh.getListener())
 				add(csg,linkEncoder,dh.getListener())
-				add(csg,forceSenseEncoder,dh.getListener())
+				//add(csg,forceSenseEncoder,dh.getListener())
+				add(csg,baseEncoderCap,dh.getListener())
 			}else{
 				// load the end of limb
 				// Target point
