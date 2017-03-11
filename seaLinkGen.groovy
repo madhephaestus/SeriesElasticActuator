@@ -163,6 +163,15 @@ return new ICadGenerator(){
 							keepAwayDistance)
 							.toCSG()
 							.toZMin()
+		CSG baseShapeCutter = new Cube(basexLength+(keepAwayDistance*2)+encoderKeepawayDistance,
+							baseyLength+(keepAwayDistance*2),
+							topLevel)
+						.toCSG()		
+						.toXMax()
+						.toYMin()
+						.toZMin()
+						.movex(keepAwayDistance+encoderKeepawayDistance)
+						
 		CSG baseShape = new RoundedCube(basexLength+(keepAwayDistance*2)+encoderKeepawayDistance,
 							baseyLength+(keepAwayDistance*2),
 							topLevel)
@@ -178,14 +187,28 @@ return new ICadGenerator(){
 				.difference([encoderBaseKeepaway,servoReference])
 		CSG baseCap = getEncoderCap()
 					.movez(topLevel)
-					
+		CSG baseShapeA = baseShape.difference(baseShapeCutter)
+						.setColor(javafx.scene.paint.Color.CYAN);
+		CSG baseShapeB = baseShape.intersect(baseShapeCutter)
+						.setColor(javafx.scene.paint.Color.GREEN);
+		baseCap.setColor(javafx.scene.paint.Color.LIGHTBLUE);			
 		baseCap.setManufacturing({ toMfg ->
 				return toMfg
 						.roty(180)
 						.toZMin()
 			})
-		
-		attachmentParts.add(baseShape)
+		baseShapeB.setManufacturing({ toMfg ->
+				return toMfg
+						.rotx(90)
+						.toZMin()
+			})
+		baseShapeA.setManufacturing({ toMfg ->
+				return toMfg
+						.rotx(-90)
+						.toZMin()
+			})
+		attachmentParts.add(baseShapeA)
+		attachmentParts.add(baseShapeB)
 		attachmentParts.add(baseCap)
 		return attachmentParts;
 	}
@@ -250,7 +273,7 @@ return new ICadGenerator(){
 		CSG myGearA = gearA
 					.rotz(90+Math.toDegrees(dh.getTheta()))
 					.movez(-centerLinkToBearingTop)	
-		
+					.setColor(javafx.scene.paint.Color.BLUE);
 		if(linkIndex==0){
 			CSG baseServo =servoReference.clone()
 			CSG secondLinkServo =servoReference.clone()
@@ -261,8 +284,13 @@ return new ICadGenerator(){
 			
 			previousEncoder = baseEncoder
 			previousServo = baseServo
-			
-			add(csg,myGearA,sourceLimb.getRootListener())
+			CSG baseMyGearA = myGearA.clone()
+			baseMyGearA.setManufacturing({ toMfg ->
+				return toMfg
+						.toXMin()
+						.toZMin()
+			})
+			add(csg,baseMyGearA,sourceLimb.getRootListener())
 			//add(csg,baseServo,sourceLimb.getRootListener())
 			//add(csg,baseEncoder,sourceLimb.getRootListener())
 			//add(csg,baseForceSenseEncoder,sourceLimb.getRootListener())
@@ -277,10 +305,12 @@ return new ICadGenerator(){
 					.difference(springBlockPartGear.hull())
 					.union(springBlockPartGear)	
 					,dh)
+					.setColor(javafx.scene.paint.Color.LIGHTGREEN);
 		CSG myPin = moveDHValues(loadBearingPin,dh)
 		
 		CSG myspringBlockPart = moveDHValues(springBlockPart
 										,dh)	
+							.setColor(javafx.scene.paint.Color.BROWN);
 		CSG handMountPart=null;
 		
 		if(linkIndex<dhLinks.size()-1){
@@ -289,6 +319,7 @@ return new ICadGenerator(){
 								.rotx(180)
 			CSG baseEncoderCap = getEncoderCap().clone()
 							.movez(-centerLinkToBearingTop)
+							.setColor(javafx.scene.paint.Color.LIGHTBLUE);
 			CSG thirdPlusLinkServo =servoReference.clone()
 			CSG linkEncoder = encoder.clone()
 								.rotz(-Math.toDegrees(dh.getTheta()))
@@ -320,6 +351,7 @@ return new ICadGenerator(){
 
 			handMountPart.setManufacturing({ toMfg ->
 				return toMfg
+					.rotx(90)
 					.toXMin()
 					.toZMin()
 			})
