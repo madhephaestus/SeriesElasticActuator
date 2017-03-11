@@ -242,32 +242,6 @@ return new ICadGenerator(){
 			//add(csg,baseEncoder,sourceLimb.getRootListener())
 			//add(csg,baseForceSenseEncoder,sourceLimb.getRootListener())
 		}
-		if(linkIndex<dhLinks.size()-1){
-				CSG forceSenseEncoder = encoder
-									.rotz(180-Math.toDegrees(dh.getTheta()))
-									.rotx(180)
-				CSG baseEncoderCap = getEncoderCap().clone()
-								.movez(-centerLinkToBearingTop)
-				CSG thirdPlusLinkServo =servoReference.clone()
-				CSG linkEncoder = encoder.clone()
-									.rotz(-Math.toDegrees(dh.getTheta()))
-
-				previousEncoder = linkEncoder
-				previousServo = thirdPlusLinkServo
-				add(csg,myGearA.clone(),dh.getListener())
-				add(csg,thirdPlusLinkServo,dh.getListener())
-				add(csg,linkEncoder,dh.getListener())
-				//add(csg,forceSenseEncoder,dh.getListener())
-				add(csg,baseEncoderCap,dh.getListener())
-			}else{
-				// load the end of limb
-				// Target point
-				CSG handMountPart = handMount()
-				add(csg,handMountPart,dh.getListener())
-				
-			}
-		
-		
 		CSG springMoved = moveDHValues(spring
 									.rotz(-Math.toDegrees(dh.getTheta()))
 									//.rotz(linkIndex==0?180:0)
@@ -278,11 +252,33 @@ return new ICadGenerator(){
 					,dh)
 		CSG myPin = moveDHValues(loadBearingPin,dh)
 		
+		if(linkIndex<dhLinks.size()-1){
+			CSG forceSenseEncoder = encoder
+								.rotz(180-Math.toDegrees(dh.getTheta()))
+								.rotx(180)
+			CSG baseEncoderCap = getEncoderCap().clone()
+							.movez(-centerLinkToBearingTop)
+			CSG thirdPlusLinkServo =servoReference.clone()
+			CSG linkEncoder = encoder.clone()
+								.rotz(-Math.toDegrees(dh.getTheta()))
+
+			previousEncoder = linkEncoder
+			previousServo = thirdPlusLinkServo
+			add(csg,myGearA.clone(),dh.getListener())
+			add(csg,thirdPlusLinkServo,dh.getListener())
+			add(csg,linkEncoder,dh.getListener())
+			//add(csg,forceSenseEncoder,dh.getListener())
+			add(csg,baseEncoderCap,dh.getListener())
+		}else{
+			// load the end of limb
+			// Target point
+			CSG handMountPart = handMount()
+			add(csg,handMountPart,dh.getListener())
+			
+		}
 		add(csg,myPin,dh.getListener())
 		add(csg,myGearB,dh.getListener())
 		add(csg,springMoved,dh.getListener())
-		
-		
 		return csg;
 	}
 
