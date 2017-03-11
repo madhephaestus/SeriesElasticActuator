@@ -285,6 +285,7 @@ return new ICadGenerator(){
 			previousEncoder = baseEncoder
 			previousServo = baseServo
 			CSG baseMyGearA = myGearA.clone()
+							.setColor(javafx.scene.paint.Color.BLUE);
 			baseMyGearA.setManufacturing({ toMfg ->
 				return toMfg
 						.toXMin()
