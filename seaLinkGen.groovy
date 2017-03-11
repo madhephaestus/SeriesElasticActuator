@@ -178,6 +178,13 @@ return new ICadGenerator(){
 				.difference([encoderBaseKeepaway,servoReference])
 		CSG baseCap = getEncoderCap()
 					.movez(topLevel)
+					
+		baseCap.setManufacturing({ toMfg ->
+				return toMfg
+						.roty(180)
+						.toZMin()
+			})
+		
 		attachmentParts.add(baseShape)
 		attachmentParts.add(baseCap)
 		return attachmentParts;
@@ -274,7 +281,7 @@ return new ICadGenerator(){
 		
 		CSG myspringBlockPart = moveDHValues(springBlockPart
 										,dh)	
-		
+		CSG handMountPart=null;
 		
 		if(linkIndex<dhLinks.size()-1){
 			CSG forceSenseEncoder = encoder
@@ -288,18 +295,50 @@ return new ICadGenerator(){
 
 			previousEncoder = linkEncoder
 			previousServo = thirdPlusLinkServo
-			add(csg,myGearA.clone(),dh.getListener())
-			add(csg,thirdPlusLinkServo,dh.getListener())
+			
+			myGearA.setManufacturing({ toMfg ->
+				return toMfg
+						.toXMin()
+						.toZMin()
+			})
+			baseEncoderCap.setManufacturing({ toMfg ->
+				return toMfg
+						.roty(180)
+						.toXMin()
+						.toZMin()
+			})
+			add(csg,myGearA,dh.getListener())
+			//add(csg,thirdPlusLinkServo,dh.getListener())
 			//add(csg,linkEncoder,dh.getListener())
 			//add(csg,forceSenseEncoder,dh.getListener())
 			add(csg,baseEncoderCap,dh.getListener())
+			
 		}else{
 			// load the end of limb
 			// Target point
-			CSG handMountPart = handMount()
+			handMountPart = handMount()
+
+			handMountPart.setManufacturing({ toMfg ->
+				return toMfg
+					.toXMin()
+					.toZMin()
+			})
 			add(csg,handMountPart,dh.getListener())
-			
 		}
+		
+		myGearB.setManufacturing({ toMfg ->
+			return reverseDHValues(toMfg,dh)
+					.roty(180)
+					.toZMin()
+					.rotz(-Math.toDegrees(dh.getTheta()))
+					.toXMin()
+		})
+		myspringBlockPart.setManufacturing({ toMfg ->
+			return reverseDHValues(toMfg,dh)
+					.toZMin()
+					.rotz(-Math.toDegrees(dh.getTheta()))
+					.toXMin()
+		})
 		add(csg,myspringBlockPart,dh.getListener())
 		//add(csg,myPin,dh.getListener())
 		add(csg,myGearB,dh.getListener())
