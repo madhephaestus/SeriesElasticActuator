@@ -20,7 +20,7 @@ return new ICadGenerator(){
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M3",Vitamins.listVitaminSizes("capScrew"))
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","R8-2RS",Vitamins.listVitaminSizes("ballBearing"))
 	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS60T",Vitamins.listVitaminSizes("vexGear"))
-	StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
+	StringParameter gearBParam 				= new StringParameter("Gear B","HS36T",Vitamins.listVitaminSizes("vexGear"))
 	
      String springType = "Torsion-9271K133"
      HashMap<String, Object>  springData = Vitamins.getConfiguration("torsionSpring",springType)
@@ -43,7 +43,7 @@ return new ICadGenerator(){
 	double pinLength = 36
 	double linkMaterialThickness = pinLength/2-3
 	//Encoder Cap mesurments
-	double encoderCapRodRadius =8
+	double encoderCapRodRadius =7
 	double cornerRadius = 1
 	double capPinSpacing = gearAMeasurments.diameter*0.75+encoderCapRodRadius
 	double pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
