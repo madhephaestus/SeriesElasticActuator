@@ -9,6 +9,7 @@ import eu.mihosoft.vrl.v3d.Transform;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import eu.mihosoft.vrl.v3d.Transform;
 
+
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 return new ICadGenerator(){
@@ -17,7 +18,7 @@ return new ICadGenerator(){
 	LengthParameter thickness 				= new LengthParameter("Material Thickness",3.15,[10,1])
 	LengthParameter printerOffset 			= new LengthParameter("printerOffset",0.5,[1.2,0])
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M3",Vitamins.listVitaminSizes("capScrew"))
-	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","608zz",Vitamins.listVitaminSizes("ballBearing"))
+	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","R8-2RS",Vitamins.listVitaminSizes("ballBearing"))
 	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS60T",Vitamins.listVitaminSizes("vexGear"))
 	StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
 	
@@ -32,7 +33,7 @@ return new ICadGenerator(){
 	double gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
 	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
 	double springHeight = springData.numOfCoils*springData.wireDiameter
-	double linkMaterialThickness = 19 
+	
 	double boltDimeMeasurment = boltMeasurments.get("outerDiameter")
 	double nutDimeMeasurment = nutMeasurments.get("width")
 	double nutThickMeasurment = nutMeasurments.get("height")
@@ -40,11 +41,15 @@ return new ICadGenerator(){
 	// PN: 93600A586		
 	double pinRadius = (5.0+printerOffset.getMM())/2
 	double pinLength = 36
-
+	double linkMaterialThickness = pinLength/2-3
+	//Encoder Cap mesurments
 	double encoderCapRodRadius =8
+	double cornerRadius = 1
 	double capPinSpacing = gearAMeasurments.diameter*0.75+encoderCapRodRadius
+	double pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
 	double bearingDiameter = bearingData.outerDiameter
 	double encoderToEncoderDistance = (springHeight/2)+linkMaterialThickness
+	
 	
 	DHParameterKinematics neck=null;
 	CSG gearA = Vitamins.get( "vexGear",gearAParam.getStrValue())
@@ -76,6 +81,12 @@ return new ICadGenerator(){
 	double encoderBearingHeight = encoderSimple.getMaxZ()
 	double topPlateOffset = encoderToEncoderDistance*2-encoderBearingHeight*2
 	double centerLinkToBearingTop = encoderToEncoderDistance-encoderBearingHeight
+	double topOfGearToCenter = (centerLinkToBearingTop-gearBMeasurments.height)
+	double totalSpringLength = springData.legLength+springData.od/2
+	double drivenLinkThickness =centerLinkToBearingTop+topOfGearToCenter
+	double drivenLinkWidth = springData.od+encoderCapRodRadius
+	double drivenLinkX = totalSpringLength+encoderCapRodRadius
+	
 	/**
 	 * Gets the all dh chains.
 	 *
@@ -95,7 +106,7 @@ return new ICadGenerator(){
 	public ArrayList<CSG> generateBody(MobileBase base ){
 		ArrayList<CSG> attachmentParts = new ArrayList<CSG>()
 		double maxz = 0.001
-		double cornerRadius = 3
+		
 		for(DHParameterKinematics l:getLimbDHChains(base)){
 			double thisZ = l.getRobotToFiducialTransform().getZ()
 			if(thisZ>maxz)
@@ -199,9 +210,15 @@ return new ICadGenerator(){
 		DHLink dh = dhLinks.get(linkIndex);
 		HashMap<String, Object> shaftmap = Vitamins.getConfiguration(conf.getShaftType(),conf.getShaftSize())
 		HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
-		println conf.getShaftType() +" "+conf.getShaftSize()+" "+shaftmap
+		//println conf.getShaftType() +" "+conf.getShaftSize()+" "+shaftmap
 		double hornOffset = 	shaftmap.get("hornThickness")	
 		double servoNub = servoMeasurments.tipOfShaftToBottomOfFlange - servoMeasurments.bottomOfFlangeToTopOfBody
+		
+		CSG springBlockPart = springBlock(drivenLinkThickness)
+								.rotz(-Math.toDegrees(dh.getTheta()))
+		CSG springBlockPartGear = springBlock(gearBMeasurments.height)
+								.rotx(180)
+								.rotz(-Math.toDegrees(dh.getTheta()))
 		// creating the servo
 		CSG servoReference=   Vitamins.get(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
 		.transformed(new Transform().rotZ(90))
@@ -213,7 +230,8 @@ return new ICadGenerator(){
 					.movez(hornOffset)
 					.movey(-gearDistance)
 		servoReference=servoReference
-			.movez(-springHeight/2-linkMaterialThickness)			
+			.toZMax()
+			.movez(servoNub-centerLinkToBearingTop)			
 			.movey(-gearDistance)
 			.rotz(90+Math.toDegrees(dh.getTheta()))
 		for(int i=0;i<2;i++){
@@ -224,7 +242,7 @@ return new ICadGenerator(){
 		}
 		CSG myGearA = gearA
 					.rotz(90+Math.toDegrees(dh.getTheta()))
-					.movez(-(springHeight/2)-linkMaterialThickness+servoTop)	
+					.movez(-centerLinkToBearingTop)	
 		
 		if(linkIndex==0){
 			CSG baseServo =servoReference.clone()
@@ -248,9 +266,15 @@ return new ICadGenerator(){
 									,dh)
 		CSG myGearB = moveDHValues(gearB
 					.rotz(5)
-					.movez(-(springHeight/2)-linkMaterialThickness+servoTop)	
+					.movez(-centerLinkToBearingTop)
+					.difference(springBlockPartGear.hull())
+					.union(springBlockPartGear)	
 					,dh)
 		CSG myPin = moveDHValues(loadBearingPin,dh)
+		
+		CSG myspringBlockPart = moveDHValues(springBlockPart
+										,dh)	
+		
 		
 		if(linkIndex<dhLinks.size()-1){
 			CSG forceSenseEncoder = encoder
@@ -266,7 +290,7 @@ return new ICadGenerator(){
 			previousServo = thirdPlusLinkServo
 			add(csg,myGearA.clone(),dh.getListener())
 			add(csg,thirdPlusLinkServo,dh.getListener())
-			add(csg,linkEncoder,dh.getListener())
+			//add(csg,linkEncoder,dh.getListener())
 			//add(csg,forceSenseEncoder,dh.getListener())
 			add(csg,baseEncoderCap,dh.getListener())
 		}else{
@@ -276,9 +300,10 @@ return new ICadGenerator(){
 			add(csg,handMountPart,dh.getListener())
 			
 		}
-		add(csg,myPin,dh.getListener())
+		add(csg,myspringBlockPart,dh.getListener())
+		//add(csg,myPin,dh.getListener())
 		add(csg,myGearB,dh.getListener())
-		add(csg,springMoved,dh.getListener())
+		//add(csg,springMoved,dh.getListener())
 		return csg;
 	}
 
@@ -327,10 +352,33 @@ return new ICadGenerator(){
 		return mountPlate
 	}
 
+	private CSG springBlock(double thickness){
+		println springData
+		CSG linkBlank = new RoundedCube(drivenLinkX,drivenLinkWidth,thickness)
+						.cornerRadius(cornerRadius)
+						.toCSG()
+						.toXMin()
+						.toZMax()
+						.movez(centerLinkToBearingTop)
+						.movex(-springData.od/2-encoderCapRodRadius/2)
+		CSG springCut = spring
+		for(int i=1;i<springData.numOfCoils;i++){
+			springCut=springCut.union(springCut.movez(-springData.wireDiameter*i))
+		}
+		double magnetPinDiameter = bearingData.innerDiameter/2
+		CSG magnetPin = new Cylinder(magnetPinDiameter,magnetPinDiameter,encoderBearingHeight-1,(int)30).toCSG()
+						.movez(linkBlank.getMaxZ())
+						
+		linkBlank =linkBlank
+					.union(magnetPin)
+					.difference(encoder.rotx(180))
+					.difference([springCut,loadBearingPin])
+		return linkBlank
+	}
 	private CSG getEncoderCap(){
 		if(encoderCap!=null)
 			return encoderCap
-		double pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
+		
 		double bearingHolder = bearingDiameter/2 + encoderCapRodRadius
 		CSG pin  =new Cylinder(encoderCapRodRadius,encoderCapRodRadius,encoderBearingHeight,(int)30).toCSG()
 					.movex(-pinOffset)

@@ -27,7 +27,7 @@ CSG bearing = Vitamins.get("ballBearing",bearingSizeParam.getStrValue())
 			.movez(bearingOffset)
 
 CSG bearingCutterSlot = new Cube(bearingHole,bearingHole,bearingOffset +bearingData.width).toCSG()
-CSG bearingCutterSlotHole = new Cube(5,bearingHole,bearingOffset +bearingData.width).toCSG()
+CSG bearingCutterSlotHole = new Cube(bearingHole*2/3,bearingHole,bearingOffset +bearingData.width).toCSG()
 						.movez(1)
 CSG bearingHoleInner = new Cylinder(bearingHoleWithOffset,bearingHoleWithOffset,bearingOffset +bearingData.width,(int)30).toCSG() // a one line Cylinder
 CSG bearingHoleOuter = new Cylinder(bearingHole/2+2,bearingHole/2+2,bearingOffset +bearingData.width,(int)30).toCSG() // a one line Cylinder
