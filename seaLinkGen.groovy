@@ -20,7 +20,7 @@ return new ICadGenerator(){
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M3",Vitamins.listVitaminSizes("capScrew"))
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","R8-2RS",Vitamins.listVitaminSizes("ballBearing"))
 	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS60T",Vitamins.listVitaminSizes("vexGear"))
-	StringParameter gearBParam 				= new StringParameter("Gear B","HS36T",Vitamins.listVitaminSizes("vexGear"))
+	StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
 	
      String springType = "Torsion-9271K133"
      HashMap<String, Object>  springData = Vitamins.getConfiguration("torsionSpring",springType)
@@ -61,6 +61,7 @@ return new ICadGenerator(){
 	CSG previousServo = null;
 	CSG previousEncoder = null
 	CSG encoderCap=null;
+	HashMap<Double,CSG> springLinkBlockLocal=new HashMap<Double,CSG>();
 	CSG loadBearingPin =new Cylinder(pinRadius,pinRadius,pinLength,(int)30).toCSG() 
 						.movez(-pinLength/2)
 						
@@ -350,6 +351,7 @@ return new ICadGenerator(){
 			// Target point
 			handMountPart = handMount()
 
+			handMountPart.setColor(javafx.scene.paint.Color.WHITE);
 			handMountPart.setManufacturing({ toMfg ->
 				return toMfg
 					.rotx(90)
@@ -425,7 +427,8 @@ return new ICadGenerator(){
 	}
 
 	private CSG springBlock(double thickness){
-		println springData
+		if(springLinkBlockLocal.get(thickness)!=null)
+			return springLinkBlockLocal.get(thickness).clone()
 		CSG linkBlank = new RoundedCube(drivenLinkX,drivenLinkWidth,thickness)
 						.cornerRadius(cornerRadius)
 						.toCSG()
@@ -445,6 +448,7 @@ return new ICadGenerator(){
 					.union(magnetPin)
 					.difference(encoder.rotx(180))
 					.difference([springCut,loadBearingPin])
+		springLinkBlockLocal.put(thickness,linkBlank)
 		return linkBlank
 	}
 	private CSG getEncoderCap(){
