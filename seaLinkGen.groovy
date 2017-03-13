@@ -42,13 +42,21 @@ return new ICadGenerator(){
 	double pinRadius = (5.0+printerOffset.getMM())/2
 	double pinLength = 36
 	double linkMaterialThickness = pinLength/2-3
+	// #8x 1-5/8 wood screw
+	double screwDrillHole=3.1/2+printerOffset.getMM()
+	double screwthreadKeepAway= 4.5/2 +printerOffset.getMM()
+	double screwHeadKeepaway =8.6/2 + printerOffset.getMM()
+	double screwLength = 41.275 //1-5/8 
+	
 	//Encoder Cap mesurments
 	double encoderCapRodRadius =7
 	double cornerRadius = 1
 	double capPinSpacing = gearAMeasurments.diameter*0.75+encoderCapRodRadius
 	double pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
+	double mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
 	double bearingDiameter = bearingData.outerDiameter
 	double encoderToEncoderDistance = (springHeight/2)+linkMaterialThickness
+	
 	
 	
 	DHParameterKinematics neck=null;
@@ -79,6 +87,20 @@ return new ICadGenerator(){
 			            )
 			            .movez(-encoderToEncoderDistance)
      CSG encoder =   encoderSimple .movez(-encoderToEncoderDistance)
+	CSG screwHole = new Cylinder(screwDrillHole,screwDrillHole,screwLength,(int)8).toCSG() // a one line Cylinder
+					.toZMax()
+     CSG screwHoleKeepaway = new Cylinder(screwthreadKeepAway,screwthreadKeepAway,screwLength/2,(int)8).toCSG() // a one line Cylinder
+     					.toZMax()
+	CSG screwHead= new Cylinder(screwHeadKeepaway,screwHeadKeepaway,screwLength*2,(int)8).toCSG() // a one line Cylinder
+
+	CSG screwTotal = screwHead.union([screwHoleKeepaway,screwHole])
+					.movez(screwLength/2)
+     CSG screwSet =screwTotal
+					.movex(-pinOffset)
+					.rotz(mountPlatePinAngle)
+					.union(screwTotal
+						.movex(-pinOffset)
+						.rotz(-mountPlatePinAngle))
 	double encoderBearingHeight = encoderSimple.getMaxZ()
 	double topPlateOffset = encoderToEncoderDistance*2-encoderBearingHeight*2
 	double centerLinkToBearingTop = encoderToEncoderDistance-encoderBearingHeight
@@ -180,14 +202,58 @@ return new ICadGenerator(){
 						.toCSG()
 						.toZMin()
 						.difference([keepawayBottomY,keepawayBottomX])
-		baseShape=baseShape				
+		CSG screws = screwSet
+					.movez(topLevel)	
+		CSG screwAcross = screwTotal.rotx(90)
+						.movez(topLevel/2)
+
+		screwAcross=screwAcross.union(
+				screwAcross
+					
+					.movex(baseShape.getMaxX()-(cornerRadius+screwHeadKeepaway))
+			).union(
+				screwAcross
+					
+					.movex(baseShape.getMinX()+(cornerRadius+screwHeadKeepaway*2))
+			).union(
+				screwAcross
+					.movez(topLevel/2-(cornerRadius+screwHeadKeepaway*2))
+					.movex(screwHeadKeepaway)
+			)		
+		CSG bottomScrews = screwTotal.rotx(180)
+		
+		CSG bottomScrewSet =bottomScrews
+					.movex(baseShape.getMaxX()-(cornerRadius+screwHeadKeepaway*2))
+					.movey(baseShape.getMaxY()-(cornerRadius+screwHeadKeepaway*2))
+					.union(
+							bottomScrews
+								.movex(baseShape.getMinX()+(cornerRadius+screwHeadKeepaway*2))
+								.movey(baseShape.getMaxY()-(cornerRadius+screwHeadKeepaway*2))
+						)
+						.union(
+							bottomScrews
+								.movex(baseShape.getMinX()+(cornerRadius+screwHeadKeepaway*2))
+								.movey(baseShape.getMinY()+(cornerRadius+screwHeadKeepaway*2))
+						)
+						.union(
+							bottomScrews
+								.movex(baseShape.getMaxX()-(cornerRadius+screwHeadKeepaway*2))
+								.movey(baseShape.getMinY()+(cornerRadius+screwHeadKeepaway*2))
+						)				
+		baseShape = baseShape.difference([bottomScrewSet,screwAcross])		
+			
+		baseShape = baseShape				
 				.toXMax()
 				.toYMin()
 				.movey(-servoCentering-keepAwayDistance)
 				.movex(keepAwayDistance+encoderKeepawayDistance)
-				.difference([encoderBaseKeepaway,servoReference])
+				.difference([encoderBaseKeepaway,servoReference,screws])
+
+				
 		CSG baseCap = getEncoderCap()
 					.movez(topLevel)
+		
+			
 		CSG baseShapeA = baseShape.difference(baseShapeCutter)
 						.setColor(javafx.scene.paint.Color.CYAN);
 		CSG baseShapeB = baseShape.intersect(baseShapeCutter)
@@ -208,6 +274,10 @@ return new ICadGenerator(){
 						.rotx(-90)
 						.toZMin()
 			})
+		
+		
+		
+		
 		attachmentParts.add(baseShapeA)
 		attachmentParts.add(baseShapeB)
 		attachmentParts.add(baseCap)
@@ -350,14 +420,25 @@ return new ICadGenerator(){
 			// load the end of limb
 			// Target point
 			handMountPart = handMount()
+			CSG tipCalibrationPart= tipCalibration()
 
+			tipCalibrationPart.setColor(javafx.scene.paint.Color.PINK);
 			handMountPart.setColor(javafx.scene.paint.Color.WHITE);
+			
+			tipCalibrationPart.setManufacturing({ toMfg ->
+				return toMfg
+					.rotx(90)
+					.roty(90)
+					.toZMin()
+					.toXMin()
+			})
 			handMountPart.setManufacturing({ toMfg ->
 				return toMfg
 					.rotx(90)
 					.toXMin()
 					.toZMin()
 			})
+			add(csg,tipCalibrationPart,dh.getListener())
 			add(csg,handMountPart,dh.getListener())
 		}
 		
@@ -380,7 +461,21 @@ return new ICadGenerator(){
 		//add(csg,springMoved,dh.getListener())
 		return csg;
 	}
-
+	private CSG tipCalibration(){
+		CSG plate = handMount()
+		double plateThickenss = (-plate.getMinX()+plate.getMaxX())
+		double platewidth  = (-plate.getMinY()+plate.getMaxY())
+		plate=plate.movex(plateThickenss)
+		CSG pyramid = new Cylinder(	platewidth/2, // Radius at the bottom
+                      		0, // Radius at the top
+                      		Math.abs(plate.getMaxX()), // Height
+                      		(int)6 //resolution
+                      		).toCSG()//convert to CSG to display 
+                      		.roty(-90)
+                      		.movex(- Math.abs(plate.getMaxX()))                  			 
+		plate=plate.union(pyramid)
+		return plate
+	}
 	private CSG handMount(){
 		
 		CSG mountPlate = new Cube(5,30,70).toCSG()
@@ -458,11 +553,11 @@ return new ICadGenerator(){
 		double bearingHolder = bearingDiameter/2 + encoderCapRodRadius
 		CSG pin  =new Cylinder(encoderCapRodRadius,encoderCapRodRadius,encoderBearingHeight,(int)30).toCSG()
 					.movex(-pinOffset)
-		double angle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
+		double mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
 		
 		CSG capPinSet=pin
-					.rotz(angle)
-					.union(pin.rotz(-angle))
+					.rotz(mountPlatePinAngle)
+					.union(pin.rotz(-mountPlatePinAngle))
 		
 		CSG center  =new Cylinder(bearingHolder,bearingHolder,encoderBearingHeight,(int)30).toCSG()
 		CSG pinColumn =pin .union(pin
@@ -476,8 +571,9 @@ return new ICadGenerator(){
 								.movez(encoderToEncoderDistance-encoderBearingHeight)
 								
 								)
-						.union(pinColumn.rotz(angle))
-						.union(pinColumn.rotz(-angle))
+						.union(pinColumn.rotz(mountPlatePinAngle))
+						.union(pinColumn.rotz(-mountPlatePinAngle))
+						.difference(screwSet)
 		encoderCap = bottomBlock
 		return encoderCap
 	}
