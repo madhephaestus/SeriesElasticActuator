@@ -397,6 +397,7 @@ return new ICadGenerator(){
 			CSG linkEncoder = encoder.clone()
 								.rotz(-Math.toDegrees(dh.getTheta()))
 			CSG esp = getLinkSideEncoderCap(conf)
+				.setColor(javafx.scene.paint.Color.ORANGE);
 			previousEncoder = linkEncoder
 			previousServo = thirdPlusLinkServo
 			
