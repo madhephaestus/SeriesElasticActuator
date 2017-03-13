@@ -88,7 +88,7 @@ return new ICadGenerator(){
 			            )
 			            .movez(-encoderToEncoderDistance)
      CSG encoder =   encoderSimple .movez(-encoderToEncoderDistance)
-	CSG screwHole = new Cylinder(screwDrillHole,screwDrillHole,screwLength,(int)8).toCSG() // a one line Cylinder
+	CSG screwHole = new Cylinder(screwDrillHole,screwDrillHole,screwLength*2,(int)8).toCSG() // a one line Cylinder
 					.toZMax()
      CSG screwHoleKeepaway = new Cylinder(screwthreadKeepAway,screwthreadKeepAway,screwLength/2,(int)8).toCSG() // a one line Cylinder
      					.toZMax()
@@ -396,7 +396,7 @@ return new ICadGenerator(){
 			CSG thirdPlusLinkServo =servoReference.clone()
 			CSG linkEncoder = encoder.clone()
 								.rotz(-Math.toDegrees(dh.getTheta()))
-			CSG esp = getLinkSideEncoderCap()
+			CSG esp = getLinkSideEncoderCap(conf)
 			previousEncoder = linkEncoder
 			previousServo = thirdPlusLinkServo
 			
@@ -417,8 +417,8 @@ return new ICadGenerator(){
 						.toZMin()
 			})
 			add(csg,myGearA,dh.getListener())
-			add(csg,thirdPlusLinkServo,dh.getListener())
-			add(csg,linkEncoder,dh.getListener())
+			//add(csg,thirdPlusLinkServo,dh.getListener())
+			//add(csg,linkEncoder,dh.getListener())
 			add(csg,esp,dh.getListener())
 			add(csg,baseEncoderCap,dh.getListener())
 			
@@ -585,11 +585,25 @@ return new ICadGenerator(){
 		encoderCapCache = bottomBlock
 		return encoderCapCache
 	}	
-	private CSG getLinkSideEncoderCap(){
+	private CSG getLinkSideEncoderCap(LinkConfiguration conf ){
 		if(encoderServoPlate!=null)
 			return encoderServoPlate.clone()
-		
+		HashMap<String, Object> shaftmap = Vitamins.getConfiguration(conf.getShaftType(),conf.getShaftSize())
+		HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
+		println conf.getShaftType() +" "+conf.getShaftSize()+" "+servoMeasurments
+		double hornOffset = 	shaftmap.get("hornThickness")	
+		double servoNub = servoMeasurments.tipOfShaftToBottomOfFlange - servoMeasurments.bottomOfFlangeToTopOfBody
+		// creating the servo
+		CSG servoReference=   Vitamins.get(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
+			.transformed(new Transform().rotZ(90))
+			.toZMax()
+			.movez(servoNub-centerLinkToBearingTop)			
+			.movey(-gearDistance)
+			.rotz(90)
+			
+		double servoTop = servoReference.getMaxZ()-servoNub
 		double bearingHolder = bearingDiameter/2 + encoderCapRodRadius
+		
 		CSG pin  =new Cylinder(encoderCapRodRadius,encoderCapRodRadius,encoderBearingHeight,(int)30).toCSG()
 					.movex(-pinOffset)
 		double mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
@@ -599,16 +613,22 @@ return new ICadGenerator(){
 					.union(pin.rotz(-mountPlatePinAngle))
 		
 		CSG center  =new Cylinder(bearingHolder,bearingHolder,encoderBearingHeight,(int)30).toCSG()
-	
-		CSG bottomBlock = capPinSet.union(center).hull()
-						.toZMax()
-						.movez(-topPlateOffset)
-						.difference(encoderKeepaway
-								.rotx(180)
-								.movez(encoderToEncoderDistance-encoderBearingHeight)
-								)
-						.difference(screwSet)
+		
+		CSG baseShape = new Cube(servoMeasurments.servoThinDimentionThickness+encoderCapRodRadius,
+							servoMeasurments.flangeLongDimention+encoderCapRodRadius,
+							encoderBearingHeight)
 						
+						.toCSG()
+						.toZMin()
+						.toYMin()
+						.movey(-servoMeasurments.shaftToShortSideFlandgeEdge-encoderCapRodRadius/2)
+						.movex(-gearDistance)
+		CSG bottomBlock = capPinSet.union([center,baseShape]).hull()
+						.movez(-encoderToEncoderDistance)
+						.difference(encoderKeepaway)
+						.difference(screwSet)
+						.difference(servoReference)
+						.difference(servoReference.movez(-2))
 		encoderServoPlate = bottomBlock
 		return encoderServoPlate
 	}
