@@ -68,7 +68,8 @@ return new ICadGenerator(){
 				.movez(-springHeight/2)
 	CSG previousServo = null;
 	CSG previousEncoder = null
-	CSG encoderCap=null;
+	CSG encoderCapCache=null
+	CSG encoderServoPlate=null;
 	HashMap<Double,CSG> springLinkBlockLocal=new HashMap<Double,CSG>();
 	CSG loadBearingPin =new Cylinder(pinRadius,pinRadius,pinLength,(int)30).toCSG() 
 						.movez(-pinLength/2)
@@ -395,7 +396,7 @@ return new ICadGenerator(){
 			CSG thirdPlusLinkServo =servoReference.clone()
 			CSG linkEncoder = encoder.clone()
 								.rotz(-Math.toDegrees(dh.getTheta()))
-
+			CSG esp = getLinkSideEncoderCap()
 			previousEncoder = linkEncoder
 			previousServo = thirdPlusLinkServo
 			
@@ -410,10 +411,15 @@ return new ICadGenerator(){
 						.toXMin()
 						.toZMin()
 			})
+			esp.setManufacturing({ toMfg ->
+				return toMfg
+						.toXMin()
+						.toZMin()
+			})
 			add(csg,myGearA,dh.getListener())
 			add(csg,thirdPlusLinkServo,dh.getListener())
 			add(csg,linkEncoder,dh.getListener())
-			//add(csg,forceSenseEncoder,dh.getListener())
+			add(csg,esp,dh.getListener())
 			add(csg,baseEncoderCap,dh.getListener())
 			
 		}else{
@@ -549,8 +555,8 @@ return new ICadGenerator(){
 		return linkBlank
 	}
 	private CSG getEncoderCap(){
-		if(encoderCap!=null)
-			return encoderCap
+		if(encoderCapCache!=null)
+			return encoderCapCache
 		
 		double bearingHolder = bearingDiameter/2 + encoderCapRodRadius
 		CSG pin  =new Cylinder(encoderCapRodRadius,encoderCapRodRadius,encoderBearingHeight,(int)30).toCSG()
@@ -576,8 +582,35 @@ return new ICadGenerator(){
 						.union(pinColumn.rotz(mountPlatePinAngle))
 						.union(pinColumn.rotz(-mountPlatePinAngle))
 						.difference(screwSet)
-		encoderCap = bottomBlock
-		return encoderCap
+		encoderCapCache = bottomBlock
+		return encoderCapCache
+	}	
+	private CSG getLinkSideEncoderCap(){
+		if(encoderServoPlate!=null)
+			return encoderServoPlate.clone()
+		
+		double bearingHolder = bearingDiameter/2 + encoderCapRodRadius
+		CSG pin  =new Cylinder(encoderCapRodRadius,encoderCapRodRadius,encoderBearingHeight,(int)30).toCSG()
+					.movex(-pinOffset)
+		double mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
+		
+		CSG capPinSet=pin
+					.rotz(mountPlatePinAngle)
+					.union(pin.rotz(-mountPlatePinAngle))
+		
+		CSG center  =new Cylinder(bearingHolder,bearingHolder,encoderBearingHeight,(int)30).toCSG()
+	
+		CSG bottomBlock = capPinSet.union(center).hull()
+						.toZMax()
+						.movez(-topPlateOffset)
+						.difference(encoderKeepaway
+								.rotx(180)
+								.movez(encoderToEncoderDistance-encoderBearingHeight)
+								)
+						.difference(screwSet)
+						
+		encoderServoPlate = bottomBlock
+		return encoderServoPlate
 	}
 	private CSG reverseDHValues(CSG incoming,DHLink dh ){
 		println "Reversing "+dh
