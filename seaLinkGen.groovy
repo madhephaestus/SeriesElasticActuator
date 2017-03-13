@@ -50,7 +50,7 @@ return new ICadGenerator(){
 	
 	//Encoder Cap mesurments
 	double encoderCapRodRadius =7
-	double cornerRadius = 1
+	double cornerRadius = 0
 	double capPinSpacing = gearAMeasurments.diameter*0.75+encoderCapRodRadius
 	double pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
 	double mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
@@ -210,36 +210,36 @@ return new ICadGenerator(){
 
 		screwAcross=screwAcross.union(
 				screwAcross
-					
-					.movex(baseShape.getMaxX()-(cornerRadius+screwHeadKeepaway))
+					.movez(topLevel/2-(keepAwayDistance/2+screwHeadKeepaway)+2)
+					.movex(baseShape.getMaxX()-(keepAwayDistance/2+screwHeadKeepaway)+3)
 			).union(
 				screwAcross
 					
-					.movex(baseShape.getMinX()+(cornerRadius+screwHeadKeepaway*2))
+					.movex(baseShape.getMinX()+(keepAwayDistance/2+screwHeadKeepaway))
 			).union(
 				screwAcross
-					.movez(topLevel/2-(cornerRadius+screwHeadKeepaway*2))
+					.movez(topLevel/2-(keepAwayDistance/2+screwHeadKeepaway))
 					.movex(screwHeadKeepaway)
 			)		
 		CSG bottomScrews = screwTotal.rotx(180)
 		
 		CSG bottomScrewSet =bottomScrews
-					.movex(baseShape.getMaxX()-(cornerRadius+screwHeadKeepaway*2))
-					.movey(baseShape.getMaxY()-(cornerRadius+screwHeadKeepaway*2))
+					.movex(baseShape.getMaxX()-(keepAwayDistance/2+screwHeadKeepaway))
+					.movey(baseShape.getMaxY()-(keepAwayDistance/2+screwHeadKeepaway))
 					.union(
 							bottomScrews
-								.movex(baseShape.getMinX()+(cornerRadius+screwHeadKeepaway*2))
-								.movey(baseShape.getMaxY()-(cornerRadius+screwHeadKeepaway*2))
+								.movex(baseShape.getMinX()+(keepAwayDistance/2+screwHeadKeepaway))
+								.movey(baseShape.getMaxY()-(keepAwayDistance/2+screwHeadKeepaway))
 						)
 						.union(
 							bottomScrews
-								.movex(baseShape.getMinX()+(cornerRadius+screwHeadKeepaway*2))
-								.movey(baseShape.getMinY()+(cornerRadius+screwHeadKeepaway*2))
+								.movex(baseShape.getMinX()+(keepAwayDistance/2+screwHeadKeepaway))
+								.movey(baseShape.getMinY()+(keepAwayDistance/2+screwHeadKeepaway))
 						)
 						.union(
 							bottomScrews
-								.movex(baseShape.getMaxX()-(cornerRadius+screwHeadKeepaway*2))
-								.movey(baseShape.getMinY()+(cornerRadius+screwHeadKeepaway*2))
+								.movex(baseShape.getMaxX()-(keepAwayDistance/2+screwHeadKeepaway))
+								.movey(baseShape.getMinY()+(keepAwayDistance/2+screwHeadKeepaway))
 						)				
 		baseShape = baseShape.difference([bottomScrewSet,screwAcross])		
 			
