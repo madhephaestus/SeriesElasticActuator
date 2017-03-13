@@ -411,8 +411,8 @@ return new ICadGenerator(){
 						.toZMin()
 			})
 			add(csg,myGearA,dh.getListener())
-			//add(csg,thirdPlusLinkServo,dh.getListener())
-			//add(csg,linkEncoder,dh.getListener())
+			add(csg,thirdPlusLinkServo,dh.getListener())
+			add(csg,linkEncoder,dh.getListener())
 			//add(csg,forceSenseEncoder,dh.getListener())
 			add(csg,baseEncoderCap,dh.getListener())
 			
@@ -478,7 +478,9 @@ return new ICadGenerator(){
 	}
 	private CSG handMount(){
 		
-		CSG mountPlate = new Cube(5,30,70).toCSG()
+		CSG mountPlate = new RoundedCube(5,30,70)
+					.cornerRadius(cornerRadius)
+					.toCSG()
 		CSG centerHole =new Cylinder(10.2/2,10.2/2,10,(int)30)
 							.toCSG()
 							.movez(-5)
