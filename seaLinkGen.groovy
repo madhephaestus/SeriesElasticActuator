@@ -393,22 +393,67 @@ return new ICadGenerator(){
 										,dh)	
 							.setColor(javafx.scene.paint.Color.BROWN);
 		CSG handMountPart=null;
-		
+		CSG myArmScrews = moveDHValues(armScrews
+											.rotz(-Math.toDegrees(dh.getTheta()))
+											,dh)
 		if(linkIndex<dhLinks.size()-1){
 			CSG forceSenseEncoder = encoder
 								.rotz(180-Math.toDegrees(dh.getTheta()))
 								.rotx(180)
 			CSG baseEncoderCap = getEncoderCap().clone()
 							.movez(-centerLinkToBearingTop)
-							.setColor(javafx.scene.paint.Color.LIGHTBLUE);
+							
 			CSG thirdPlusLinkServo =servoReference.clone()
 			CSG linkEncoder = encoder.clone()
 								.rotz(-Math.toDegrees(dh.getTheta()))
 			CSG esp = getLinkSideEncoderCap(conf)
-				.setColor(javafx.scene.paint.Color.ORANGE);
+			double linkCconnectorOffset = drivenLinkXFromCenter-(encoderCapRodRadius+bearingDiameter)/2
+			def end = [-dh.getR()+linkCconnectorOffset,dh.getD()*0.98,0]
+			def controlOne = [end.get(1)/2,end.get(1)/2,0]
+			def controlTwo = [end.get(0),end.get(1)/2,end.get(2)]
+
+			CSG connectorArmCross = new RoundedCube(cornerRadius*2,
+											encoderCapRodRadius+bearingDiameter ,
+											 encoderBearingHeight)
+					.cornerRadius(cornerRadius)
+					.toCSG()
+					
+			def ribs = Extrude.moveBezier(	connectorArmCross,
+					controlOne, // Control point one
+					controlTwo, // Control point two
+					end ,// Endpoint
+					
+					5
+					)
+			CSG supportRib = ribs.get(ribs.size()-2)
+							.union(ribs.get(ribs.size()-1))
+							.toZMin()
+							.movez(centerLinkToBearingTop-encoderBearingHeight )
+			def linkParts = Extrude.bezier(	connectorArmCross,
+					controlOne, // Control point one
+					controlTwo, // Control point two
+					end ,// Endpoint
+					
+					10
+					)
+			print "\r\nUnioning link..."
+			CSG linkSection = linkParts.get(0)
+						.union(linkParts)
+						//
+						.toZMin()
+						.movez(centerLinkToBearingTop )
+			linkSection = 	linkSection
+							.difference(baseEncoderCap
+										.intersect(linkSection)
+										.hull())
+							.union(supportRib)
+							.union(myArmScrews)
+			print "Done\r\n"
+			baseEncoderCap=baseEncoderCap.union(linkSection)
+			baseEncoderCap.setColor(javafx.scene.paint.Color.LIGHTBLUE);
+			esp.setColor(javafx.scene.paint.Color.ORANGE);
 			previousEncoder = linkEncoder
 			previousServo = thirdPlusLinkServo
-			
 			myGearA.setManufacturing({ toMfg ->
 				return toMfg
 						.toXMin()
@@ -425,6 +470,7 @@ return new ICadGenerator(){
 						.toXMin()
 						.toZMin()
 			})
+			//add(csg,linkSection,dh.getListener())
 			add(csg,myGearA,dh.getListener())
 			//add(csg,thirdPlusLinkServo,dh.getListener())
 			//add(csg,linkEncoder,dh.getListener())
@@ -461,9 +507,7 @@ return new ICadGenerator(){
 							.difference(myspringBlockPart
 									.intersect(handMountPart)
 									.hull())
-							.difference(moveDHValues(armScrews
-											.rotz(-Math.toDegrees(dh.getTheta()))
-											,dh)	)
+							.difference(myArmScrews	)
 			tipCalibrationPart.setColor(javafx.scene.paint.Color.PINK);
 			handMountPart.setColor(javafx.scene.paint.Color.WHITE);
 			
@@ -689,4 +733,4 @@ return new ICadGenerator(){
 		csg.add(object);
 		BowlerStudioController.addCsg(object);
 	}
-};
+}
