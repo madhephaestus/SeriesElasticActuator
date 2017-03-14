@@ -19,7 +19,7 @@ return new ICadGenerator(){
 	LengthParameter printerOffset 			= new LengthParameter("printerOffset",0.5,[1.2,0])
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M3",Vitamins.listVitaminSizes("capScrew"))
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","R8-2RS",Vitamins.listVitaminSizes("ballBearing"))
-	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS60T",Vitamins.listVitaminSizes("vexGear"))
+	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS36T",Vitamins.listVitaminSizes("vexGear"))
 	StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
 	//StringParameter gearBParam 				= new StringParameter("Gear B","HS60T",Vitamins.listVitaminSizes("vexGear"))
 	//StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
@@ -306,7 +306,7 @@ return new ICadGenerator(){
 		if(linkIndex<dhLinks.size()-1){
 			nextLink=sourceLimb.getLinkConfiguration(linkIndex+1);
 		}
-		nextLink= sourceLimb.getLinkConfiguration(linkIndex);
+		
 		String linkStr =conf.getXml()
 		ArrayList<CSG> csg = null;
 		HashMap<String,ArrayList<CSG>> legmap=null;
@@ -377,13 +377,14 @@ return new ICadGenerator(){
 				.movez(servoNub-centerLinkToBearingTop)			
 				.movey(-gearDistance)
 				.rotz(90+Math.toDegrees(dh.getTheta()))
+			CSG myGearA = gearA.clone()	
 			for(int i=0;i<2;i++){
-				gearA=gearA
+				myGearA=myGearA
 					.difference(horn
 								.movez(hornOffset*i)
 								)
 			}
-			CSG myGearA = gearA
+			myGearA = myGearA
 						.rotz(90+Math.toDegrees(dh.getTheta()))
 						.movez(-centerLinkToBearingTop)	
 						.setColor(javafx.scene.paint.Color.BLUE);
@@ -409,6 +410,11 @@ return new ICadGenerator(){
 				//add(csg,baseEncoder,sourceLimb.getRootListener())
 				//add(csg,baseForceSenseEncoder,sourceLimb.getRootListener())
 			}
+			println "Link Hardware: using from index "+
+					(linkIndex+1)+
+					" "+nextLink.getElectroMechanicalSize() +
+					" "+nextLink.getShaftSize()
+					
 			CSG forceSenseEncoder = encoder
 								.rotz(180-Math.toDegrees(dh.getTheta()))
 								.rotx(180)
@@ -711,7 +717,7 @@ return new ICadGenerator(){
 			return sidePlateLocal.get(conf.getXml()).clone()
 		HashMap<String, Object> shaftmap = Vitamins.getConfiguration(conf.getShaftType(),conf.getShaftSize())
 		HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
-		println conf.getShaftType() +" "+conf.getShaftSize()+" "+servoMeasurments
+		
 		double hornOffset = 	shaftmap.get("hornThickness")	
 		double servoNub = servoMeasurments.tipOfShaftToBottomOfFlange - servoMeasurments.bottomOfFlangeToTopOfBody
 		// creating the servo
