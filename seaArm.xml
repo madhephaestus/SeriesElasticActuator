@@ -186,7 +186,7 @@
 <link>
 	<name>endEffector</name>
 	<deviceName>dyio</deviceName>
-	<type>null</type>
+	<type>servo-rotory</type>
 	<index>0</index>
 	<scale>1.0</scale>
 	<upperLimit>100000.0</upperLimit>
@@ -232,7 +232,7 @@
 	<DHParameters>
 		<Delta>0.0</Delta>
 		<Theta>0.0</Theta>
-		<Radius>0.0</Radius>
+		<Radius>90</Radius>
 		<Alpha>0.0</Alpha>
 	</DHParameters>
 
