@@ -20,7 +20,7 @@ return new ICadGenerator(){
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M3",Vitamins.listVitaminSizes("capScrew"))
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","R8-2RS",Vitamins.listVitaminSizes("ballBearing"))
 	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS60T",Vitamins.listVitaminSizes("vexGear"))
-	StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
+	StringParameter gearBParam 				= new StringParameter("Gear B","HS36T",Vitamins.listVitaminSizes("vexGear"))
 	
      String springType = "Torsion-9271K133"
      HashMap<String, Object>  springData = Vitamins.getConfiguration("torsionSpring",springType)
@@ -464,16 +464,17 @@ return new ICadGenerator(){
 						
 			linkSection = 	linkSection
 							.union(supportRib)
-							.movex(5)// offset to avoid hittin pervious link
-			linkSection = 	linkSection
+							.movex(5)// offset to avoid hitting pervious link
+							.movey(-2)// offset to avoid hitting pervious link
+			
+			linkSection = 	linkSection				
+							.difference(myspringBlockPart.hull()
+									.intersect(linkSection)
+									.hull())
 							.difference(baseEncoderCap
 										.intersect(linkSection)
 										.hull())
 							.difference(myArmScrews)
-							.difference(myspringBlockPart
-									.intersect(linkSection)
-									.hull())
-
 				
 			print "Done\r\n"
 			baseEncoderCap=baseEncoderCap.union(linkSection)
@@ -501,7 +502,7 @@ return new ICadGenerator(){
 			add(csg,myGearA,dh.getListener())
 			//add(csg,thirdPlusLinkServo,dh.getListener())
 			//add(csg,linkEncoder,dh.getListener())
-			add(csg,esp,dh.getListener())
+			//add(csg,esp,dh.getListener())
 			add(csg,baseEncoderCap,dh.getListener())
 			
 		}else{
@@ -568,9 +569,9 @@ return new ICadGenerator(){
 					.rotz(-Math.toDegrees(dh.getTheta()))
 					.toXMin()
 		})
-		add(csg,myspringBlockPart,dh.getListener())
+		//add(csg,myspringBlockPart,dh.getListener())
 		//add(csg,myPin,dh.getListener())
-		add(csg,myGearB,dh.getListener())
+		//add(csg,myGearB,dh.getListener())
 		//add(csg,springMoved,dh.getListener())
 		return csg;
 	}
