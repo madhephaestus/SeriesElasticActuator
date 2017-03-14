@@ -68,7 +68,7 @@
 	<rotz>-0.0</rotz></imuFromCentroid>
 
 	<DHParameters>
-		<Delta>89.1566265060241</Delta>
+		<Delta>134.27857772553628</Delta>
 		<Theta>0.0</Theta>
 		<Radius>0.0</Radius>
 		<Alpha>-90.0</Alpha>
@@ -149,12 +149,12 @@
 		<vitamin>
 			<name>electroMechanical</name>
 			<type>hobbyServo</type>
-			<id>hv6214mg</id>
+			<id>towerProMG91</id>
 		</vitamin>
 		<vitamin>
 			<name>shaft</name>
 			<type>hobbyServoHorn</type>
-			<id>hv6214mg_6</id>
+			<id>standardMicro1</id>
 		</vitamin>
 
 	</vitamins>
