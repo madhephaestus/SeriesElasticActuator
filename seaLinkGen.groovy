@@ -20,8 +20,11 @@ return new ICadGenerator(){
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M3",Vitamins.listVitaminSizes("capScrew"))
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","R8-2RS",Vitamins.listVitaminSizes("ballBearing"))
 	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS60T",Vitamins.listVitaminSizes("vexGear"))
-	StringParameter gearBParam 				= new StringParameter("Gear B","HS36T",Vitamins.listVitaminSizes("vexGear"))
-	
+	StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
+	//StringParameter gearBParam 				= new StringParameter("Gear B","HS60T",Vitamins.listVitaminSizes("vexGear"))
+	//StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
+	//StringParameter gearBParam 				= new StringParameter("Gear B","HS36T",Vitamins.listVitaminSizes("vexGear"))
+	//StringParameter gearBParam 				= new StringParameter("Gear B","HS12T",Vitamins.listVitaminSizes("vexGear"))
      String springType = "Torsion-9271K133"
      HashMap<String, Object>  springData = Vitamins.getConfiguration("torsionSpring",springType)
 	HashMap<String, Object>  bearingData = Vitamins.getConfiguration("ballBearing",bearingSizeParam.getStrValue())			
@@ -468,7 +471,7 @@ return new ICadGenerator(){
 							.movey(-2)// offset to avoid hitting pervious link
 			
 			linkSection = 	linkSection				
-							.difference(myspringBlockPart.hull()
+							.difference(myspringBlockPart
 									.intersect(linkSection)
 									.hull())
 							.difference(baseEncoderCap.hull()
@@ -498,11 +501,11 @@ return new ICadGenerator(){
 						.toXMin()
 						.toZMin()
 			})
-			//add(csg,linkSection,dh.getListener())
+			
 			add(csg,myGearA,dh.getListener())
 			//add(csg,thirdPlusLinkServo,dh.getListener())
 			//add(csg,linkEncoder,dh.getListener())
-			//add(csg,esp,dh.getListener())
+			add(csg,esp,dh.getListener())
 			add(csg,baseEncoderCap,dh.getListener())
 			
 		}else{
@@ -569,9 +572,9 @@ return new ICadGenerator(){
 					.rotz(-Math.toDegrees(dh.getTheta()))
 					.toXMin()
 		})
-		//add(csg,myspringBlockPart,dh.getListener())
+		add(csg,myspringBlockPart,dh.getListener())
 		//add(csg,myPin,dh.getListener())
-		//add(csg,myGearB,dh.getListener())
+		add(csg,myGearB,dh.getListener())
 		//add(csg,springMoved,dh.getListener())
 		return csg;
 	}
