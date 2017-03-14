@@ -40,7 +40,7 @@ return new ICadGenerator(){
 	//https://www.mcmaster.com/#standard-dowel-pins/=16olhp3
 	// PN: 93600A586		
 	double pinRadius = (5.0+printerOffset.getMM())/2
-	double pinLength = 36
+	double pinLength = 42
 	double linkMaterialThickness = pinLength/2-3
 	// #8x 1-5/8 wood screw
 	double screwDrillHole=3.1/2+printerOffset.getMM()
@@ -50,7 +50,7 @@ return new ICadGenerator(){
 	
 	//Encoder Cap mesurments
 	double encoderCapRodRadius =7
-	double cornerRadius = 0
+	double cornerRadius = 1
 	double capPinSpacing = gearAMeasurments.diameter*0.75+encoderCapRodRadius
 	double pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
 	double mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
@@ -102,6 +102,7 @@ return new ICadGenerator(){
 					.union(screwTotal
 						.movex(-pinOffset)
 						.rotz(-mountPlatePinAngle))
+	
 	double encoderBearingHeight = encoderSimple.getMaxZ()
 	double topPlateOffset = encoderToEncoderDistance*2-encoderBearingHeight*2
 	double centerLinkToBearingTop = encoderToEncoderDistance-encoderBearingHeight
@@ -110,7 +111,14 @@ return new ICadGenerator(){
 	double drivenLinkThickness =centerLinkToBearingTop+topOfGearToCenter
 	double drivenLinkWidth = springData.od+encoderCapRodRadius
 	double drivenLinkX = totalSpringLength+encoderCapRodRadius
-	
+	double drivenLinkXFromCenter = springData.legLength+encoderCapRodRadius
+	CSG armScrews = screwTotal
+					.movey(-springData.od/2+screwHeadKeepaway)
+					.union(screwTotal
+						.movey(springData.od/2-screwHeadKeepaway))
+					.roty(-90)
+					.movex(springData.legLength+encoderCapRodRadius/2)
+					.movez(centerLinkToBearingTop-screwHeadKeepaway)
 	/**
 	 * Gets the all dh chains.
 	 *
@@ -428,7 +436,34 @@ return new ICadGenerator(){
 			// Target point
 			handMountPart = handMount()
 			CSG tipCalibrationPart= tipCalibration()
+			
+			double plateThickenss = (-handMountPart.getMinX()+handMountPart.getMaxX())
+			double platewidth  = (-handMountPart.getMinY()+handMountPart.getMaxY())
+			double plateOffset = Math.abs(handMountPart.getMaxX())
 
+			double springBlockWidth =(-myspringBlockPart.getMinY()+myspringBlockPart.getMaxY())
+			double linkLength = dh.getR() -plateOffset-plateThickenss -drivenLinkXFromCenter+3
+			CSG connectorArmCross = new RoundedCube(plateThickenss,platewidth,drivenLinkThickness)
+					.cornerRadius(cornerRadius)
+					.toCSG()
+					.toXMin()
+			CSG section = connectorArmCross
+					.union(connectorArmCross
+							.movex(linkLength )
+					)
+					.hull()
+					.toXMax()
+					.toZMin()
+					.movex(-plateOffset-plateThickenss+cornerRadius*2)
+			handMountPart=handMountPart
+						.union(section)
+			handMountPart=handMountPart
+							.difference(myspringBlockPart
+									.intersect(handMountPart)
+									.hull())
+							.difference(moveDHValues(armScrews
+											.rotz(-Math.toDegrees(dh.getTheta()))
+											,dh)	)
 			tipCalibrationPart.setColor(javafx.scene.paint.Color.PINK);
 			handMountPart.setColor(javafx.scene.paint.Color.WHITE);
 			
@@ -485,7 +520,7 @@ return new ICadGenerator(){
 	}
 	private CSG handMount(){
 		
-		CSG mountPlate = new RoundedCube(5,30,70)
+		CSG mountPlate = new RoundedCube(8,30,70)
 					.cornerRadius(cornerRadius)
 					.toCSG()
 		CSG centerHole =new Cylinder(10.2/2,10.2/2,10,(int)30)
@@ -547,11 +582,12 @@ return new ICadGenerator(){
 		double magnetPinDiameter = bearingData.innerDiameter/2
 		CSG magnetPin = new Cylinder(magnetPinDiameter,magnetPinDiameter,encoderBearingHeight-1,(int)30).toCSG()
 						.movez(linkBlank.getMaxZ())
-						
+				
 		linkBlank =linkBlank
 					.union(magnetPin)
 					.difference(encoder.rotx(180))
 					.difference([springCut,loadBearingPin])
+					.difference(armScrews)
 		springLinkBlockLocal.put(thickness,linkBlank)
 		return linkBlank
 	}
