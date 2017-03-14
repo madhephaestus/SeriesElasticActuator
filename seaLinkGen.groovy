@@ -471,7 +471,7 @@ return new ICadGenerator(){
 							.difference(myspringBlockPart.hull()
 									.intersect(linkSection)
 									.hull())
-							.difference(baseEncoderCap
+							.difference(baseEncoderCap.hull()
 										.intersect(linkSection)
 										.hull())
 							.difference(myArmScrews)
