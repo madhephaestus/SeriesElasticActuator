@@ -409,7 +409,7 @@ return new ICadGenerator(){
 			CSG esp = getLinkSideEncoderCap(conf)
 			double linkCconnectorOffset = drivenLinkXFromCenter-(encoderCapRodRadius+bearingDiameter)/2
 			def end = [-dh.getR()+linkCconnectorOffset,dh.getD()*0.98,0]
-			def controlOne = [end.get(1)/2,end.get(1)/2,0]
+			def controlOne = [0,end.get(1)/2,0]
 			def controlTwo = [end.get(0),end.get(1)/2,end.get(2)]
 
 			CSG connectorArmCross = new RoundedCube(cornerRadius*2,
@@ -425,10 +425,29 @@ return new ICadGenerator(){
 					
 					5
 					)
+			CSG mountLug = new RoundedCube(encoderCapRodRadius+bearingDiameter,drivenLinkWidth,drivenLinkThickness)
+						.cornerRadius(cornerRadius)
+						.toCSG()
+						.toXMax()
+						.toZMax()
+						.movez(centerLinkToBearingTop)
+						.movex(drivenLinkX)
+						
+			mountLug = moveDHValues(mountLug.rotz(-Math.toDegrees(dh.getTheta()))
+											,dh)	
+			mountLug=mountLug.union(
+				mountLug
+					.toZMax()
+					.movez(centerLinkToBearingTop+encoderBearingHeight)
+				)	
 			CSG supportRib = ribs.get(ribs.size()-2)
+							.movez(encoderBearingHeight -cornerRadius*2)
+							//.union(ribs.get(ribs.size()-2))
 							.union(ribs.get(ribs.size()-1))
 							.toZMin()
-							.movez(centerLinkToBearingTop-encoderBearingHeight )
+							.movez(centerLinkToBearingTop-encoderBearingHeight+ cornerRadius*2)
+							.union(mountLug)
+							.hull()
 			def linkParts = Extrude.bezier(	connectorArmCross,
 					controlOne, // Control point one
 					controlTwo, // Control point two
@@ -442,12 +461,20 @@ return new ICadGenerator(){
 						//
 						.toZMin()
 						.movez(centerLinkToBearingTop )
+						
+			linkSection = 	linkSection
+							.union(supportRib)
+							.movex(5)// offset to avoid hittin pervious link
 			linkSection = 	linkSection
 							.difference(baseEncoderCap
 										.intersect(linkSection)
 										.hull())
-							.union(supportRib)
-							.union(myArmScrews)
+							.difference(myArmScrews)
+							.difference(myspringBlockPart
+									.intersect(linkSection)
+									.hull())
+
+				
 			print "Done\r\n"
 			baseEncoderCap=baseEncoderCap.union(linkSection)
 			baseEncoderCap.setColor(javafx.scene.paint.Color.LIGHTBLUE);
