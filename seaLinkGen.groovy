@@ -92,7 +92,7 @@ return new ICadGenerator(){
 			            )
 			            .movez(-encoderToEncoderDistance)
      CSG encoder =   encoderSimple .movez(-encoderToEncoderDistance)
-	CSG screwHole = new Cylinder(screwDrillHole,screwDrillHole,screwLength*2,(int)8).toCSG() // a one line Cylinder
+	CSG screwHole = new Cylinder(screwDrillHole,screwDrillHole,screwLength,(int)8).toCSG() // a one line Cylinder
 					.toZMax()
      CSG screwHoleKeepaway = new Cylinder(screwthreadKeepAway,screwthreadKeepAway,screwLength/2,(int)8).toCSG() // a one line Cylinder
      					.toZMax()
@@ -757,7 +757,7 @@ return new ICadGenerator(){
 		CSG bottomBlock = capPinSet.union([center,baseShape]).hull()
 						.movez(-encoderToEncoderDistance)
 						.difference(encoderKeepaway)
-						.difference(screwSet)
+						.difference(screwSet.movez(-encoderBearingHeight))
 						.difference(servoReference)
 						.difference(servoReference.movez(-2))
 		sidePlateLocal.put(conf.getXml(),bottomBlock) 
