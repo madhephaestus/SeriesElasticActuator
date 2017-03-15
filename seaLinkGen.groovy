@@ -340,12 +340,16 @@ return new ICadGenerator(){
 									.rotz(-Math.toDegrees(dh.getTheta()))
 									//.rotz(linkIndex==0?180:0)
 									,dh)
-		CSG myGearB = moveDHValues(gearB
+		CSG tmpMyGear = gearB
 					.rotz(5)
 					.movez(-centerLinkToBearingTop)
-					.difference(springBlockPartGear.hull())
-					.union(springBlockPartGear)	
-					,dh)
+		tmpMyGear = 	tmpMyGear	
+					.difference(springBlockPartGear
+								.intersect(tmpMyGear)
+								.hull()
+					)
+					.union(springBlockPartGear)
+		CSG myGearB = moveDHValues(tmpMyGear,dh)
 					.setColor(javafx.scene.paint.Color.LIGHTGREEN);
 		CSG myPin = moveDHValues(loadBearingPin,dh)
 		
