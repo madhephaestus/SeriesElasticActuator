@@ -20,7 +20,7 @@ return new ICadGenerator(){
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M3",Vitamins.listVitaminSizes("capScrew"))
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","R8-2RS",Vitamins.listVitaminSizes("ballBearing"))
 	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS60T",Vitamins.listVitaminSizes("vexGear"))
-	StringParameter gearBParam 				= new StringParameter("Gear B","HS60T",Vitamins.listVitaminSizes("vexGear"))
+	StringParameter gearBParam 				= new StringParameter("Gear B","HS36T",Vitamins.listVitaminSizes("vexGear"))
 	//StringParameter gearBParam 				= new StringParameter("Gear B","HS60T",Vitamins.listVitaminSizes("vexGear"))
 	//StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
 	//StringParameter gearBParam 				= new StringParameter("Gear B","HS36T",Vitamins.listVitaminSizes("vexGear"))
@@ -40,10 +40,12 @@ return new ICadGenerator(){
 	double boltDimeMeasurment = boltMeasurments.get("outerDiameter")
 	double nutDimeMeasurment = nutMeasurments.get("width")
 	double nutThickMeasurment = nutMeasurments.get("height")
-	//https://www.mcmaster.com/#standard-dowel-pins/=16olhp3
-	// PN: 93600A586		
+	//pin https://www.mcmaster.com/#98381a514/=16s6brg
+	// PN: 98381a514		
 	double pinRadius = (5.0+printerOffset.getMM())/2
 	double pinLength = 42
+	// bushing
+	//https://www.mcmaster.com/#6391k123/=16s6one
 	double linkMaterialThickness = pinLength/2-3
 	// #8x 1-5/8 wood screw
 	double screwDrillHole=3.1/2+printerOffset.getMM()
