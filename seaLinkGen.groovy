@@ -42,8 +42,8 @@ return new ICadGenerator(){
 	double nutThickMeasurment = nutMeasurments.get("height")
 	//pin https://www.mcmaster.com/#98381a514/=16s6brg
 	// PN: 98381a514		
-	double pinRadius = (5.0+printerOffset.getMM())/2
-	double pinLength = 42
+	double pinRadius = ((3/6)*25.4+printerOffset.getMM())/2
+	double pinLength = 1.5*25.4
 	// bushing
 	//https://www.mcmaster.com/#6391k123/=16s6one
 	double linkMaterialThickness = pinLength/2-3
