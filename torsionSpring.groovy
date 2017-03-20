@@ -17,6 +17,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import eu.mihosoft.vrl.v3d.parametrics.*;
 CSG getNut(){
+	LengthParameter printerOffset 		= new LengthParameter("printerOffset",0.5,[1.2,0])
 	String type= "torsionSpring"
 	if(args==null)
 		args=["Torsion-9271K621"]
@@ -27,9 +28,11 @@ CSG getNut(){
 	HashMap<String,Object> config = Vitamins.getConfiguration( type,size.getStrValue())
 	double height = config.wireDiameter * config.numOfCoils
 	
-	CSG core  =new Cylinder(config.od/2,config.od/2,height,(int)30).toCSG() // a one line Cylinder
+	CSG core  =new Cylinder(config.od/2+printerOffset.getMM()/2,
+	config.od/2+printerOffset.getMM()/2,
+	height,(int)30).toCSG() // a one line Cylinder
 				.difference(new Cylinder(config.id/2,config.id/2,height,(int)30).toCSG())
-	CSG leg = new Cube(config.legLength, config.wireDiameter,config.wireDiameter).toCSG()
+	CSG leg = new Cube(config.legLength, config.wireDiameter+printerOffset.getMM(),config.wireDiameter+printerOffset.getMM()).toCSG()
 				.toZMin()
 				.toXMin()
 				.toYMin()
