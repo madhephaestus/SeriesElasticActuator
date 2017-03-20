@@ -29,14 +29,14 @@ CSG getNut(){
 	double height = config.wireDiameter * config.numOfCoils
 	
 	CSG core  =new Cylinder(config.od/2+printerOffset.getMM()/2,
-	config.od/2+printerOffset.getMM()/2,
-	height,(int)30).toCSG() // a one line Cylinder
+						config.od/2+printerOffset.getMM()/2,
+						height,(int)30).toCSG() // a one line Cylinder
 				.difference(new Cylinder(config.id/2,config.id/2,height,(int)30).toCSG())
 	CSG leg = new Cube(config.legLength, config.wireDiameter+printerOffset.getMM(),config.wireDiameter+printerOffset.getMM()).toCSG()
 				.toZMin()
 				.toXMin()
 				.toYMin()
-				.movey(-config.od/2)
+				.movey(-core.getMaxY())
 	
 
 	core = core.union(leg)
