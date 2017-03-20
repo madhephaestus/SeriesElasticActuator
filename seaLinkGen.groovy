@@ -13,6 +13,10 @@ import eu.mihosoft.vrl.v3d.Transform;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 return new ICadGenerator(){
+	boolean showVitamins = true
+	boolean showRightPrintedParts = false
+	boolean showLeftPrintedParts = true
+	
 	HashMap<String , HashMap<String,ArrayList<CSG>>> map =  new HashMap<>();
 	HashMap<String,ArrayList<CSG>> bodyMap =  new HashMap<>();
 	LengthParameter thickness 				= new LengthParameter("Material Thickness",3.15,[10,1])
@@ -293,8 +297,8 @@ return new ICadGenerator(){
 		
 		
 		
-		attachmentParts.add(baseShapeA)
-		attachmentParts.add(baseShapeB)
+		if(showLeftPrintedParts)attachmentParts.add(baseShapeA)
+		if(showRightPrintedParts)attachmentParts.add(baseShapeB)
 		attachmentParts.add(baseCap)
 		return attachmentParts;
 	}
@@ -412,9 +416,9 @@ return new ICadGenerator(){
 							.toZMin()
 				})
 				add(csg,baseMyGearA,sourceLimb.getRootListener())
-				//add(csg,baseServo,sourceLimb.getRootListener())
-				//add(csg,baseEncoder,sourceLimb.getRootListener())
-				//add(csg,baseForceSenseEncoder,sourceLimb.getRootListener())
+				if(showVitamins)add(csg,baseServo,sourceLimb.getRootListener())
+				if(showVitamins)add(csg,baseEncoder,sourceLimb.getRootListener())
+				if(showVitamins)add(csg,baseForceSenseEncoder,sourceLimb.getRootListener())
 			}
 			println "Link Hardware: using from index "+
 					(linkIndex+1)+
@@ -532,11 +536,11 @@ return new ICadGenerator(){
 						.toZMin()
 			})
 			
-			add(csg,myGearA,dh.getListener())
-			//add(csg,thirdPlusLinkServo,dh.getListener())
-			//add(csg,linkEncoder,dh.getListener())
-			add(csg,esp,dh.getListener())
-			add(csg,baseEncoderCap,dh.getListener())
+			if(showRightPrintedParts)add(csg,myGearA,dh.getListener())
+			if(showVitamins)add(csg,thirdPlusLinkServo,dh.getListener())
+			if(showVitamins)add(csg,linkEncoder,dh.getListener())
+			if(showRightPrintedParts)add(csg,esp,dh.getListener())
+			if(showLeftPrintedParts)add(csg,baseEncoderCap,dh.getListener())
 			
 		}else{
 			// load the end of limb
@@ -585,8 +589,8 @@ return new ICadGenerator(){
 					.toXMin()
 					.toZMin()
 			})
-			add(csg,tipCalibrationPart,dh.getListener())
-			add(csg,handMountPart,dh.getListener())
+			if(showRightPrintedParts)add(csg,tipCalibrationPart,dh.getListener())
+			if(showLeftPrintedParts)add(csg,handMountPart,dh.getListener())
 		}
 		
 		myGearB.setManufacturing({ toMfg ->
@@ -602,10 +606,10 @@ return new ICadGenerator(){
 					.rotz(-Math.toDegrees(dh.getTheta()))
 					.toXMin()
 		})
-		add(csg,myspringBlockPart,dh.getListener())
-		//add(csg,myPin,dh.getListener())
-		add(csg,myGearB,dh.getListener())
-		//add(csg,springMoved,dh.getListener())
+		if(showLeftPrintedParts)add(csg,myspringBlockPart,dh.getListener())
+		if(showVitamins)add(csg,myPin,dh.getListener())
+		if(showRightPrintedParts)add(csg,myGearB,dh.getListener())
+		if(showVitamins)add(csg,springMoved,dh.getListener())
 		return csg;
 	}
 	private CSG tipCalibration(){
