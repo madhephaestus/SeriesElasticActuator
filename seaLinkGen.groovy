@@ -13,8 +13,8 @@ import eu.mihosoft.vrl.v3d.Transform;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 return new ICadGenerator(){
-	boolean showVitamins = true
-	boolean showRightPrintedParts = false
+	boolean showVitamins = false
+	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	
 	HashMap<String , HashMap<String,ArrayList<CSG>>> map =  new HashMap<>();
@@ -46,10 +46,13 @@ return new ICadGenerator(){
 	double nutThickMeasurment = nutMeasurments.get("height")
 	//pin https://www.mcmaster.com/#98381a514/=16s6brg
 	// PN: 98381a514		
-	double pinRadius = ((3/16)*25.4+printerOffset.getMM())/2
+	double pinRadius = ((3/16)*25.4+printerOffset.getMM()/2)/2
 	double pinLength = 1.5*25.4
 	// bushing
 	//https://www.mcmaster.com/#6391k123/=16s6one
+	double brassBearingRadius = ((1/4)*25.4+printerOffset.getMM()/2)/2
+	double brassBearingLength = (5/8)*25.4
+	
 	double linkMaterialThickness = pinLength/2-3
 	// #8x 1-5/8 wood screw
 	double screwDrillHole=3.1/2+printerOffset.getMM()
@@ -81,9 +84,8 @@ return new ICadGenerator(){
 	CSG encoderServoPlate=null;
 	HashMap<Double,CSG> springLinkBlockLocal=new HashMap<Double,CSG>();
 	HashMap<Double,CSG> sidePlateLocal=new HashMap<Double,CSG>();
-	CSG loadBearingPin =new Cylinder(pinRadius,pinRadius,pinLength,(int)30).toCSG() 
-						.movez(-pinLength/2)
-						
+	
+		
 	CSG encoderSimple = (CSG) ScriptingEngine
 					 .gitScriptRun(
             "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
@@ -129,6 +131,12 @@ return new ICadGenerator(){
 					.roty(-90)
 					.movex(springData.legLength+encoderCapRodRadius/2)
 					.movez(centerLinkToBearingTop-screwHeadKeepaway)
+	CSG loadBearingPinBearing =new Cylinder(brassBearingRadius,brassBearingRadius,drivenLinkThickness+encoderBearingHeight,(int)30).toCSG() 
+						.toZMin()
+						.movez(-pinLength/2)
+	CSG loadBearingPin =new Cylinder(pinRadius,pinRadius,pinLength,(int)30).toCSG() 
+						.movez(-pinLength/2)
+						.union(	loadBearingPinBearing)	
 	/**
 	 * Gets the all dh chains.
 	 *
@@ -355,11 +363,14 @@ return new ICadGenerator(){
 								.hull()
 					)
 					.union(springBlockPartGear)
-		CSG myGearB = moveDHValues(tmpMyGear,dh)
+		CSG myGearB = moveDHValues(tmpMyGear
+								.difference(loadBearingPin)
+		,dh)
 					.setColor(javafx.scene.paint.Color.LIGHTGREEN);
 		CSG myPin = moveDHValues(loadBearingPin,dh)
 		
 		CSG myspringBlockPart = moveDHValues(springBlockPart
+										.difference(loadBearingPin)
 										,dh)	
 							.setColor(javafx.scene.paint.Color.BROWN);
 		CSG handMountPart=null;
@@ -695,7 +706,7 @@ return new ICadGenerator(){
 		linkBlank =linkBlank
 					.union(magnetPin)
 					.difference(encoder.rotx(180))
-					.difference([springCut,loadBearingPin])
+					.difference([springCut])
 					.difference(armScrews)
 		springLinkBlockLocal.put(thickness,linkBlank)
 		return linkBlank
