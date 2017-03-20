@@ -14,7 +14,7 @@ Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimension
 CSGDatabase.clear()
 return new ICadGenerator(){
 	boolean showVitamins = false
-	boolean showRightPrintedParts = false
+	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	
 	HashMap<String , HashMap<String,ArrayList<CSG>>> map =  new HashMap<>();

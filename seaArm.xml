@@ -149,12 +149,12 @@
 		<vitamin>
 			<name>electroMechanical</name>
 			<type>hobbyServo</type>
-			<id>towerProMG91</id>
+			<id>hv6214mg</id>
 		</vitamin>
 		<vitamin>
 			<name>shaft</name>
 			<type>hobbyServoHorn</type>
-			<id>standardMicro1</id>
+			<id>hv6214mg_6</id>
 		</vitamin>
 
 	</vitamins>
