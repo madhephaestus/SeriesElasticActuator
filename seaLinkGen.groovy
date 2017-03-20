@@ -42,7 +42,7 @@ return new ICadGenerator(){
 	double nutThickMeasurment = nutMeasurments.get("height")
 	//pin https://www.mcmaster.com/#98381a514/=16s6brg
 	// PN: 98381a514		
-	double pinRadius = ((3/6)*25.4+printerOffset.getMM())/2
+	double pinRadius = ((3/16)*25.4+printerOffset.getMM())/2
 	double pinLength = 1.5*25.4
 	// bushing
 	//https://www.mcmaster.com/#6391k123/=16s6one
@@ -490,7 +490,16 @@ return new ICadGenerator(){
 							.union(supportRib)
 							.movex(5)// offset to avoid hitting pervious link
 							.movey(-2)// offset to avoid hitting pervious link
-			
+			double xSize= (-linkSection.getMinX()+linkSection.getMaxX())
+			double ySize= (-linkSection.getMinY()+linkSection.getMaxY())
+			double zSize= (-linkSection.getMinZ()+linkSection.getMaxZ())
+			CSG bottomCut = new Cube(xSize, ySize,zSize).toCSG()
+							.toZMax()
+							.toXMin()
+							//.movez(myspringBlockPart.getMinZ())
+			bottomCut=moveDHValues(bottomCut
+											.rotz(-Math.toDegrees(dh.getTheta()))
+											,dh)				
 			linkSection = 	linkSection				
 							.difference(myspringBlockPart
 									.intersect(linkSection)
@@ -499,7 +508,7 @@ return new ICadGenerator(){
 										.intersect(linkSection)
 										.hull())
 							.difference(myArmScrews)
-				
+							.difference(bottomCut)
 			print "Done\r\n"
 			baseEncoderCap=baseEncoderCap.union(linkSection)
 			baseEncoderCap.setColor(javafx.scene.paint.Color.LIGHTBLUE);
