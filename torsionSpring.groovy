@@ -20,13 +20,13 @@ CSG getNut(){
 	LengthParameter printerOffset 		= new LengthParameter("printerOffset",0.5,[1.2,0])
 	String type= "torsionSpring"
 	if(args==null)
-		args=["Torsion-9271K621"]
+		args=["Torsion-9271K133"]
 	StringParameter size = new StringParameter(	type+" Default",
 										args.get(0),
 										Vitamins.listVitaminSizes(type))
 	//println "Database loaded "+database
 	HashMap<String,Object> config = Vitamins.getConfiguration( type,size.getStrValue())
-	double height = config.wireDiameter * config.numOfCoils
+	double height = config.wireDiameter * (config.numOfCoils+1)
 	
 	CSG core  =new Cylinder(config.od/2+printerOffset.getMM()/2,
 						config.od/2+printerOffset.getMM()/2,
