@@ -27,16 +27,19 @@ CSG getNut(){
 	//println "Database loaded "+database
 	HashMap<String,Object> config = Vitamins.getConfiguration( type,size.getStrValue())
 	double height = config.wireDiameter * (config.numOfCoils+1)
+	double coreDelta= config.od+(config.od - config.id - config.wireDiameter) +printerOffset.getMM()
 	
-	CSG core  =new Cylinder(config.od/2+printerOffset.getMM()/2,
-						config.od/2+printerOffset.getMM()/2,
+	CSG core  =new Cylinder(coreDelta/2,
+						coreDelta/2,
 						height,(int)30).toCSG() // a one line Cylinder
 				.difference(new Cylinder(config.id/2,config.id/2,height,(int)30).toCSG())
-	CSG leg = new Cube(config.legLength, config.wireDiameter+printerOffset.getMM(),config.wireDiameter+printerOffset.getMM()).toCSG()
+	CSG leg = new Cube(	config.legLength+(printerOffset.getMM()*2),
+					config.wireDiameter+printerOffset.getMM(),
+					config.wireDiameter+printerOffset.getMM()).toCSG()
 				.toZMin()
 				.toXMin()
 				.toYMin()
-				.movey(-core.getMaxY())
+				.movey(-config.od/2- printerOffset.getMM()/2)
 	
 
 	core = core.union(leg)
