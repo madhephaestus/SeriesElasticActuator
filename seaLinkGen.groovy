@@ -39,7 +39,7 @@ return new ICadGenerator(){
 	
 	double gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
 	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
-	double springHeight = springData.numOfCoils*springData.wireDiameter
+	double springHeight = (1+springData.numOfCoils)*(springData.wireDiameter)
 	
 	double boltDimeMeasurment = boltMeasurments.get("outerDiameter")
 	double nutDimeMeasurment = nutMeasurments.get("width")
