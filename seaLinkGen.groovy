@@ -46,11 +46,12 @@ return new ICadGenerator(){
 	double nutThickMeasurment = nutMeasurments.get("height")
 	//pin https://www.mcmaster.com/#98381a514/=16s6brg
 	// PN: 98381a514		
-	double pinRadius = ((3/16)*25.4+printerOffset.getMM()/2)/2
-	double pinLength = 1.5*25.4
+	double pinRadius = ((3/16)*25.4+printerOffset.getMM())/2
+	double pinLength = 2*25.4 + printerOffset.getMM()
 	// bushing
 	//https://www.mcmaster.com/#6391k123/=16s6one
-	double brassBearingRadius = ((1/4)*25.4+printerOffset.getMM()/2)/2
+	//double brassBearingRadius = ((1/4)*25.4+printerOffset.getMM())/2
+	double brassBearingRadius = pinRadius
 	double brassBearingLength = (5/8)*25.4
 	
 	double linkMaterialThickness = pinLength/2-3
@@ -131,7 +132,10 @@ return new ICadGenerator(){
 					.roty(-90)
 					.movex(springData.legLength+encoderCapRodRadius/2)
 					.movez(centerLinkToBearingTop-screwHeadKeepaway)
-	CSG loadBearingPinBearing =new Cylinder(brassBearingRadius,brassBearingRadius,drivenLinkThickness+encoderBearingHeight,(int)30).toCSG() 
+	CSG loadBearingPinBearing =new Cylinder(	brassBearingRadius,
+										brassBearingRadius,
+										drivenLinkThickness+encoderBearingHeight,
+										(int)30).toCSG() 
 						.toZMin()
 						.movez(-pinLength/2)
 	CSG loadBearingPin =new Cylinder(pinRadius,pinRadius,pinLength,(int)30).toCSG() 
