@@ -56,8 +56,8 @@ return new ICadGenerator(){
 	
 	double linkMaterialThickness = pinLength/2-3
 	// #8x 1-5/8 wood screw
-	double screwDrillHole=3.1/2+printerOffset.getMM()
-	double screwthreadKeepAway= 4.5/2 +printerOffset.getMM()
+	double screwDrillHole=((0.2010*25.4)+printerOffset.getMM())/2
+	double screwthreadKeepAway= ((0.2570*25.4)+printerOffset.getMM())/2
 	double screwHeadKeepaway =8.6/2 + printerOffset.getMM()
 	double screwLength = 41.275 //1-5/8 
 	
@@ -120,9 +120,9 @@ return new ICadGenerator(){
 	double topPlateOffset = encoderToEncoderDistance*2-encoderBearingHeight*2
 	double centerLinkToBearingTop = encoderToEncoderDistance-encoderBearingHeight
 	double topOfGearToCenter = (centerLinkToBearingTop-gearBMeasurments.height)
-	double totalSpringLength = springData.legLength+springData.od/2
+	double totalSpringLength = springData.legLength+spring.getMaxY()
 	double drivenLinkThickness =centerLinkToBearingTop+topOfGearToCenter
-	double drivenLinkWidth = springData.od+encoderCapRodRadius
+	double drivenLinkWidth = (spring.getMaxY()*2)+encoderCapRodRadius
 	double drivenLinkX = totalSpringLength+encoderCapRodRadius
 	double drivenLinkXFromCenter = springData.legLength+encoderCapRodRadius
 	CSG armScrews = screwTotal
@@ -698,7 +698,8 @@ return new ICadGenerator(){
 						.toXMin()
 						.toZMax()
 						.movez(centerLinkToBearingTop)
-						.movex(-springData.od/2-encoderCapRodRadius/2)
+						
+						.movex(-drivenLinkWidth/2)
 		CSG springCut = spring
 		for(int i=1;i<springData.numOfCoils;i++){
 			springCut=springCut.union(springCut.movez(-springData.wireDiameter*i))
@@ -742,7 +743,8 @@ return new ICadGenerator(){
 								)
 						.union(pinColumn.rotz(mountPlatePinAngle))
 						.union(pinColumn.rotz(-mountPlatePinAngle))
-						.difference(screwSet)
+						.difference(screwSet
+									.scalez(5))
 		encoderCapCache = bottomBlock
 		return encoderCapCache
 	}	
