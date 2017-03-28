@@ -9,13 +9,13 @@
 		<file>Walking.groovy</file>
 	</driveEngine>
 
-<name>myDOg</name>
+<name>walkingSEA</name>
 <leg>
 
 <name>DefaultLeg</name>
 	<cadEngine>
-		<git>https://gist.github.com/087a69fc6c79a5a6ba397c1224d4692f.git</git>
-		<file>LinkedCadEngine.groovy</file>
+		<git>https://github.com/madhephaestus/SeriesElasticActuator.git</git>
+		<file>seaLinkGen.groovy</file>
 	</cadEngine>
 	<kinematics>
 		<git>https://gist.github.com/087a69fc6c79a5a6ba397c1224d4692f.git</git>
@@ -208,9 +208,9 @@
 <leg>
 
 <name>DefaultLeg2</name>
-	<cadEngine>
-		<git>https://gist.github.com/087a69fc6c79a5a6ba397c1224d4692f.git</git>
-		<file>LinkedCadEngine.groovy</file>
+<cadEngine>
+		<git>https://github.com/madhephaestus/SeriesElasticActuator.git</git>
+		<file>seaLinkGen.groovy</file>
 	</cadEngine>
 	<kinematics>
 		<git>https://gist.github.com/087a69fc6c79a5a6ba397c1224d4692f.git</git>
@@ -404,8 +404,8 @@
 
 <name>DefaultLeg3</name>
 	<cadEngine>
-		<git>https://gist.github.com/087a69fc6c79a5a6ba397c1224d4692f.git</git>
-		<file>LinkedCadEngine.groovy</file>
+		<git>https://github.com/madhephaestus/SeriesElasticActuator.git</git>
+		<file>seaLinkGen.groovy</file>
 	</cadEngine>
 	<kinematics>
 		<git>https://gist.github.com/087a69fc6c79a5a6ba397c1224d4692f.git</git>
@@ -599,8 +599,8 @@
 
 <name>DefaultLeg4</name>
 	<cadEngine>
-		<git>https://gist.github.com/087a69fc6c79a5a6ba397c1224d4692f.git</git>
-		<file>LinkedCadEngine.groovy</file>
+		<git>https://github.com/madhephaestus/SeriesElasticActuator.git</git>
+		<file>seaLinkGen.groovy</file>
 	</cadEngine>
 	<kinematics>
 		<git>https://gist.github.com/087a69fc6c79a5a6ba397c1224d4692f.git</git>
