@@ -70,7 +70,7 @@
 	<DHParameters>
 		<Delta>0.0</Delta>
 		<Theta>0.01</Theta>
-		<Radius>180</Radius>
+		<Radius>180.0</Radius>
 		<Alpha>-89.97</Alpha>
 	</DHParameters>
 
@@ -124,7 +124,7 @@
 	<DHParameters>
 		<Delta>0.0</Delta>
 		<Theta>0.01</Theta>
-		<Radius>180</Radius>
+		<Radius>180.0</Radius>
 		<Alpha>0.01</Alpha>
 	</DHParameters>
 
@@ -178,7 +178,7 @@
 	<DHParameters>
 		<Delta>0.0</Delta>
 		<Theta>90.01</Theta>
-		<Radius>180</Radius>
+		<Radius>180.0</Radius>
 		<Alpha>0.01</Alpha>
 	</DHParameters>
 
@@ -195,20 +195,20 @@
 </ZframeToRAS>
 
 <baseToZframe>
-	<x>-75.00000000000003</x>
-	<y>40.000000000000036</y>
-	<z>460</z>
-	<rotw>0.702661135646815</rotw>
-	<rotx>0.07916646039534943</rotx>
-	<roty>0.7026611356468148</roty>
-	<rotz>-0.07916646039534948</rotz>
+	<x>-200.0</x>
+	<y>97.67441860465118</y>
+	<z>460.0</z>
+	<rotw>0.7071684852014806</rotw>
+	<rotx>-0.0</rotx>
+	<roty>0.7070450717866884</roty>
+	<rotz>-0.0</rotz>
 </baseToZframe>
 
 </leg>
 <leg>
 
 <name>DefaultLeg2</name>
-<cadEngine>
+	<cadEngine>
 		<git>https://github.com/madhephaestus/SeriesElasticActuator.git</git>
 		<file>seaLinkGen.groovy</file>
 	</cadEngine>
@@ -265,7 +265,7 @@
 	<DHParameters>
 		<Delta>0.0</Delta>
 		<Theta>0.01</Theta>
-		<Radius>180</Radius>
+		<Radius>180.0</Radius>
 		<Alpha>-89.97</Alpha>
 	</DHParameters>
 
@@ -319,7 +319,7 @@
 	<DHParameters>
 		<Delta>0.0</Delta>
 		<Theta>0.01</Theta>
-		<Radius>180</Radius>
+		<Radius>180.0</Radius>
 		<Alpha>0.01</Alpha>
 	</DHParameters>
 
@@ -373,7 +373,7 @@
 	<DHParameters>
 		<Delta>0.0</Delta>
 		<Theta>90.01</Theta>
-		<Radius>180</Radius>
+		<Radius>180.0</Radius>
 		<Alpha>0.01</Alpha>
 	</DHParameters>
 
@@ -390,13 +390,13 @@
 </ZframeToRAS>
 
 <baseToZframe>
-	<x>74.99999999999996</x>
-	<y>-59.99999999999995</y>
-	<z>460</z>
-	<rotw>0.07925844132879416</rotw>
-	<rotx>-0.7026507663684222</rotx>
-	<roty>0.0792584413287932</roty>
-	<rotz>0.7026507663684213</rotz>
+	<x>200.0</x>
+	<y>-100.0</y>
+	<z>460.0</z>
+	<rotw>6.170670739598364E-5</rotw>
+	<rotx>-0.7071067784940844</rotx>
+	<roty>6.170670739598362E-5</roty>
+	<rotz>0.7071067784940845</rotz>
 </baseToZframe>
 
 </leg>
@@ -460,7 +460,7 @@
 	<DHParameters>
 		<Delta>0.0</Delta>
 		<Theta>0.01</Theta>
-		<Radius>180</Radius>
+		<Radius>180.0</Radius>
 		<Alpha>-89.97</Alpha>
 	</DHParameters>
 
@@ -514,7 +514,7 @@
 	<DHParameters>
 		<Delta>0.0</Delta>
 		<Theta>0.01</Theta>
-		<Radius>180</Radius>
+		<Radius>180.0</Radius>
 		<Alpha>0.01</Alpha>
 	</DHParameters>
 
@@ -568,7 +568,7 @@
 	<DHParameters>
 		<Delta>0.0</Delta>
 		<Theta>90.01</Theta>
-		<Radius>180</Radius>
+		<Radius>180.0</Radius>
 		<Alpha>0.01</Alpha>
 	</DHParameters>
 
@@ -585,13 +585,13 @@
 </ZframeToRAS>
 
 <baseToZframe>
-	<x>74.99999999999996</x>
-	<y>60.00000000000005</y>
-	<z>460</z>
-	<rotw>0.0791971196828662</rotw>
-	<rotx>0.7026576806909164</rotx>
-	<roty>0.07919711968286675</roty>
-	<rotz>-0.7026576806909163</rotz>
+	<x>200.0</x>
+	<y>100.0</y>
+	<z>460.0</z>
+	<rotw>4.329780281177467E-17</rotw>
+	<rotx>-0.7071067811865475</rotx>
+	<roty>4.329780281177466E-17</roty>
+	<rotz>0.7071067811865476</rotz>
 </baseToZframe>
 
 </leg>
@@ -655,7 +655,7 @@
 	<DHParameters>
 		<Delta>0.0</Delta>
 		<Theta>0.0</Theta>
-		<Radius>180</Radius>
+		<Radius>180.0</Radius>
 		<Alpha>-90.0</Alpha>
 	</DHParameters>
 
@@ -709,7 +709,7 @@
 	<DHParameters>
 		<Delta>0.0</Delta>
 		<Theta>0.0</Theta>
-		<Radius>180</Radius>
+		<Radius>180.0</Radius>
 		<Alpha>0.0</Alpha>
 	</DHParameters>
 
@@ -763,7 +763,7 @@
 	<DHParameters>
 		<Delta>0.0</Delta>
 		<Theta>90.0</Theta>
-		<Radius>180</Radius>
+		<Radius>180.0</Radius>
 		<Alpha>0.0</Alpha>
 	</DHParameters>
 
@@ -780,13 +780,13 @@
 </ZframeToRAS>
 
 <baseToZframe>
-	<x>-75.00000000000003</x>
-	<y>-39.999999999999964</y>
-	<z>460</z>
-	<rotw>0.7051320916686236</rotw>
-	<rotx>-0.05280845859359923</rotx>
-	<roty>0.7051320916686236</roty>
-	<rotz>0.05280845859359914</rotz>
+	<x>-200.0</x>
+	<y>-100.0</y>
+	<z>460.0</z>
+	<rotw>0.7071067811865476</rotw>
+	<rotx>-0.0</rotx>
+	<roty>0.7071067811865475</roty>
+	<rotz>-0.0</rotz>
 </baseToZframe>
 
 </leg>
