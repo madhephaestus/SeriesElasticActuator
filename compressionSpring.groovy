@@ -27,12 +27,12 @@ CSG getNut(){
 	//println "Database loaded "+database
 	HashMap<String,Object> config = Vitamins.getConfiguration( type,size.getStrValue())
 	double height = config.relaxedLength
-	double coreDelta= config.od
-	
+	double coreDelta= config.od+printerOffset.getMM()
+	double coreInnerDelta= config.id-printerOffset.getMM()
 	CSG core  =new Cylinder(coreDelta/2,
 						coreDelta/2,
 						height,(int)30).toCSG() // a one line Cylinder
-				.difference(new Cylinder(config.id/2,config.id/2,height,(int)30).toCSG())
+				.difference(new Cylinder(coreInnerDelta/2,coreInnerDelta/2,height,(int)30).toCSG())
 	
 	return core
 		.setParameter(size)
