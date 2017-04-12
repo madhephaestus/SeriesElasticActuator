@@ -234,7 +234,9 @@ return new ICadGenerator(){
 						.toZMin()
 						.difference([keepawayBottomY,keepawayBottomX])
 		CSG screws = screwSet
-					.movez(topLevel)	
+					.scalez(10)
+					.movez(topLevel)
+						
 		CSG screwAcross = screwTotal.rotx(90)
 						.movez(topLevel/2)
 
@@ -250,7 +252,7 @@ return new ICadGenerator(){
 				screwAcross
 					.movez(topLevel/2-(keepAwayDistance/2+screwHeadKeepaway))
 					.movex(screwHeadKeepaway)
-			)		
+			).scaley(10)		
 		CSG bottomScrews = screwTotal.rotx(180)
 		
 		CSG bottomScrewSet =bottomScrews
@@ -270,7 +272,7 @@ return new ICadGenerator(){
 							bottomScrews
 								.movex(baseShape.getMaxX()-(keepAwayDistance/2+screwHeadKeepaway))
 								.movey(baseShape.getMinY()+(keepAwayDistance/2+screwHeadKeepaway))
-						)				
+						).scalez(10)				
 		baseShape = baseShape.difference([bottomScrewSet,screwAcross])		
 			
 		baseShape = baseShape				
