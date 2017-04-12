@@ -235,7 +235,7 @@ return new ICadGenerator(){
 						.difference([keepawayBottomY,keepawayBottomX])
 		CSG screws = screwSet
 					.scalez(10)
-					.movez(topLevel)
+					//.movez(topLevel)
 						
 		CSG screwAcross = screwTotal.rotx(90)
 						.movez(topLevel/2)
@@ -522,7 +522,7 @@ return new ICadGenerator(){
 											.rotz(-Math.toDegrees(dh.getTheta()))
 											,dh)				
 			linkSection = 	linkSection				
-							.union(myspringBlockPart
+							.difference(myspringBlockPart
 									.intersect(linkSection)
 									.hull())
 							.difference(baseEncoderCap.hull()
