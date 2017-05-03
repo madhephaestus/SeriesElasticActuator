@@ -36,13 +36,7 @@ return new ICadGenerator(){
 	HashMap<String, Object>  nutMeasurments = Vitamins.getConfiguration( "nut",boltSizeParam.getStrValue())
 	HashMap<String, Object>  gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
 	HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
-	CSG loadCell = (CSG) ScriptingEngine
-					 .gitScriptRun(
-            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
-            "loadCell.groovy" , // file to load
-            null// no parameters (see next tutorial)
-            )
-            .rotx(-90)
+	
 	double gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
 	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
 	double springHeight = 20
@@ -128,11 +122,11 @@ return new ICadGenerator(){
 	double topPlateOffset = encoderToEncoderDistance*2-encoderBearingHeight*2
 	double centerLinkToBearingTop = encoderToEncoderDistance-encoderBearingHeight
 	double topOfGearToCenter = (centerLinkToBearingTop-gearBMeasurments.height)
-	double totalSpringLength = loadCell.getMaxX()
+	double totalSpringLength = 80
 	double drivenLinkThickness =centerLinkToBearingTop+topOfGearToCenter
 	double drivenLinkWidth = screwCenterLine*1.5+encoderCapRodRadius
 	double drivenLinkX = totalSpringLength+encoderCapRodRadius
-	double legLength =  loadCell.getMaxX()
+	double legLength = 80
 	double drivenLinkXFromCenter = legLength+encoderCapRodRadius
 	
 	CSG armScrews = screwTotal
@@ -151,6 +145,14 @@ return new ICadGenerator(){
 	CSG loadBearingPin =new Cylinder(pinRadius,pinRadius,pinLength,(int)30).toCSG() 
 						.movez(-pinLength/2)
 						.union(	loadBearingPinBearing)	
+	CSG loadCell = (CSG) ScriptingEngine
+					 .gitScriptRun(
+            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+            "loadCell.groovy" , // file to load
+            null// no parameters (see next tutorial)
+            )
+            .rotx(-90)
+            .movey(-drivenLinkWidth/2)
 	/**
 	 * Gets the all dh chains.
 	 *

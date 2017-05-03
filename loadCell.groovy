@@ -10,6 +10,7 @@ baseBolt=baseBolt.union(baseBolt.movex(15))
 			.rotx(180)
 endBolt=endBolt.union(endBolt.movex(15))
 			.movex(60)
+			.rotx(180)
 			
 			
 CSG bolts= endBolt.union(baseBolt)
