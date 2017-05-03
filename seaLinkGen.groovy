@@ -42,7 +42,7 @@ return new ICadGenerator(){
             "loadCell.groovy" , // file to load
             null// no parameters (see next tutorial)
             )
-            .rotx(90)
+            .rotx(-90)
 	double gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
 	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
 	double springHeight = 20
