@@ -1,6 +1,6 @@
 //Your code here
 LengthParameter printerOffset		= new LengthParameter("printerOffset",0.5,[2,0.001])
-double barWidth = 12.7
+double barWidth = 14.5
 CSG bar = new Cube(80,barWidth,barWidth).toCSG()
 				.toXMin()
 CSG baseBolt =Vitamins.get("capScrew","M5");

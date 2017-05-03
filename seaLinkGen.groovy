@@ -13,7 +13,7 @@ import eu.mihosoft.vrl.v3d.Transform;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 return new ICadGenerator(){
-	boolean showVitamins = true
+	boolean showVitamins = false
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	
@@ -466,11 +466,11 @@ return new ICadGenerator(){
 			CSG esp = getLinkSideEncoderCap(nextLink)
 			double linkCconnectorOffset = drivenLinkXFromCenter-(encoderCapRodRadius+bearingDiameter)/2
 			def end = [-dh.getR()+linkCconnectorOffset,dh.getD()*0.98,0]
-			def controlOne = [0,end.get(1)*4/5,0]
-			def controlTwo = [end.get(0),end.get(1)/5,end.get(2)]
+			def controlOne = [0,end.get(1)*1.1,0]
+			def controlTwo = [end.get(0),0,end.get(2)*1.1]
 
 			CSG connectorArmCross = new RoundedCube(cornerRadius*2,
-											encoderCapRodRadius+bearingDiameter ,
+											encoderCapRodRadius+bearingDiameter -cornerRadius,
 											 encoderBearingHeight)
 					.cornerRadius(cornerRadius)
 					.toCSG()
@@ -509,7 +509,6 @@ return new ICadGenerator(){
 					controlOne, // Control point one
 					controlTwo, // Control point two
 					end ,// Endpoint
-					
 					10
 					)
 			print "\r\nUnioning link..."
