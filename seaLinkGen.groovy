@@ -13,7 +13,7 @@ import eu.mihosoft.vrl.v3d.Transform;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 return new ICadGenerator(){
-	boolean showVitamins = false
+	boolean showVitamins = true
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	
@@ -29,17 +29,23 @@ return new ICadGenerator(){
 	//StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
 	//StringParameter gearBParam 				= new StringParameter("Gear B","HS36T",Vitamins.listVitaminSizes("vexGear"))
 	//StringParameter gearBParam 				= new StringParameter("Gear B","HS12T",Vitamins.listVitaminSizes("vexGear"))
-     String springType = "Torsion-9271K133"
-     HashMap<String, Object>  springData = Vitamins.getConfiguration("torsionSpring",springType)
+     //String springType = "Torsion-9271K133"
+     //HashMap<String, Object>  springData = Vitamins.getConfiguration("torsionSpring",springType)
 	HashMap<String, Object>  bearingData = Vitamins.getConfiguration("ballBearing",bearingSizeParam.getStrValue())			
 	HashMap<String, Object>  boltMeasurments = Vitamins.getConfiguration( "capScrew",boltSizeParam.getStrValue())
 	HashMap<String, Object>  nutMeasurments = Vitamins.getConfiguration( "nut",boltSizeParam.getStrValue())
 	HashMap<String, Object>  gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
 	HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
-	
+	CSG loadCell = (CSG) ScriptingEngine
+					 .gitScriptRun(
+            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+            "loadCell.groovy" , // file to load
+            null// no parameters (see next tutorial)
+            )
+            .rotx(90)
 	double gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
 	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
-	double springHeight = (1+springData.numOfCoils)*(springData.wireDiameter)
+	double springHeight = 20
 	
 	double boltDimeMeasurment = boltMeasurments.get("outerDiameter")
 	double nutDimeMeasurment = nutMeasurments.get("width")
@@ -77,8 +83,8 @@ return new ICadGenerator(){
 				.movey(-gearDistance)
 	CSG gearB = Vitamins.get( "vexGear",gearBParam.getStrValue());
 	CSG bolt = Vitamins.get( "capScrew",boltSizeParam.getStrValue());
-	CSG spring = Vitamins.get( "torsionSpring",springType)	
-				.movez(-springHeight/2)
+	//CSG spring = Vitamins.get( "torsionSpring",springType)	
+	//			.movez(-springHeight/2)
 	CSG previousServo = null;
 	CSG previousEncoder = null
 	CSG encoderCapCache=null
@@ -86,13 +92,15 @@ return new ICadGenerator(){
 	HashMap<Double,CSG> springLinkBlockLocal=new HashMap<Double,CSG>();
 	HashMap<Double,CSG> sidePlateLocal=new HashMap<Double,CSG>();
 	
-		
+	
+       	
 	CSG encoderSimple = (CSG) ScriptingEngine
 					 .gitScriptRun(
             "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
             "encoderBoard.groovy" , // file to load
             null// no parameters (see next tutorial)
             )
+       
      CSG encoderKeepaway = (CSG) ScriptingEngine
 					 .gitScriptRun(
 			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
@@ -115,22 +123,24 @@ return new ICadGenerator(){
 					.union(screwTotal
 						.movex(-pinOffset)
 						.rotz(-mountPlatePinAngle))
-	
+	double screwCenterLine = boltDimeMeasurment*4
 	double encoderBearingHeight = encoderSimple.getMaxZ()
 	double topPlateOffset = encoderToEncoderDistance*2-encoderBearingHeight*2
 	double centerLinkToBearingTop = encoderToEncoderDistance-encoderBearingHeight
 	double topOfGearToCenter = (centerLinkToBearingTop-gearBMeasurments.height)
-	double totalSpringLength = springData.legLength+spring.getMaxY()
+	double totalSpringLength = loadCell.getMaxX()
 	double drivenLinkThickness =centerLinkToBearingTop+topOfGearToCenter
-	double drivenLinkWidth = (spring.getMaxY()*2)+encoderCapRodRadius
+	double drivenLinkWidth = screwCenterLine*1.5+encoderCapRodRadius
 	double drivenLinkX = totalSpringLength+encoderCapRodRadius
-	double drivenLinkXFromCenter = springData.legLength+encoderCapRodRadius
+	double legLength =  loadCell.getMaxX()
+	double drivenLinkXFromCenter = legLength+encoderCapRodRadius
+	
 	CSG armScrews = screwTotal
-					.movey(-springData.od/2+screwHeadKeepaway)
+					.movey(-screwCenterLine+screwHeadKeepaway)
 					.union(screwTotal
-						.movey(springData.od/2-screwHeadKeepaway))
+						.movey(screwCenterLine-screwHeadKeepaway))
 					.roty(-90)
-					.movex(springData.legLength+encoderCapRodRadius/2)
+					.movex(legLength+encoderCapRodRadius/2)
 					.movez(centerLinkToBearingTop-screwHeadKeepaway)
 	CSG loadBearingPinBearing =new Cylinder(	brassBearingRadius,
 										brassBearingRadius,
@@ -356,7 +366,7 @@ return new ICadGenerator(){
 		
 	
 	
-		CSG springMoved = moveDHValues(spring
+		CSG springMoved = moveDHValues(loadCell
 									.rotz(-Math.toDegrees(dh.getTheta()))
 									//.rotz(linkIndex==0?180:0)
 									,dh)
@@ -586,9 +596,9 @@ return new ICadGenerator(){
 			handMountPart=handMountPart
 						.union(section)
 			handMountPart=handMountPart
-							.difference(myspringBlockPart
-									.intersect(handMountPart)
-									.hull())
+							//.difference(myspringBlockPart
+							//		.intersect(handMountPart)
+							//		.hull())
 							.difference(myArmScrews	)
 			tipCalibrationPart.setColor(javafx.scene.paint.Color.PINK);
 			handMountPart.setColor(javafx.scene.paint.Color.WHITE);
@@ -702,10 +712,10 @@ return new ICadGenerator(){
 						.movez(centerLinkToBearingTop)
 						
 						.movex(-drivenLinkWidth/2)
-		CSG springCut = spring
-		for(int i=1;i<springData.numOfCoils;i++){
-			springCut=springCut.union(springCut.movez(-springData.wireDiameter*i))
-		}
+		CSG springCut = loadCell
+		//for(int i=1;i<springData.numOfCoils;i++){
+		//	springCut=springCut.union(springCut.movez(-springData.wireDiameter*i))
+		//}
 		double magnetPinDiameter = bearingData.innerDiameter/2
 		CSG magnetPin = new Cylinder(magnetPinDiameter,magnetPinDiameter,encoderBearingHeight-1,(int)30).toCSG()
 						.movez(linkBlank.getMaxZ())

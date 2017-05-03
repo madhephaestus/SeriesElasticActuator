@@ -8,11 +8,14 @@ baseBolt=baseBolt.union(baseBolt.movex(15))
 			.movex(5)
 endBolt=endBolt.union(endBolt.movex(15))
 			.movex(60)
+			.rotx(180)
 			
 CSG bolts= endBolt.union(baseBolt)
+			.makeKeepaway(printerOffset.getMM())
 			.scalez(10)
 			.movez(bar.getMaxZ())
 			
 bar=bar.union(bolts)
+		.movex(-bar.getMaxX()/2)
 
-return [bar]
+return bar
