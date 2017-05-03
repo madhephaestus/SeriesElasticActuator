@@ -39,7 +39,7 @@ return new ICadGenerator(){
 	
 	double gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
 	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
-	double springHeight = 20
+	double springHeight = 22
 	
 	double boltDimeMeasurment = boltMeasurments.get("outerDiameter")
 	double nutDimeMeasurment = nutMeasurments.get("width")
@@ -59,7 +59,7 @@ return new ICadGenerator(){
 	double screwDrillHole=((0.2010*25.4)+printerOffset.getMM())/2
 	double screwthreadKeepAway= ((0.2570*25.4)+printerOffset.getMM())/2
 	double screwHeadKeepaway =8.6/2 + printerOffset.getMM()
-	double screwLength = 41.275 //1-5/8 
+	double screwLength = 200 //1-5/8 
 	
 	//Encoder Cap mesurments
 	double encoderCapRodRadius =7
@@ -122,11 +122,11 @@ return new ICadGenerator(){
 	double topPlateOffset = encoderToEncoderDistance*2-encoderBearingHeight*2
 	double centerLinkToBearingTop = encoderToEncoderDistance-encoderBearingHeight
 	double topOfGearToCenter = (centerLinkToBearingTop-gearBMeasurments.height)
-	double totalSpringLength = 80
+	double totalSpringLength = 47.5
 	double drivenLinkThickness =centerLinkToBearingTop+topOfGearToCenter
 	double drivenLinkWidth = screwCenterLine*1.5+encoderCapRodRadius
 	double drivenLinkX = totalSpringLength+encoderCapRodRadius
-	double legLength = 80
+	double legLength = totalSpringLength
 	double drivenLinkXFromCenter = legLength+encoderCapRodRadius
 	
 	CSG armScrews = screwTotal
@@ -466,8 +466,8 @@ return new ICadGenerator(){
 			CSG esp = getLinkSideEncoderCap(nextLink)
 			double linkCconnectorOffset = drivenLinkXFromCenter-(encoderCapRodRadius+bearingDiameter)/2
 			def end = [-dh.getR()+linkCconnectorOffset,dh.getD()*0.98,0]
-			def controlOne = [0,end.get(1)/2,0]
-			def controlTwo = [end.get(0),end.get(1)/2,end.get(2)]
+			def controlOne = [0,end.get(1)*4/5,0]
+			def controlTwo = [end.get(0),end.get(1)/5,end.get(2)]
 
 			CSG connectorArmCross = new RoundedCube(cornerRadius*2,
 											encoderCapRodRadius+bearingDiameter ,
@@ -541,6 +541,7 @@ return new ICadGenerator(){
 										.intersect(linkSection)
 										.hull())
 							.difference(myArmScrews)
+							.difference(springMoved)
 							.difference(bottomCut)
 			print "Done\r\n"
 			baseEncoderCap=baseEncoderCap.union(linkSection)
