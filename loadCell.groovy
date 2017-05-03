@@ -7,10 +7,8 @@ CSG baseBolt =Vitamins.get("capScrew","M5");
 CSG endBolt =Vitamins.get("capScrew","M4");
 baseBolt=baseBolt.union(baseBolt.movex(15))
 			.movex(5)
-			.rotx(180)
 endBolt=endBolt.union(endBolt.movex(15))
 			.movex(60)
-			.rotx(180)
 			
 			
 CSG bolts= endBolt.union(baseBolt)
