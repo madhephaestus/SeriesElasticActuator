@@ -1,6 +1,7 @@
 //Your code here
 LengthParameter printerOffset		= new LengthParameter("printerOffset",0.5,[2,0.001])
-CSG bar = new Cube(80,12.7,12.7).toCSG()
+double barWidth = 12.7
+CSG bar = new Cube(80,barWidth,barWidth).toCSG()
 				.toXMin()
 CSG baseBolt =Vitamins.get("capScrew","M5");
 CSG endBolt =Vitamins.get("capScrew","M4");
@@ -17,5 +18,7 @@ CSG bolts= endBolt.union(baseBolt)
 			
 bar=bar.union(bolts)
 		.movex(-bar.getMaxX()/2)
+		.movey(barWidth/2)
+		.movez(barWidth/2)
 
 return bar
