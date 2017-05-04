@@ -746,7 +746,7 @@ return new ICadGenerator(){
 					.difference(encoder.rotx(180))
 					.difference(armScrews)
 					.union(linkBackBlank)
-					.union([springCut])
+					.difference([springCut])
 					
 					
 					
