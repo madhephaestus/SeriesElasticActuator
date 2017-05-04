@@ -39,7 +39,7 @@ return new ICadGenerator(){
 	
 	double gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
 	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
-	double springHeight = 24
+	double springHeight = 26
 	
 	double boltDimeMeasurment = boltMeasurments.get("outerDiameter")
 	double boltHeadThickness =boltMeasurments.headHeight
@@ -725,14 +725,15 @@ return new ICadGenerator(){
 						.toZMax()
 						.movez(centerLinkToBearingTop)
 						.movex(-drivenLinkWidth/2)
-		CSG linkBackBlank = new RoundedCube(drivenLinkWidth,drivenLinkWidth,thickness-boltHeadThickness)
+		CSG linkBackBlank = new RoundedCube(drivenLinkWidth,drivenLinkWidth,thickness-boltHeadThickness*2)
 						.cornerRadius(cornerRadius)
 						.toCSG()
 						.toZMax()
-						.movez(centerLinkToBearingTop-boltHeadThickness)
+						.movez(centerLinkToBearingTop-boltHeadThickness*2)
 						.movex(loadCellBoltCenter)
 						
 		CSG springCut = loadCell
+						.movez(linkBackBlank.getMinZ())
 		//for(int i=1;i<springData.numOfCoils;i++){
 		//	springCut=springCut.union(springCut.movez(-springData.wireDiameter*i))
 		//}
@@ -745,7 +746,7 @@ return new ICadGenerator(){
 					.difference(encoder.rotx(180))
 					.difference(armScrews)
 					.union(linkBackBlank)
-					.difference([springCut])
+					.union([springCut])
 					
 					
 					
