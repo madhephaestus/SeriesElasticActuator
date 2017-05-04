@@ -13,7 +13,7 @@ import eu.mihosoft.vrl.v3d.Transform;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 return new ICadGenerator(){
-	boolean showVitamins = true
+	boolean showVitamins = false
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	
@@ -21,7 +21,7 @@ return new ICadGenerator(){
 	HashMap<String,ArrayList<CSG>> bodyMap =  new HashMap<>();
 	LengthParameter thickness 				= new LengthParameter("Material Thickness",3.15,[10,1])
 	LengthParameter printerOffset 			= new LengthParameter("printerOffset",0.5,[1.2,0])
-	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M3",Vitamins.listVitaminSizes("capScrew"))
+	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","Inch-1_4-20",Vitamins.listVitaminSizes("capScrew"))
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","R8-60355K505",Vitamins.listVitaminSizes("ballBearing"))
 	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS60T",Vitamins.listVitaminSizes("vexGear"))
 	StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
@@ -42,6 +42,7 @@ return new ICadGenerator(){
 	double springHeight = 24
 	
 	double boltDimeMeasurment = boltMeasurments.get("outerDiameter")
+	double boltHeadThickness =boltMeasurments.headHeight
 	double nutDimeMeasurment = nutMeasurments.get("width")
 	double nutThickMeasurment = nutMeasurments.get("height")
 	//pin https://www.mcmaster.com/#98381a514/=16s6brg
@@ -56,9 +57,9 @@ return new ICadGenerator(){
 	
 	double linkMaterialThickness = pinLength/2-3
 	// #8x 1-5/8 wood screw
-	double screwDrillHole=((0.2010*25.4)+printerOffset.getMM())/2
-	double screwthreadKeepAway= ((0.2570*25.4)+printerOffset.getMM())/2
-	double screwHeadKeepaway =8.6/2 + printerOffset.getMM()
+	double screwDrillHole=((boltMeasurments.outerDiameter-1.2)+printerOffset.getMM())/2
+	double screwthreadKeepAway= (boltMeasurments.outerDiameter+printerOffset.getMM()+0.25)/2
+	double screwHeadKeepaway =boltMeasurments.headDiameter/2 + printerOffset.getMM()
 	double screwLength = 200 //1-5/8 
 	
 	//Encoder Cap mesurments
@@ -117,7 +118,7 @@ return new ICadGenerator(){
 					.union(screwTotal
 						.movex(-pinOffset)
 						.rotz(-mountPlatePinAngle))
-	double screwCenterLine = boltDimeMeasurment*4
+	double screwCenterLine = boltDimeMeasurment*2
 	double encoderBearingHeight = encoderSimple.getMaxZ()
 	double topPlateOffset = encoderToEncoderDistance*2-encoderBearingHeight*2
 	double centerLinkToBearingTop = encoderToEncoderDistance-encoderBearingHeight
@@ -128,7 +129,7 @@ return new ICadGenerator(){
 	double drivenLinkX = totalSpringLength+encoderCapRodRadius
 	double legLength = totalSpringLength
 	double drivenLinkXFromCenter = legLength+encoderCapRodRadius
-	
+	double loadCellBoltCenter = -(40.0-5.0-(15.0/2))
 	CSG armScrews = screwTotal
 					.movey(-screwCenterLine+screwHeadKeepaway)
 					.union(screwTotal
@@ -136,6 +137,12 @@ return new ICadGenerator(){
 					.roty(-90)
 					.movex(legLength+encoderCapRodRadius/2)
 					.movez(centerLinkToBearingTop-screwHeadKeepaway)
+	CSG LoadCellScrews = screwTotal
+					.movey(-screwCenterLine+screwHeadKeepaway)
+					.union(screwTotal
+						.movey(screwCenterLine-screwHeadKeepaway))
+					.movex(loadCellBoltCenter)
+					.movez(centerLinkToBearingTop-screwHeadKeepaway)				
 	CSG loadBearingPinBearing =new Cylinder(	brassBearingRadius,
 										brassBearingRadius,
 										drivenLinkThickness+encoderBearingHeight,
@@ -381,15 +388,21 @@ return new ICadGenerator(){
 								.hull()
 					)
 					.union(springBlockPartGear)
+		CSG loadCellBolts = moveDHValues(LoadCellScrews
+							.rotz(-Math.toDegrees(dh.getTheta()))
+								,dh)	
 		CSG myGearB = moveDHValues(tmpMyGear
 								.difference(loadBearingPin)
-		,dh)
+								,dh)
+					.difference(loadCellBolts)
 					.setColor(javafx.scene.paint.Color.LIGHTGREEN);
 		CSG myPin = moveDHValues(loadBearingPin,dh)
 		
 		CSG myspringBlockPart = moveDHValues(springBlockPart
+		
 										.difference(loadBearingPin)
 										,dh)	
+							.difference(loadCellBolts)
 							.setColor(javafx.scene.paint.Color.BROWN);
 		CSG handMountPart=null;
 		CSG myArmScrews = moveDHValues(armScrews
@@ -711,8 +724,14 @@ return new ICadGenerator(){
 						.toXMin()
 						.toZMax()
 						.movez(centerLinkToBearingTop)
-						
 						.movex(-drivenLinkWidth/2)
+		CSG linkBackBlank = new RoundedCube(drivenLinkWidth,drivenLinkWidth,thickness-boltHeadThickness)
+						.cornerRadius(cornerRadius)
+						.toCSG()
+						.toZMax()
+						.movez(centerLinkToBearingTop-boltHeadThickness)
+						.movex(loadCellBoltCenter)
+						
 		CSG springCut = loadCell
 		//for(int i=1;i<springData.numOfCoils;i++){
 		//	springCut=springCut.union(springCut.movez(-springData.wireDiameter*i))
@@ -720,12 +739,16 @@ return new ICadGenerator(){
 		double magnetPinDiameter = bearingData.innerDiameter/2
 		CSG magnetPin = new Cylinder(magnetPinDiameter,magnetPinDiameter,encoderBearingHeight-1,(int)30).toCSG()
 						.movez(linkBlank.getMaxZ())
-				
+		
 		linkBlank =linkBlank
 					.union(magnetPin)
 					.difference(encoder.rotx(180))
-					.difference([springCut])
 					.difference(armScrews)
+					.union(linkBackBlank)
+					.difference([springCut])
+					
+					
+					
 		springLinkBlockLocal.put(thickness,linkBlank)
 		return linkBlank
 	}
