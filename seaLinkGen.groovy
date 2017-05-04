@@ -43,6 +43,7 @@ return new ICadGenerator(){
 	
 	double boltDimeMeasurment = boltMeasurments.get("outerDiameter")
 	double boltHeadThickness =boltMeasurments.headHeight
+	double boltHeadKeepaway = boltMeasurments.headDiameter*1.25
 	double nutDimeMeasurment = nutMeasurments.get("width")
 	double nutThickMeasurment = nutMeasurments.get("height")
 	//pin https://www.mcmaster.com/#98381a514/=16s6brg
@@ -108,7 +109,7 @@ return new ICadGenerator(){
 					.toZMax()
      CSG screwHoleKeepaway = new Cylinder(screwthreadKeepAway,screwthreadKeepAway,screwLength/2,(int)8).toCSG() // a one line Cylinder
      					.toZMax()
-	CSG screwHead= new Cylinder(screwHeadKeepaway,screwHeadKeepaway,screwLength*2,(int)8).toCSG() // a one line Cylinder
+	CSG screwHead= new Cylinder(boltHeadKeepaway,boltHeadKeepaway,screwLength*2,(int)8).toCSG() // a one line Cylinder
 
 	CSG screwTotal = screwHead.union([screwHoleKeepaway,screwHole])
 					.movez(screwLength/2)
@@ -118,7 +119,7 @@ return new ICadGenerator(){
 					.union(screwTotal
 						.movex(-pinOffset)
 						.rotz(-mountPlatePinAngle))
-	double screwCenterLine = boltDimeMeasurment*2
+	double screwCenterLine = boltHeadKeepaway
 	double encoderBearingHeight = encoderSimple.getMaxZ()
 	double topPlateOffset = encoderToEncoderDistance*2-encoderBearingHeight*2
 	double centerLinkToBearingTop = encoderToEncoderDistance-encoderBearingHeight
@@ -136,13 +137,13 @@ return new ICadGenerator(){
 						.movey(screwCenterLine-screwHeadKeepaway))
 					.roty(-90)
 					.movex(legLength+encoderCapRodRadius/2)
-					.movez(centerLinkToBearingTop-screwHeadKeepaway)
+					.movez(centerLinkToBearingTop-screwHeadKeepaway*1.5)
 	CSG LoadCellScrews = screwTotal
 					.movey(-screwCenterLine+screwHeadKeepaway)
 					.union(screwTotal
 						.movey(screwCenterLine-screwHeadKeepaway))
 					.movex(loadCellBoltCenter)
-					.movez(centerLinkToBearingTop-screwHeadKeepaway)				
+					.movez(-topOfGearToCenter)				
 	CSG loadBearingPinBearing =new Cylinder(	brassBearingRadius,
 										brassBearingRadius,
 										drivenLinkThickness+encoderBearingHeight,
@@ -253,7 +254,7 @@ return new ICadGenerator(){
 						.toZMin()
 						.difference([keepawayBottomY,keepawayBottomX])
 		CSG screws = screwSet
-					.scalez(10)
+					//.scalez(10)
 					//.movez(topLevel)
 						
 		CSG screwAcross = screwTotal.rotx(90)
@@ -271,7 +272,7 @@ return new ICadGenerator(){
 				screwAcross
 					.movez(topLevel/2-(keepAwayDistance/2+screwHeadKeepaway))
 					.movex(screwHeadKeepaway)
-			).scaley(10)		
+			)	
 		CSG bottomScrews = screwTotal.rotx(180)
 		
 		CSG bottomScrewSet =bottomScrews
@@ -291,7 +292,7 @@ return new ICadGenerator(){
 							bottomScrews
 								.movex(baseShape.getMaxX()-(keepAwayDistance/2+screwHeadKeepaway))
 								.movey(baseShape.getMinY()+(keepAwayDistance/2+screwHeadKeepaway))
-						).scalez(10)				
+						)				
 		baseShape = baseShape.difference([bottomScrewSet,screwAcross])		
 			
 		baseShape = baseShape				
@@ -377,6 +378,7 @@ return new ICadGenerator(){
 	
 		CSG springMoved = moveDHValues(loadCell
 									.rotz(-Math.toDegrees(dh.getTheta()))
+									.movez(springBlockPart.getMinZ())
 									//.rotz(linkIndex==0?180:0)
 									,dh)
 		CSG tmpMyGear = gearB
@@ -537,17 +539,18 @@ return new ICadGenerator(){
 			double xSize= (-linkSection.getMinX()+linkSection.getMaxX())
 			double ySize= (-linkSection.getMinY()+linkSection.getMaxY())
 			double zSize= (-linkSection.getMinZ()+linkSection.getMaxZ())
-			CSG bottomCut = new Cube(xSize, ySize,zSize).toCSG()
+			CSG bottomCut = new Cube(xSize*2, ySize*2,zSize).toCSG()
 							.toZMax()
 							.toXMin()
-							//.movez(myspringBlockPart.getMinZ())
+							.movez(springBlockPart.getMinZ()+cornerRadius)
 			bottomCut=moveDHValues(bottomCut
 											.rotz(-Math.toDegrees(dh.getTheta()))
 											,dh)				
 			linkSection = 	linkSection				
 							.difference(myspringBlockPart
 									.intersect(linkSection)
-									.hull())
+									.hull()
+									.makeKeepaway(printerOffset.getMM()))
 							.difference(baseEncoderCap.hull()
 										.intersect(linkSection)
 										.hull())
@@ -594,7 +597,7 @@ return new ICadGenerator(){
 			double plateOffset = Math.abs(handMountPart.getMaxX())
 
 			double springBlockWidth =(-myspringBlockPart.getMinY()+myspringBlockPart.getMaxY())
-			double linkLength = dh.getR() -plateOffset-plateThickenss -drivenLinkXFromCenter+3
+			double linkLength = dh.getR() -plateOffset-plateThickenss -drivenLinkXFromCenter+8
 			CSG connectorArmCross = new RoundedCube(plateThickenss,platewidth,drivenLinkThickness)
 					.cornerRadius(cornerRadius)
 					.toCSG()
@@ -610,9 +613,10 @@ return new ICadGenerator(){
 			handMountPart=handMountPart
 						.union(section)
 			handMountPart=handMountPart
-							//.difference(myspringBlockPart
-							//		.intersect(handMountPart)
-							//		.hull())
+							.difference(myspringBlockPart
+									.intersect(handMountPart)
+									.hull()
+									.makeKeepaway(printerOffset.getMM()*2))
 							.difference(myArmScrews	)
 			tipCalibrationPart.setColor(javafx.scene.paint.Color.PINK);
 			handMountPart.setColor(javafx.scene.paint.Color.WHITE);
@@ -724,12 +728,15 @@ return new ICadGenerator(){
 						.toXMin()
 						.toZMax()
 						.movez(centerLinkToBearingTop)
-						.movex(-drivenLinkWidth/2)
-		CSG linkBackBlank = new RoundedCube(drivenLinkWidth,drivenLinkWidth,thickness-boltHeadThickness*2)
+						.movex(-(bearingData.innerDiameter/2)-2)
+		double loadCellNub = loadCell.getMaxZ()
+		if(loadCellNub>thickness)
+			loadCellNub=thickness
+		CSG linkBackBlank = new RoundedCube(25,drivenLinkWidth,loadCellNub)
 						.cornerRadius(cornerRadius)
 						.toCSG()
-						.toZMax()
-						.movez(centerLinkToBearingTop-boltHeadThickness*2)
+						.toZMin()
+						.movez(linkBlank.getMinZ())
 						.movex(loadCellBoltCenter)
 						
 		CSG springCut = loadCell
@@ -781,7 +788,7 @@ return new ICadGenerator(){
 						.union(pinColumn.rotz(mountPlatePinAngle))
 						.union(pinColumn.rotz(-mountPlatePinAngle))
 						.difference(screwSet
-									.scalez(5))
+									)
 		encoderCapCache = bottomBlock
 		return encoderCapCache
 	}	
