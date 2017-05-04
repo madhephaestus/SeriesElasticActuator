@@ -13,7 +13,7 @@ import eu.mihosoft.vrl.v3d.Transform;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 return new ICadGenerator(){
-	boolean showVitamins = false
+	boolean showVitamins = true
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	
@@ -39,7 +39,7 @@ return new ICadGenerator(){
 	
 	double gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
 	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
-	double springHeight = 22
+	double springHeight = 24
 	
 	double boltDimeMeasurment = boltMeasurments.get("outerDiameter")
 	double nutDimeMeasurment = nutMeasurments.get("width")
@@ -470,7 +470,7 @@ return new ICadGenerator(){
 			def controlTwo = [end.get(0),0,end.get(2)*1.1]
 
 			CSG connectorArmCross = new RoundedCube(cornerRadius*2,
-											encoderCapRodRadius+bearingDiameter -cornerRadius,
+											encoderCapRodRadius+bearingDiameter -cornerRadius-5,
 											 encoderBearingHeight)
 					.cornerRadius(cornerRadius)
 					.toCSG()
@@ -512,8 +512,7 @@ return new ICadGenerator(){
 					10
 					)
 			print "\r\nUnioning link..."
-			CSG linkSection = linkParts.get(0)
-						.union(linkParts)
+			CSG linkSection = CSG.unionAll(linkParts)
 						//
 						.toZMin()
 						.movez(centerLinkToBearingTop )
