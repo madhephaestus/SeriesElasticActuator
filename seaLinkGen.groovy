@@ -21,7 +21,7 @@ return new ICadGenerator(){
 	HashMap<String,ArrayList<CSG>> bodyMap =  new HashMap<>();
 	LengthParameter thickness 				= new LengthParameter("Material Thickness",3.15,[10,1])
 	LengthParameter printerOffset 			= new LengthParameter("printerOffset",0.5,[1.2,0])
-	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","Inch-1_4-20",Vitamins.listVitaminSizes("capScrew"))
+	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M5",Vitamins.listVitaminSizes("capScrew"))
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","R8-60355K505",Vitamins.listVitaminSizes("ballBearing"))
 	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS60T",Vitamins.listVitaminSizes("vexGear"))
 	StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
