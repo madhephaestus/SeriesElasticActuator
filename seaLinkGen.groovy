@@ -49,7 +49,7 @@ return new ICadGenerator(){
 	//pin https://www.mcmaster.com/#98381a514/=16s6brg
 	// PN: 98381a514		
 	double pinRadius = ((3/16)*25.4+printerOffset.getMM())/2
-	double pinLength = 1.5*25.4 + printerOffset.getMM()
+	double pinLength = (1.5*25.4) + (printerOffset.getMM()*2)
 	// bushing
 	//https://www.mcmaster.com/#6391k123/=16s6one
 	//double brassBearingRadius = ((1/4)*25.4+printerOffset.getMM())/2
