@@ -18,7 +18,9 @@ loadHole=loadHole
 
 CSG bar = new Cube(80,barWidth,barWidth).toCSG()
 				
-CSG nub = new Cube(30,nubWidth,nubWidth).toCSG()
+CSG nub = new RoundedCube(30,nubWidth,nubWidth)
+					.cornerRadius(1)// sets the radius of the corner
+					.toCSG()
 				
 bar=bar.union(nub)
 		.difference(loadHole)
