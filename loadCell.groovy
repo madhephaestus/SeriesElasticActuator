@@ -13,6 +13,7 @@ loadHole=loadHole
 		.union(loadHole
 		.toXMin()
 		.movex(-holeOffsetEdgeToEdge/2))
+		.rotx(90)
 
 
 CSG bar = new Cube(80,barWidth,barWidth).toCSG()
