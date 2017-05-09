@@ -26,8 +26,10 @@ bar=bar.union(nub)
 		.difference(loadHole)
 		.toXMin()
 				
-CSG baseBolt =Vitamins.get("capScrew","M5");
-CSG endBolt =Vitamins.get("capScrew","M4");
+CSG baseBolt =Vitamins.get("capScrew","M5")
+			.makeKeepaway(printerOffset.getMM())
+CSG endBolt =Vitamins.get("capScrew","M4")
+			.makeKeepaway(printerOffset.getMM())
 baseBolt=baseBolt.union(baseBolt.movex(15))
 			.movex(5)
 endBolt=endBolt.union(endBolt.movex(15))
@@ -35,7 +37,6 @@ endBolt=endBolt.union(endBolt.movex(15))
 			
 			
 CSG bolts= endBolt.union(baseBolt)
-			.makeKeepaway(printerOffset.getMM())
 			.scalez(10)
 			.movez(bar.getMaxZ())
 			
