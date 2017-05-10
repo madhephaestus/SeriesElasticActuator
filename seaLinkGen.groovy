@@ -1,14 +1,4 @@
-import com.neuronrobotics.bowlerstudio.creature.ICadGenerator;
-import com.neuronrobotics.bowlerstudio.creature.CreatureLab;
-import org.apache.commons.io.IOUtils;
-import com.neuronrobotics.bowlerstudio.vitamins.*;
-import eu.mihosoft.vrl.v3d.parametrics.*;
-import com.neuronrobotics.bowlerstudio.vitamins.Vitamins;
-import javafx.scene.paint.Color;
-import eu.mihosoft.vrl.v3d.Transform;
-import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
-import eu.mihosoft.vrl.v3d.Transform;
-
+import javafx.scene.transform.Affine;
 
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
@@ -254,7 +244,6 @@ return new ICadGenerator(){
 						.toZMin()
 						.difference([keepawayBottomY,keepawayBottomX])
 		CSG screws = screwSet
-					//.scalez(10)
 					//.movez(topLevel)
 						
 		CSG screwAcross = screwTotal.rotx(90)
