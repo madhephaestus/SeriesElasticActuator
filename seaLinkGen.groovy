@@ -255,7 +255,7 @@ return new ICadGenerator(){
 						.toZMin()
 						.difference([keepawayBottomY,keepawayBottomX])
 		CSG screws = screwSet
-					//.movez(topLevel)
+					.movez(topLevel)
 						
 		CSG screwAcross = screwTotal.rotx(90)
 						.movez(topLevel/2)
