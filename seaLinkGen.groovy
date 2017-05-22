@@ -677,12 +677,12 @@ return new ICadGenerator(){
 		CSG mountPlate = new RoundedCube(8,30,70)
 					.cornerRadius(cornerRadius)
 					.toCSG()
-		CSG centerHole =new Cylinder(10.2/2,10.2/2,10,(int)30)
+		CSG centerHole =new Cylinder(10.2/2,10.2/2,20,(int)30)
 							.toCSG()
-							.movez(-5)
+							.movez(-10)
 							.roty(90)
 							
-		CSG handBolt = Vitamins.get( "capScrew","M2");
+		CSG handBolt = Vitamins.get( "capScrew","M3");
 		mountPlate=mountPlate
 					.toXMin()
 					.difference(centerHole)
