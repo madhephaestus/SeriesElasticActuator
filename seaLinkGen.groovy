@@ -682,32 +682,32 @@ return new ICadGenerator(){
 							.movez(-5)
 							.roty(90)
 							
-		
+		CSG handBolt = Vitamins.get( "capScrew","M2");
 		mountPlate=mountPlate
 					.toXMin()
 					.difference(centerHole)
-					.difference(bolt
+					.difference(handBolt
 								.roty(90)
 								.toZMin()
 								.movez(55.4/2)
 								.toYMin()
 								.movey(17.2/2)
 					)
-					.difference(bolt
+					.difference(handBolt
 								.roty(90)
 								.toZMax()
 								.movez(-55.4/2)
 								.toYMin()
 								.movey(17.2/2)
 					)
-					.difference(bolt
+					.difference(handBolt
 								.roty(90)
 								.toZMax()
 								.movez(-55.4/2)
 								.toYMax()
 								.movey(-17.2/2)
 					)
-					.difference(bolt
+					.difference(handBolt
 								.roty(90)
 								.toZMin()
 								.movez(55.4/2)
