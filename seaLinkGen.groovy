@@ -108,9 +108,9 @@ return new ICadGenerator(){
      CSG encoder =   encoderSimple .movez(-encoderToEncoderDistance)
 	CSG screwHole = new Cylinder(screwDrillHole,screwDrillHole,screwLength,(int)8).toCSG() // a one line Cylinder
 					.toZMax()
-     CSG screwHoleKeepaway = new Cylinder(screwthreadKeepAway,screwthreadKeepAway,screwLength/2,(int)8).toCSG() // a one line Cylinder
+     CSG screwHoleKeepaway = new Cylinder(screwthreadKeepAway,screwthreadKeepAway,30,(int)8).toCSG() // a one line Cylinder
      					.toZMax()
-	CSG screwHead= new Cylinder(boltHeadKeepaway,boltHeadKeepaway,screwLength*2,(int)8).toCSG() // a one line Cylinder
+	CSG screwHead= new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() // a one line Cylinder
 
 	CSG screwTotal = screwHead.union([screwHoleKeepaway,screwHole])
 					.movez(screwLength/2)
@@ -137,7 +137,7 @@ return new ICadGenerator(){
 					.union(screwTotal
 						.movey(screwCenterLine-screwHeadKeepaway))
 					.roty(-90)
-					.movex(legLength+encoderCapRodRadius/2)
+					//.movex(legLength+encoderCapRodRadius/2)
 					.movez(centerLinkToBearingTop-screwHeadKeepaway*1.5)
 	CSG LoadCellScrews = screwTotal
 					.movey(-screwCenterLine+screwHeadKeepaway)
@@ -410,6 +410,7 @@ return new ICadGenerator(){
 		CSG myArmScrews = moveDHValues(armScrews
 											.rotz(-Math.toDegrees(dh.getTheta()))
 											,dh)
+					   .movex(-30)
 		if(linkIndex<dhLinks.size()-1){
 			HashMap<String, Object> shaftmap = Vitamins.getConfiguration(nextLink.getShaftType(),nextLink.getShaftSize())
 			HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(nextLink.getElectroMechanicalType(),nextLink.getElectroMechanicalSize())
@@ -634,7 +635,7 @@ return new ICadGenerator(){
 					.toXMin()
 					.toZMin()
 			})
-			if(showRightPrintedParts)add(csg,tipCalibrationPart,dh.getListener())
+			//if(showRightPrintedParts)add(csg,tipCalibrationPart,dh.getListener())
 			if(showLeftPrintedParts)add(csg,handMountPart,dh.getListener())
 		}
 		
