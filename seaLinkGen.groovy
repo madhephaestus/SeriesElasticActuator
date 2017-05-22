@@ -108,12 +108,13 @@ return new ICadGenerator(){
      CSG encoder =   encoderSimple .movez(-encoderToEncoderDistance)
 	CSG screwHole = new Cylinder(screwDrillHole,screwDrillHole,screwLength,(int)8).toCSG() // a one line Cylinder
 					.toZMax()
-     CSG screwHoleKeepaway = new Cylinder(screwthreadKeepAway,screwthreadKeepAway,30,(int)8).toCSG() // a one line Cylinder
-     					.toZMax()
+     CSG screwHoleKeepaway = new Cylinder(screwthreadKeepAway,screwthreadKeepAway,50,(int)8).toCSG() // a one line Cylinder
+     					.toZMin()
 	CSG screwHead= new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() // a one line Cylinder
+						.movez(screwHoleKeepaway.getMaxZ())
 
 	CSG screwTotal = screwHead.union([screwHoleKeepaway,screwHole])
-					.movez(screwLength/2)
+					//.movez()
      CSG screwSet =screwTotal
 					.movex(-pinOffset)
 					.rotz(mountPlatePinAngle)
@@ -366,8 +367,8 @@ return new ICadGenerator(){
 		}
 		
 		DHLink dh = dhLinks.get(linkIndex);
-
-		CSG springBlockPart = springBlock(drivenLinkThickness)
+		CSG springBlockPartRaw=springBlock(drivenLinkThickness)
+		CSG springBlockPart =springBlockPartRaw
 								.rotz(-Math.toDegrees(dh.getTheta()))
 		CSG springBlockPartGear = springBlock(gearBMeasurments.height)
 								.rotx(180)
@@ -410,7 +411,7 @@ return new ICadGenerator(){
 		CSG myArmScrews = moveDHValues(armScrews
 											.rotz(-Math.toDegrees(dh.getTheta()))
 											,dh)
-					   .movex(-30)
+					   .movex(springBlockPartRaw.getMaxX())
 		if(linkIndex<dhLinks.size()-1){
 			HashMap<String, Object> shaftmap = Vitamins.getConfiguration(nextLink.getShaftType(),nextLink.getShaftSize())
 			HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(nextLink.getElectroMechanicalType(),nextLink.getElectroMechanicalSize())
@@ -551,7 +552,7 @@ return new ICadGenerator(){
 							.difference(myspringBlockPart
 									.intersect(linkSection)
 									.hull()
-									.makeKeepaway(printerOffset.getMM()))
+									.toolOffset(printerOffset.getMM()))
 							.difference(baseEncoderCap.hull()
 										.intersect(linkSection)
 										.hull())
@@ -617,7 +618,7 @@ return new ICadGenerator(){
 							.difference(myspringBlockPart
 									.intersect(handMountPart)
 									.hull()
-									.makeKeepaway(printerOffset.getMM()*2))
+									.toolOffset(printerOffset.getMM()*2))
 							.difference(myArmScrews	)
 			tipCalibrationPart.setColor(javafx.scene.paint.Color.PINK);
 			handMountPart.setColor(javafx.scene.paint.Color.WHITE);
@@ -635,7 +636,7 @@ return new ICadGenerator(){
 					.toXMin()
 					.toZMin()
 			})
-			//if(showRightPrintedParts)add(csg,tipCalibrationPart,dh.getListener())
+			if(showRightPrintedParts)add(csg,tipCalibrationPart,dh.getListener())
 			if(showLeftPrintedParts)add(csg,handMountPart,dh.getListener())
 		}
 		
@@ -752,7 +753,7 @@ return new ICadGenerator(){
 		linkBlank =linkBlank
 					.union(magnetPin)
 					.difference(encoder.rotx(180))
-					.difference(armScrews)
+					.difference(armScrews.movex(linkBlank.getMaxX()))
 					.union(linkBackBlank)
 					.difference([springCut])
 					
