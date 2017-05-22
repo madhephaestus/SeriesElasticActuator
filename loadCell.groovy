@@ -1,7 +1,7 @@
 //Your code here
 LengthParameter printerOffset		= new LengthParameter("printerOffset",0.5,[2,0.001])
 double barWidth = 12.7
-double nubWidth = 14.5
+double nubWidth = 15.5
 double holeRad = 9.5/2.0
 double holeOffsetEdgeToEdge = 16.5
 
