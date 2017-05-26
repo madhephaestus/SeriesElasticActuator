@@ -24,7 +24,7 @@ return new ICadGenerator(){
 	LengthParameter printerOffset 			= new LengthParameter("printerOffset",0.5,[1.2,0])
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M5",Vitamins.listVitaminSizes("capScrew"))
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","R8-60355K505",Vitamins.listVitaminSizes("ballBearing"))
-	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS60T",Vitamins.listVitaminSizes("vexGear"))
+	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS36T",Vitamins.listVitaminSizes("vexGear"))
 	StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
 	//StringParameter gearBParam 				= new StringParameter("Gear B","HS60T",Vitamins.listVitaminSizes("vexGear"))
 	//StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
@@ -137,6 +137,14 @@ return new ICadGenerator(){
 					.movey(-screwCenterLine+screwHeadKeepaway)
 					.union(screwTotal
 						.movey(screwCenterLine-screwHeadKeepaway))
+					.union(screwTotal
+							.union(new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() 
+									.movez(27-drivenLinkThickness)
+							)
+							.movez(centerLinkToBearingTop-encoderBearingHeight)
+							.movex(-16)
+							.roty(90)
+							)
 					.roty(-90)
 					//.movex(legLength+encoderCapRodRadius/2)
 					.movez(centerLinkToBearingTop-screwHeadKeepaway*1.5)
@@ -301,7 +309,7 @@ return new ICadGenerator(){
 				.toYMin()
 				.movey(-servoCentering-keepAwayDistance)
 				.movex(keepAwayDistance+encoderKeepawayDistance)
-				.difference([encoderBaseKeepaway,servoReference,screws])
+				.difference([encoderBaseKeepaway,servoReference.toolOffset(printerOffset.getMM()),screws])
 
 				
 		CSG baseCap = getEncoderCap()
@@ -832,7 +840,7 @@ return new ICadGenerator(){
 						.difference(encoderKeepaway)
 						.difference(screwSet.movez(-encoderBearingHeight))
 						.difference(servoReference)
-						.difference(servoReference.movez(-2))
+						.difference(servoReference.toolOffset(printerOffset.getMM()).movez(-2))
 		sidePlateLocal.put(conf.getXml(),bottomBlock) 
 		return sidePlateLocal.get(conf.getXml())
 	}
