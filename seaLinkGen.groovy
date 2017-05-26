@@ -839,8 +839,8 @@ return new ICadGenerator(){
 						.movez(-encoderToEncoderDistance)
 						.difference(encoderKeepaway)
 						.difference(screwSet.movez(-encoderBearingHeight))
-						.difference(servoReference)
-						.difference(servoReference.toolOffset(printerOffset.getMM()).movez(-2))
+						.minkowskiDifference(servoReference,printerOffset.getMM())
+						.minkowskiDifference(servoReference.movez(-2),printerOffset.getMM())
 		sidePlateLocal.put(conf.getXml(),bottomBlock) 
 		return sidePlateLocal.get(conf.getXml())
 	}

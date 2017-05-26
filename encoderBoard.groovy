@@ -9,7 +9,7 @@ CSG makeEncoder(){
 	
 	
 	double magnetDiameter =6.0 - printerOffset.getMM()/2
-	double magnetThickness = 2.5
+	double magnetThickness = 2.5+printerOffset.getMM()
 	double magnetOffset =1.5
 	double mountHoleRadius = 2.0/2
 	double chipToShortside = 5.5
