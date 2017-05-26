@@ -24,7 +24,7 @@ return new ICadGenerator(){
 	LengthParameter printerOffset 			= new LengthParameter("printerOffset",0.5,[1.2,0])
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M5",Vitamins.listVitaminSizes("capScrew"))
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","R8-60355K505",Vitamins.listVitaminSizes("ballBearing"))
-	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS36T",Vitamins.listVitaminSizes("vexGear"))
+	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS60T",Vitamins.listVitaminSizes("vexGear"))
 	StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
 	//StringParameter gearBParam 				= new StringParameter("Gear B","HS60T",Vitamins.listVitaminSizes("vexGear"))
 	//StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
@@ -679,42 +679,37 @@ return new ICadGenerator(){
 		CSG mountPlate = new RoundedCube(8,30,70)
 					.cornerRadius(cornerRadius)
 					.toCSG()
-		CSG centerHole =new Cylinder(10.2/2,10.2/2,20,(int)30)
+		double centerHoleRad=(10.3+printerOffset.getMM())/2
+		CSG centerHole =new Cylinder(centerHoleRad,centerHoleRad,20,(int)30)
 							.toCSG()
 							.movez(-10)
 							.roty(90)
-							
+		HashMap<String, Object>  boltData = Vitamins.getConfiguration( "capScrew","M3")								
 		CSG handBolt = Vitamins.get( "capScrew","M3");
+		double boltCenterLong = 55.4+boltData.outerDiameter
+		double boltShortDistance = 17.2+boltData.outerDiameter
 		mountPlate=mountPlate
 					.toXMin()
 					.difference(centerHole)
 					.difference(handBolt
 								.roty(90)
-								.toZMin()
-								.movez(55.4/2)
-								.toYMin()
-								.movey(17.2/2)
+								.movez(boltCenterLong /2)
+								.movey(boltShortDistance/2)
 					)
 					.difference(handBolt
 								.roty(90)
-								.toZMax()
-								.movez(-55.4/2)
-								.toYMin()
-								.movey(17.2/2)
+								.movez(-boltCenterLong /2)
+								.movey(boltShortDistance/2)
 					)
 					.difference(handBolt
 								.roty(90)
-								.toZMax()
-								.movez(-55.4/2)
-								.toYMax()
-								.movey(-17.2/2)
+								.movez(-boltCenterLong /2)
+								.movey(-boltShortDistance/2)
 					)
 					.difference(handBolt
 								.roty(90)
-								.toZMin()
-								.movez(55.4/2)
-								.toYMax()
-								.movey(-17.2/2)
+								.movez(boltCenterLong /2)
+								.movey(-boltShortDistance/2)
 					)
 		// offset the claw mount so the tip is at the kinematic center
 		mountPlate=mountPlate.movex(-54.4)
