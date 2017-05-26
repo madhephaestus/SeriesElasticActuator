@@ -133,6 +133,7 @@ return new ICadGenerator(){
 	double legLength = totalSpringLength
 	double drivenLinkXFromCenter = legLength+encoderCapRodRadius
 	double loadCellBoltCenter = -(40.0-5.0-(15.0/2))
+	double thirdarmBoltBackSetDistance = 16.0
 	CSG armScrews = screwTotal
 					.movey(-screwCenterLine+screwHeadKeepaway)
 					.union(screwTotal
@@ -142,7 +143,7 @@ return new ICadGenerator(){
 									.movez(27-drivenLinkThickness)
 							)
 							.movez(centerLinkToBearingTop-encoderBearingHeight)
-							.movex(-16)
+							.movex(-thirdarmBoltBackSetDistance)
 							.roty(90)
 							)
 					.roty(-90)
@@ -612,10 +613,14 @@ return new ICadGenerator(){
 					.cornerRadius(cornerRadius)
 					.toCSG()
 					.toXMin()
+			CSG screwHead= new Cylinder(boltHeadKeepaway/1.5,boltHeadKeepaway/1.5,drivenLinkThickness,(int)20).toCSG()
+							.movez(-drivenLinkThickness/2)
+							.movex(-thirdarmBoltBackSetDistance/1.5)
 			CSG section = connectorArmCross
 					.union(connectorArmCross
 							.movex(linkLength )
 					)
+					.union(screwHead)
 					.hull()
 					.toXMax()
 					.toZMin()
@@ -769,7 +774,7 @@ return new ICadGenerator(){
 		if(encoderCapCache!=null)
 			return encoderCapCache
 		
-		double bearingHolder = bearingDiameter/2 + encoderCapRodRadius
+		double bearingHolder = bearingDiameter/2 + encoderCapRodRadius/2
 		CSG pin  =new Cylinder(encoderCapRodRadius,encoderCapRodRadius,encoderBearingHeight,(int)30).toCSG()
 					.movex(-pinOffset)
 		double mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
