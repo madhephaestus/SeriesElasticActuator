@@ -72,6 +72,16 @@ CSG makeEncoder(){
 			.union(bearingCutterSlot)
 			.setParameter(printerOffset)
 			.setRegenerate({makeEncoder()})
+	double shadowy = -chipToShortside-cornerOffset-3
+	CSG cordCutOut = new Cube(	6,// X dimention
+				6,// Y dimention
+				board.getMaxZ()//  Z dimention
+				).toCSG()
+				.toZMin()
+				.toYMax()
+				.movey(-bearing.getMaxX()-2)
+	board=board
+		.union(	cordCutOut)		
 	if (args ==  null)
 		return board
 	
@@ -85,16 +95,10 @@ CSG makeEncoder(){
 				.toZMax()
 				
 				.toYMin()
-				.movey(-chipToShortside-cornerOffset-3)
-	CSG cordCutOut = new Cube(	6,// X dimention
-				6,// Y dimention
-				board.getMaxZ()//  Z dimention
-				).toCSG()
-				.toZMin()
-				.toYMin()
-				.movey(shaddow.getMaxY())			
+				.movey(shadowy)
+				
 	board=board
-		.union([bearingHoleInner,bearingHoleInner.movez(bearingHoleInner.getMaxZ()),shaddow,cordCutOut])
+		.union([bearingHoleInner,bearingHoleInner.movez(bearingHoleInner.getMaxZ()),shaddow])
 	
 	
 	return board
