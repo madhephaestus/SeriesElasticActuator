@@ -78,8 +78,8 @@ CSG makeEncoder(){
 				board.getMaxZ()//  Z dimention
 				).toCSG()
 				.toZMin()
-				.toYMax()
-				.movey(-bearing.getMaxX()-2)
+				.toXMax()
+				.movex(-bearing.getMaxX()-2)
 	board=board
 		.union(	cordCutOut)		
 	if (args ==  null)
