@@ -8,7 +8,7 @@ CSG makeEncoder(){
 	HashMap<String, Object>  bearingData = Vitamins.getConfiguration("ballBearing",bearingSizeParam.getStrValue())
 	
 	
-	double magnetDiameter =6.0 - printerOffset.getMM()/2
+	double magnetDiameter =6.0 - printerOffset.getMM()
 	double magnetThickness = 2.5+printerOffset.getMM()
 	double magnetOffset =1.5
 	double mountHoleRadius = 2.0/2
