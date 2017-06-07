@@ -556,15 +556,20 @@ return new ICadGenerator(){
 							.movez(springBlockPart.getMinZ()+cornerRadius)
 			bottomCut=moveDHValues(bottomCut
 											.rotz(-Math.toDegrees(dh.getTheta()))
-											,dh)				
+											,dh)	
+			CSG otherEncoder = linkEncoder.rotx(180)			
 			linkSection = 	linkSection				
 							.difference(myspringBlockPart
 									.intersect(linkSection)
 									.hull()
 									.toolOffset(printerOffset.getMM()))
-							.difference(baseEncoderCap.hull()
+							.difference(baseEncoderCap//.hull()
 										.intersect(linkSection)
-										.hull())
+										.hull()
+										)
+							.difference(otherEncoder.hull()
+										.intersect(linkSection)
+										.hull())			
 							.difference(myArmScrews)
 							.difference(springMoved)
 							.difference(bottomCut)
@@ -594,6 +599,7 @@ return new ICadGenerator(){
 			if(showRightPrintedParts)add(csg,myGearA,dh.getListener())
 			if(showVitamins)add(csg,thirdPlusLinkServo,dh.getListener())
 			if(showVitamins)add(csg,linkEncoder,dh.getListener())
+			if(showVitamins)add(csg,otherEncoder,dh.getListener())
 			if(showRightPrintedParts)add(csg,esp,dh.getListener())
 			if(showLeftPrintedParts)add(csg,baseEncoderCap,dh.getListener())
 			
@@ -787,7 +793,11 @@ return new ICadGenerator(){
 		CSG pinColumn =pin .union(pin
 									.movez(topPlateOffset))
 								.hull() 
-		CSG bottomBlock = capPinSet.union(center).hull()
+		CSG pivot = center.movex(-encoderCapRodRadius*4)
+		CSG bottomBlock = capPinSet
+						.union(pivot)
+						.hull()
+						.union(center.union(pivot).hull())
 						//.toZMax()
 						.movez(topPlateOffset)
 						.difference(encoderKeepaway
