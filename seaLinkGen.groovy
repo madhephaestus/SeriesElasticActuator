@@ -97,7 +97,12 @@ return new ICadGenerator(){
             "encoderBoard.groovy" , // file to load
             null// no parameters (see next tutorial)
             )
-       
+      List<CSG> nucleo = (List<CSG>) ScriptingEngine
+					 .gitScriptRun(
+			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+			            "nucleo-144.groovy" , // file to load
+			            null
+			            ) 
      CSG encoderKeepaway = (CSG) ScriptingEngine
 					 .gitScriptRun(
 			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
@@ -306,13 +311,18 @@ return new ICadGenerator(){
 		baseShape = baseShape.difference([bottomScrewSet,screwAcross])	
 		double baseBackSet = 	-baseShape.getMaxX()+keepAwayDistance+encoderKeepawayDistance
 		double spacing = 300
-		CSG footing =new Cylinder(100,100,1,(int)30).toCSG()
+		CSG footing =new Cylinder(150,150,1,(int)30).toCSG()
+		CSG nucleoBoard = nucleo.get(0)
 		CSG basePlate = footing
 						.union(footing
 								.movey(spacing)
 								)
 						.hull()
 						.toZMax()
+						.difference(nucleoBoard
+							.movey(spacing/2-nucleoBoard.getMaxY()/2)
+							.movex(-nucleoBoard.getMaxX()/2)
+						)
 						.difference(	bottomScrewSet)
 						.difference(	bottomScrewSet.movey(spacing))
 						.movex(baseBackSet)
