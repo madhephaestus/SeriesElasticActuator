@@ -326,6 +326,7 @@ return new ICadGenerator(){
 						.difference(	bottomScrewSet)
 						.difference(	bottomScrewSet.movey(spacing))
 						.movex(baseBackSet)
+						.movez(0.1)
 		baseShape = baseShape				
 				.toYMin()
 				.movey(-servoCentering-keepAwayDistance)
