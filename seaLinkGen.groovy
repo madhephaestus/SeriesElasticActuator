@@ -303,13 +303,23 @@ return new ICadGenerator(){
 								.movex(baseShape.getMaxX()-(keepAwayDistance/2+screwHeadKeepaway))
 								.movey(baseShape.getMinY()+(keepAwayDistance/2+screwHeadKeepaway))
 						)				
-		baseShape = baseShape.difference([bottomScrewSet,screwAcross])		
-			
+		baseShape = baseShape.difference([bottomScrewSet,screwAcross])	
+		double baseBackSet = 	-baseShape.getMaxX()+keepAwayDistance+encoderKeepawayDistance
+		double spacing = 300
+		CSG footing =new Cylinder(100,100,1,(int)30).toCSG()
+		CSG basePlate = footing
+						.union(footing
+								.movey(spacing)
+								)
+						.hull()
+						.toZMax()
+						.difference(	bottomScrewSet)
+						.difference(	bottomScrewSet.movey(spacing))
+						.movex(baseBackSet)
 		baseShape = baseShape				
-				.toXMax()
 				.toYMin()
 				.movey(-servoCentering-keepAwayDistance)
-				.movex(keepAwayDistance+encoderKeepawayDistance)
+				.movex(baseBackSet)
 				.difference([encoderBaseKeepaway,servoReference.toolOffset(printerOffset.getMM()),screws])
 
 				
@@ -343,7 +353,8 @@ return new ICadGenerator(){
 		
 		if(showLeftPrintedParts)attachmentParts.add(baseShapeA)
 		if(showRightPrintedParts)attachmentParts.add(baseShapeB)
-		attachmentParts.add(baseCap)
+		if(showRightPrintedParts)attachmentParts.add(basePlate)
+		if(showLeftPrintedParts)attachmentParts.add(baseCap)
 		return attachmentParts;
 	}
 	@Override 
@@ -690,7 +701,7 @@ return new ICadGenerator(){
                       		).toCSG()//convert to CSG to display 
                       		.roty(-90)
                       		.movex(- Math.abs(plate.getMaxX()))      
-          CSG tipSphere = new Sphere(10,(int)30,(int)30).toCSG()            			 
+          CSG tipSphere = new Sphere(10,(int)40,(int)40).toCSG()            			 
 		plate=plate.union([pyramid,tipSphere])
 		return plate
 	}
