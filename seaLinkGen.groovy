@@ -684,13 +684,14 @@ return new ICadGenerator(){
 		double platewidth  = (-plate.getMinY()+plate.getMaxY())
 		plate=plate.movex(plateThickenss)
 		CSG pyramid = new Cylinder(	platewidth/2, // Radius at the bottom
-                      		0, // Radius at the top
+                      		7, // Radius at the top
                       		Math.abs(plate.getMaxX()), // Height
                       		(int)6 //resolution
                       		).toCSG()//convert to CSG to display 
                       		.roty(-90)
-                      		.movex(- Math.abs(plate.getMaxX()))                  			 
-		plate=plate.union(pyramid)
+                      		.movex(- Math.abs(plate.getMaxX()))      
+          CSG tipSphere = new Sphere(10,(int)30,(int)30).toCSG()            			 
+		plate=plate.union([pyramid,tipSphere])
 		return plate
 	}
 	private CSG handMount(){
