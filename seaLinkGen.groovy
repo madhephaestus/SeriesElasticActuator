@@ -269,6 +269,13 @@ return new ICadGenerator(){
 						.toCSG()
 						.toZMin()
 						.difference([keepawayBottomY,keepawayBottomX])
+		CSG sidePlate = new Cube( basexLength+(keepAwayDistance*2)+encoderKeepawayDistance,
+							1.0,
+							topLevel)
+							.toCSG()
+							.movey((baseyLength+(keepAwayDistance*2))/2)
+							.toZMin()
+							
 		CSG screws = screwSet
 					.movez(topLevel)
 						
@@ -327,6 +334,9 @@ return new ICadGenerator(){
 						.difference(	bottomScrewSet.movey(spacing))
 						.movex(baseBackSet)
 						.movez(0.1)
+		sidePlate=sidePlate
+				.movex(baseBackSet)
+				
 		baseShape = baseShape				
 				.toYMin()
 				.movey(-servoCentering-keepAwayDistance)
@@ -361,7 +371,7 @@ return new ICadGenerator(){
 		
 		
 		
-		
+		if(showRightPrintedParts)attachmentParts.add(sidePlate)
 		if(showLeftPrintedParts)attachmentParts.add(baseShapeA)
 		if(showRightPrintedParts)attachmentParts.add(baseShapeB)
 		if(showRightPrintedParts)attachmentParts.add(basePlate)
