@@ -401,8 +401,8 @@ return new ICadGenerator(){
 					.movex(basePlate.getMaxX())
 		})
 		
-		if(showRightPrintedParts)attachmentParts.add(sidePlateA)
-		if(showRightPrintedParts)attachmentParts.add(sidePlateB)
+		//if(showRightPrintedParts)attachmentParts.add(sidePlateA)
+		//if(showRightPrintedParts)attachmentParts.add(sidePlateB)
 		if(showLeftPrintedParts)attachmentParts.add(baseShapeA)
 		if(showRightPrintedParts)attachmentParts.add(baseShapeB)
 		if(showRightPrintedParts)attachmentParts.add(basePlate)
@@ -411,7 +411,7 @@ return new ICadGenerator(){
 	}
 	@Override 
 	public ArrayList<CSG> generateCad(DHParameterKinematics sourceLimb, int linkIndex) {
-		return new ArrayList<CSG>()
+		//return new ArrayList<CSG>()
 		//Creating the horn
 		ArrayList<DHLink> dhLinks=sourceLimb.getChain().getLinks();
 		String legStr = sourceLimb.getXml()
