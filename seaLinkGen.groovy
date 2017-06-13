@@ -236,6 +236,7 @@ return new ICadGenerator(){
 			            )
 			            .movez(servoPlane)
 		double encoderKeepawayDistance= encoderBaseKeepaway.getMaxX()
+		double sidePlateclearenceHeight = 10*24.5
 		/*
 		for (int i=1;i<3;i++){
 			servoReference=servoReference
@@ -275,7 +276,21 @@ return new ICadGenerator(){
 							.toCSG()
 							.movey((baseyLength+(keepAwayDistance*2))/2)
 							.toZMin()
-							
+		sidePlate=sidePlate
+				.union(sidePlate.movez(sidePlateclearenceHeight))
+				.union(sidePlate.movez(-20*25.4))
+				.hull()
+		CSG strapSlot  = 	new Cube(5,
+								(baseyLength+(keepAwayDistance*2))*2,
+								25.4
+								).toCSG()	
+								.toXMax()
+								.movex((basexLength+(keepAwayDistance*2)+encoderKeepawayDistance)/2 - 10)
+		CSG strapSlots = strapSlot
+		for(int i=1;i<13;i++){
+			strapSlots=strapSlots.union(strapSlot.movez(-38*i))
+		}
+		sidePlate=sidePlate.difference(strapSlots)								
 		CSG screws = screwSet
 					.movez(topLevel)
 						
@@ -334,9 +349,12 @@ return new ICadGenerator(){
 						.difference(	bottomScrewSet.movey(spacing))
 						.movex(baseBackSet)
 						.movez(0.1)
-		sidePlate=sidePlate
+		CSG sidePlateA=sidePlate
+				.difference(screwAcross)
+				.difference(screwAcross.movez(sidePlateclearenceHeight))
 				.movex(baseBackSet)
-				
+		CSG sidePlateB = sidePlateA
+						.movey(-(baseyLength+(keepAwayDistance*2)))
 		baseShape = baseShape				
 				.toYMin()
 				.movey(-servoCentering-keepAwayDistance)
@@ -368,10 +386,23 @@ return new ICadGenerator(){
 						.rotx(-90)
 						.toZMin()
 			})
+		sidePlateA.setManufacturing({ toMfg ->
+				return toMfg
+						.rotx(-90)
+						.toZMin()
+						.toXMin()
+						.movex(basePlate.getMaxX())
+			})
+		sidePlateB.setManufacturing({ toMfg ->
+			return toMfg
+					.rotx(-90)
+					.toZMin()
+					.toXMin()
+					.movex(basePlate.getMaxX())
+		})
 		
-		
-		
-		if(showRightPrintedParts)attachmentParts.add(sidePlate)
+		if(showRightPrintedParts)attachmentParts.add(sidePlateA)
+		if(showRightPrintedParts)attachmentParts.add(sidePlateB)
 		if(showLeftPrintedParts)attachmentParts.add(baseShapeA)
 		if(showRightPrintedParts)attachmentParts.add(baseShapeB)
 		if(showRightPrintedParts)attachmentParts.add(basePlate)
@@ -380,6 +411,7 @@ return new ICadGenerator(){
 	}
 	@Override 
 	public ArrayList<CSG> generateCad(DHParameterKinematics sourceLimb, int linkIndex) {
+		return new ArrayList<CSG>()
 		//Creating the horn
 		ArrayList<DHLink> dhLinks=sourceLimb.getChain().getLinks();
 		String legStr = sourceLimb.getXml()
