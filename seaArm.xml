@@ -9,10 +9,10 @@
 		<file>WalkingDriveEngine.groovy</file>
 	</driveEngine>
 
-<name>HephaestusArm</name>
+<name>SeriesElasticActuator</name>
 <appendage>
 
-<name>HephaestusArmLimbOne</name>
+<name>SeriesElasticActuatortArm</name>
 	<cadEngine>
 		<git>https://github.com/madhephaestus/SeriesElasticActuator.git</git>
 		<file>seaLinkGen.groovy</file>
@@ -23,12 +23,12 @@
 	</kinematics>
 <link>
 	<name>basePan</name>
-	<deviceName>hid-bowler</deviceName>
-	<type>hid-simple</type>
-	<index>0</index>
-	<scale>0.087890625</scale>
-	<upperLimit>1024</upperLimit>
-	<lowerLimit>-1024</lowerLimit>
+	<deviceName>dyio</deviceName>
+	<type>servo-rotory</type>
+	<index>11</index>
+	<scale>0.1</scale>
+	<upperLimit>2550.0</upperLimit>
+	<lowerLimit>-2550.0</lowerLimit>
 	<upperVelocity>1.0E8</upperVelocity>
 	<lowerVelocity>-1.0E8</lowerVelocity>
 	<staticOffset>0.0</staticOffset>
@@ -77,12 +77,12 @@
 </link>
 <link>
 	<name>baseTilt</name>
-	<deviceName>hid-bowler</deviceName>
-	<type>hid-simple</type>
-	<index>1</index>
-	<scale>0.087890625</scale>	
-	<upperLimit>1024</upperLimit>
-	<lowerLimit>-1024</lowerLimit>
+	<deviceName>dyio</deviceName>
+	<type>servo-rotory</type>
+	<index>10</index>
+	<scale>0.1</scale>
+	<upperLimit>2550.0</upperLimit>
+	<lowerLimit>-2550.0</lowerLimit>
 	<upperVelocity>1.0E8</upperVelocity>
 	<lowerVelocity>-1.0E8</lowerVelocity>
 	<staticOffset>0.0</staticOffset>
@@ -131,12 +131,12 @@
 </link>
 <link>
 	<name>elbow</name>
-	<deviceName>hid-bowler</deviceName>
-	<type>hid-simple</type>
-	<index>2</index>
-	<scale>0.087890625</scale>
-	<upperLimit>1024</upperLimit>
-	<lowerLimit>-1024</lowerLimit>
+	<deviceName>dyio</deviceName>
+	<type>servo-rotory</type>
+	<index>9</index>
+	<scale>0.1</scale>
+	<upperLimit>2550.0</upperLimit>
+	<lowerLimit>-2550.0</lowerLimit>
 	<upperVelocity>1.0E8</upperVelocity>
 	<lowerVelocity>-1.0E8</lowerVelocity>
 	<staticOffset>0.0</staticOffset>
@@ -225,7 +225,7 @@
 	<roty>-0.0</roty>
 	<rotz>-0.0</rotz>
 </baseToZframe>
-	<mass>5</mass>
+	<mass>0.01</mass>
 	<centerOfMassFromCentroid>	<x>0.0</x>
 	<y>0.0</y>
 	<z>0.0</z>
