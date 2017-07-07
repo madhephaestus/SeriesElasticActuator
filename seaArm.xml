@@ -9,10 +9,10 @@
 		<file>WalkingDriveEngine.groovy</file>
 	</driveEngine>
 
-<name>SeriesElasticActuator</name>
+<name>HephaestusArm</name>
 <appendage>
 
-<name>SeriesElasticActuatortArm</name>
+<name>HephaestusArmLimbOne</name>
 	<cadEngine>
 		<git>https://github.com/madhephaestus/SeriesElasticActuator.git</git>
 		<file>seaLinkGen.groovy</file>
@@ -23,8 +23,8 @@
 	</kinematics>
 <link>
 	<name>basePan</name>
-	<deviceName>dyio</deviceName>
-	<type>servo-rotory</type>
+	<deviceName>hid-bowler</deviceName>
+	<type>hid-simple</type>
 	<index>11</index>
 	<scale>0.1</scale>
 	<upperLimit>2550.0</upperLimit>
@@ -77,8 +77,8 @@
 </link>
 <link>
 	<name>baseTilt</name>
-	<deviceName>dyio</deviceName>
-	<type>servo-rotory</type>
+	<deviceName>hid-bowler</deviceName>
+	<type>hid-simple</type>
 	<index>10</index>
 	<scale>0.1</scale>
 	<upperLimit>2550.0</upperLimit>
@@ -131,8 +131,8 @@
 </link>
 <link>
 	<name>elbow</name>
-	<deviceName>dyio</deviceName>
-	<type>servo-rotory</type>
+	<deviceName>hid-bowler</deviceName>
+	<type>hid-simple</type>
 	<index>9</index>
 	<scale>0.1</scale>
 	<upperLimit>2550.0</upperLimit>
