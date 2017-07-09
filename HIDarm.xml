@@ -23,8 +23,8 @@
 	</kinematics>
 <link>
 	<name>basePan</name>
-	<deviceName>hid-bowler</deviceName>
-	<type>hid-simple</type>
+	<deviceName>hidbowler</deviceName>
+	<type>hidsimple</type>
 	<index>0</index>
 	<scale>0.087890625</scale>
 	<upperLimit>1024</upperLimit>
@@ -77,8 +77,8 @@
 </link>
 <link>
 	<name>baseTilt</name>
-	<deviceName>hid-bowler</deviceName>
-	<type>hid-simple</type>
+	<deviceName>hidbowler</deviceName>
+	<type>hidsimple</type>
 	<index>1</index>
 	<scale>0.087890625</scale>	
 	<upperLimit>1024</upperLimit>
@@ -131,8 +131,8 @@
 </link>
 <link>
 	<name>elbow</name>
-	<deviceName>hid-bowler</deviceName>
-	<type>hid-simple</type>
+	<deviceName>hidbowler</deviceName>
+	<type>hidsimple</type>
 	<index>2</index>
 	<scale>0.087890625</scale>
 	<upperLimit>1024</upperLimit>
@@ -245,6 +245,5 @@
 
 </vitamins>
 
-</mobilebase>
-
+</mohidsimple
 </root>
