@@ -26,7 +26,7 @@
 	<deviceName>hidbowler</deviceName>
 	<type>hidsimple</type>
 	<index>0</index>
-	<scale>0.087890625</scale>
+	<scale>-0.087890625</scale>
 	<upperLimit>1024</upperLimit>
 	<lowerLimit>-1024</lowerLimit>
 	<upperVelocity>1.0E8</upperVelocity>
@@ -80,7 +80,7 @@
 	<deviceName>hidbowler</deviceName>
 	<type>hidsimple</type>
 	<index>1</index>
-	<scale>0.087890625</scale>	
+	<scale>-0.087890625</scale>	
 	<upperLimit>1024</upperLimit>
 	<lowerLimit>-1024</lowerLimit>
 	<upperVelocity>1.0E8</upperVelocity>
@@ -134,7 +134,7 @@
 	<deviceName>hidbowler</deviceName>
 	<type>hidsimple</type>
 	<index>2</index>
-	<scale>0.087890625</scale>
+	<scale>-0.087890625</scale>
 	<upperLimit>1024</upperLimit>
 	<lowerLimit>-1024</lowerLimit>
 	<upperVelocity>1.0E8</upperVelocity>
