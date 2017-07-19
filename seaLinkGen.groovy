@@ -14,7 +14,7 @@ import javafx.scene.transform.Affine;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 return new ICadGenerator(){
-	boolean showVitamins = false
+	boolean showVitamins = true
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	
@@ -270,6 +270,7 @@ return new ICadGenerator(){
 						.toCSG()
 						.toZMin()
 						.difference([keepawayBottomY,keepawayBottomX])
+		/*
 		CSG sidePlate = new Cube( basexLength+(keepAwayDistance*2)+encoderKeepawayDistance,
 							1.0,
 							topLevel)
@@ -290,7 +291,8 @@ return new ICadGenerator(){
 		for(int i=1;i<13;i++){
 			strapSlots=strapSlots.union(strapSlot.movez(-38*i))
 		}
-		sidePlate=sidePlate.difference(strapSlots)								
+		sidePlate=sidePlate.difference(strapSlots)	
+		*/							
 		CSG screws = screwSet
 					.movez(topLevel)
 						
@@ -332,29 +334,28 @@ return new ICadGenerator(){
 						)				
 		baseShape = baseShape.difference([bottomScrewSet,screwAcross])	
 		double baseBackSet = 	-baseShape.getMaxX()+keepAwayDistance+encoderKeepawayDistance
-		double spacing = 300
-		CSG footing =new Cylinder(150,150,1,(int)30).toCSG()
+		double spacing = 75
+		CSG footing =new Cylinder(310,310,thickness.getMM(),(int)90).toCSG()
 		CSG nucleoBoard = nucleo.get(0)
 		CSG basePlate = footing
-						.union(footing
-								.movey(spacing)
-								)
-						.hull()
 						.toZMax()
 						.difference(nucleoBoard
-							.movey(spacing/2-nucleoBoard.getMaxY()/2)
-							.movex(-nucleoBoard.getMaxX()/2)
+									.rotz(90)
+							.movey(nucleoBoard.getMaxX()/2)
+							.movex(-spacing-nucleoBoard.getMaxX()/2)
+							.movex(baseBackSet)
 						)
-						.difference(	bottomScrewSet)
-						.difference(	bottomScrewSet.movey(spacing))
-						.movex(baseBackSet)
+						.difference(	bottomScrewSet.movex(baseBackSet))
+						
 						.movez(0.1)
+						/*
 		CSG sidePlateA=sidePlate
 				.difference(screwAcross)
 				.difference(screwAcross.movez(sidePlateclearenceHeight))
 				.movex(baseBackSet)
 		CSG sidePlateB = sidePlateA
 						.movey(-(baseyLength+(keepAwayDistance*2)))
+						*/
 		baseShape = baseShape				
 				.toYMin()
 				.movey(-servoCentering-keepAwayDistance)
@@ -386,6 +387,7 @@ return new ICadGenerator(){
 						.rotx(-90)
 						.toZMin()
 			})
+		/*
 		sidePlateA.setManufacturing({ toMfg ->
 				return toMfg
 						.rotx(-90)
@@ -400,7 +402,7 @@ return new ICadGenerator(){
 					.toXMin()
 					.movex(basePlate.getMaxX())
 		})
-		
+		*/
 		//if(showRightPrintedParts)attachmentParts.add(sidePlateA)
 		//if(showRightPrintedParts)attachmentParts.add(sidePlateB)
 		if(showLeftPrintedParts)attachmentParts.add(baseShapeA)
