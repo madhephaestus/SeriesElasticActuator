@@ -37,7 +37,7 @@ return new ICadGenerator(){
 	HashMap<String, Object>  nutMeasurments = Vitamins.getConfiguration( "nut",boltSizeParam.getStrValue())
 	HashMap<String, Object>  gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
 	HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
-	double workcellSize = 710
+	double workcellSize = 760
 	double cameraLocation =(workcellSize-20)/2
 	TransformNR cameraLocationNR = new TransformNR(cameraLocation,0,cameraLocation,new RotationNR(0,-180,-45))
 	Transform cameraLocationCSG =TransformFactory.nrToCSG(cameraLocationNR)
@@ -876,7 +876,7 @@ return new ICadGenerator(){
 		//	springCut=springCut.union(springCut.movez(-springData.wireDiameter*i))
 		//}
 		double magnetPinDiameter = bearingData.innerDiameter/2
-		CSG magnetPin = new Cylinder(magnetPinDiameter,magnetPinDiameter,encoderBearingHeight-1,(int)30).toCSG()
+		CSG magnetPin = new Cylinder(magnetPinDiameter,magnetPinDiameter,encoderBearingHeight+2,(int)30).toCSG()
 						.movez(linkBlank.getMaxZ())
 		
 		linkBlank =linkBlank

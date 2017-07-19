@@ -40,7 +40,8 @@ CSG makeEncoder(){
 					.union(bearingHoleOuter)
 	
 	CSG magnet =new Cylinder(magnetDiameter/2,magnetDiameter/2,magnetThickness+magnetOffset,(int)30).toCSG() // a one line Cylinder
-	
+	CSG chipClearence =new Cylinder(bearingHole/2+2,bearingHole/2+2,1,(int)30).toCSG() // a one line Cylinder
+	magnet=magnet.union(chipClearence)
 	CSG board = new Cube(	boardShort,// X dimention
 				boardLong,// Y dimention
 				1//  Z dimention
@@ -81,7 +82,9 @@ CSG makeEncoder(){
 				.toXMax()
 				.movex(-bearing.getMaxX()-2)
 	board=board
-		.union(	cordCutOut)		
+		.union(	cordCutOut)
+		.movez(-2)
+		
 	if (args ==  null)
 		return board
 	
