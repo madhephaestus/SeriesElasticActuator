@@ -85,8 +85,7 @@ CSG makeEncoder(){
 		.union(	cordCutOut)
 		.movez(-2)
 		
-	if (args ==  null)
-		return board
+	if (args ==  null)	return board
 	
 	if(args == null)
 		args = [100]
