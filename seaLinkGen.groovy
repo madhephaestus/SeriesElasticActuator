@@ -126,6 +126,11 @@ return new ICadGenerator(){
 					.union(screwTotal
 						.movex(-pinOffset)
 						.rotz(-mountPlatePinAngle))
+	double centerHoleRad=(10.3+printerOffset.getMM())/2
+	CSG centerHole =new Cylinder(centerHoleRad,centerHoleRad,20,(int)30)
+							.toCSG()
+							.movez(-10)
+							.roty(90)
 	double screwCenterLine = boltHeadKeepaway
 	double encoderBearingHeight = encoderSimple.getMaxZ()
 	double topPlateOffset = encoderToEncoderDistance*2-encoderBearingHeight*2
@@ -768,6 +773,16 @@ return new ICadGenerator(){
 		double plateThickenss = (-plate.getMinX()+plate.getMaxX())
 		double platewidth  = (-plate.getMinY()+plate.getMaxY())
 		plate=plate.movex(plateThickenss)
+		double sphereSize = 20
+		//centerHoleRad
+		CSG centerHole =new Cylinder(1,1,Math.abs(plate.getMaxX())+20,(int)30)
+							.toCSG()
+							.roty(-90)
+							.movex(- Math.abs(plate.getMaxX()))    
+		CSG cableTieHole =   new Cylinder(1,sphereSize/2,sphereSize/2,(int)30)
+							.toCSG()
+							.roty(-90)
+							//.movex(- Math.abs(plate.getMaxX())) 
 		CSG pyramid = new Cylinder(	platewidth/2, // Radius at the bottom
                       		14, // Radius at the top
                       		Math.abs(plate.getMaxX()), // Height
@@ -775,8 +790,10 @@ return new ICadGenerator(){
                       		).toCSG()//convert to CSG to display 
                       		.roty(-90)
                       		.movex(- Math.abs(plate.getMaxX()))      
-          CSG tipSphere = new Sphere(10,(int)40,(int)40).toCSG()            			 
+          CSG tipSphere = new Sphere(sphereSize/2,(int)40,(int)40).toCSG()            			 
 		plate=plate.union([pyramid,tipSphere])
+				.difference(centerHole)
+				.difference(cableTieHole)
 		return plate
 	}
 	private CSG handMount(){
@@ -784,11 +801,7 @@ return new ICadGenerator(){
 		CSG mountPlate = new RoundedCube(8,30,70)
 					.cornerRadius(cornerRadius)
 					.toCSG()
-		double centerHoleRad=(10.3+printerOffset.getMM())/2
-		CSG centerHole =new Cylinder(centerHoleRad,centerHoleRad,20,(int)30)
-							.toCSG()
-							.movez(-10)
-							.roty(90)
+
 		HashMap<String, Object>  boltData = Vitamins.getConfiguration( "capScrew","M3")								
 		CSG handBolt = Vitamins.get( "capScrew","M3");
 		double boltCenterLong = 55.4+boltData.outerDiameter
@@ -966,3 +979,4 @@ return new ICadGenerator(){
 		BowlerStudioController.addCsg(object);
 	}
 }
+
