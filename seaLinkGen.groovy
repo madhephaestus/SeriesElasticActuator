@@ -37,7 +37,10 @@ return new ICadGenerator(){
 	HashMap<String, Object>  nutMeasurments = Vitamins.getConfiguration( "nut",boltSizeParam.getStrValue())
 	HashMap<String, Object>  gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
 	HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
-	
+	double workcellSize = 620
+	double cameraLocation =(workcellSize-20)/2
+	TransformNR cameraLocationNR = new TransformNR(cameraLocation,0,cameraLocation,new RotationNR(0,-180,-45))
+	Transform cameraLocationCSG =TransformFactory.nrToCSG(cameraLocationNR)
 	double gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
 	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
 	double springHeight = 26
@@ -346,7 +349,7 @@ return new ICadGenerator(){
 		CSG nucleoBoard = nucleo.get(0)
 		double baseBackSet = 	-baseShape.getMaxX()+keepAwayDistance+encoderKeepawayDistance
 		double spacing = 75
-		double workcellSize = 620
+
 		double nucleoMountPlacement = spacing+baseBackSet+nucleoBoard.getMaxX()
 		CSG boxCut = new Cube(workcellSize/2+nucleoMountPlacement,workcellSize,thickness.getMM()*2).toCSG()
 					.toXMax()
@@ -972,6 +975,43 @@ return new ICadGenerator(){
 		
 	}
 
+	private ArrayList<CSG> getCameraMount(){
+		//cameraLocationCSG
+		double cameraMountSize = 40
+		Log.enableSystemPrint(true)
+		println "Camera at "+cameraLocationNR
+		CSG camerMount = new Cube(	cameraMountSize,
+								cameraMountSize,
+								thickness.getMM()).toCSG()
+								.toZMax()
+								.transformed(cameraLocationCSG)
+		CSG camerMountLug = new Cube(	cameraMountSize,
+								thickness.getMM(),
+								30).toCSG()
+								.toYMax()
+								.movey(cameraMountSize/2)
+								.toZMin()
+								
+		CSG topLug=	camerMountLug.transformed(cameraLocationCSG)
+		CSG baseLug = camerMountLug
+						.rotz(180)
+						.toXMax()
+						.movex(workcellSize/2)
+		CSG midLug = camerMountLug
+						.rotz(180)
+						.toXMin()
+						.movex(camerMount.getMaxX()+20)
+						.movez(workcellSize/2-20)			
+		CSG bracket = topLug
+					.union(midLug)
+					.hull()
+					.union(
+						baseLug
+						.union(midLug)
+						.hull()
+						)
+		return [camerMount,camerMountLug,topLug,baseLug,midLug,bracket]
+	}
 
 	private add(ArrayList<CSG> csg ,CSG object, Affine dh ){
 		object.setManipulator(dh);
