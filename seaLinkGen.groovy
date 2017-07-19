@@ -90,7 +90,7 @@ return new ICadGenerator(){
 	CSG encoderCapCache=null
 	CSG encoderServoPlate=null;
 	HashMap<Double,CSG> springLinkBlockLocal=new HashMap<Double,CSG>();
-	HashMap<Double,CSG> sidePlateLocal=new HashMap<Double,CSG>();
+	HashMap<Double,ArrayList<CSG>> sidePlateLocal=new HashMap<Double,ArrayList<CSG>>();
 	
 	
        	
@@ -580,13 +580,13 @@ return new ICadGenerator(){
 			CSG forceSenseEncoder = encoder
 								.rotz(180-Math.toDegrees(dh.getTheta()))
 								.rotx(180)
-			CSG baseEncoderCap = getEncoderCap().clone()
+			CSG baseEncoderCap = getEncoderCap()
 							.movez(-centerLinkToBearingTop)
 							
 			CSG thirdPlusLinkServo =servoReference.clone()
 			CSG linkEncoder = encoder.clone()
 								.rotz(-Math.toDegrees(dh.getTheta()))
-			CSG esp = getLinkSideEncoderCap(nextLink)
+			ArrayList<CSG> esp = getLinkSideEncoderCap(nextLink)
 			double linkCconnectorOffset = drivenLinkXFromCenter-(encoderCapRodRadius+bearingDiameter)/2
 			def end = [-dh.getR()+linkCconnectorOffset,dh.getD()*0.98,0]
 			def controlOne = [0,end.get(1)*1.1,0]
@@ -673,7 +673,8 @@ return new ICadGenerator(){
 			print "Done\r\n"
 			baseEncoderCap=baseEncoderCap.union(linkSection)
 			baseEncoderCap.setColor(javafx.scene.paint.Color.LIGHTBLUE);
-			esp.setColor(javafx.scene.paint.Color.ORANGE);
+			esp.get(0).setColor(javafx.scene.paint.Color.ORANGE);
+			if(esp.size()>1)esp.get(1).setColor(javafx.scene.paint.Color.WHITE);
 			previousEncoder = linkEncoder
 			previousServo = thirdPlusLinkServo
 			myGearA.setManufacturing({ toMfg ->
@@ -687,17 +688,24 @@ return new ICadGenerator(){
 						.toXMin()
 						.toZMin()
 			})
-			esp.setManufacturing({ toMfg ->
+			esp.get(0).setManufacturing({ toMfg ->
 				return toMfg
 						.toXMin()
 						.toZMin()
 			})
-			
+			if(esp.size()>1)
+			esp.get(1).setManufacturing({ toMfg ->
+				return toMfg
+						.roty(180)
+						.toXMin()
+						.toZMin()
+			})
 			if(showRightPrintedParts)add(csg,myGearA,dh.getListener())
 			if(showVitamins)add(csg,thirdPlusLinkServo,dh.getListener())
 			if(showVitamins)add(csg,linkEncoder,dh.getListener())
 			if(showVitamins)add(csg,otherEncoder,dh.getListener())
-			if(showRightPrintedParts)add(csg,esp,dh.getListener())
+			if(showRightPrintedParts)add(csg,esp.get(0),dh.getListener())
+			if(esp.size()>1)if(showLeftPrintedParts)add(csg,esp.get(1),dh.getListener())
 			if(showLeftPrintedParts)add(csg,baseEncoderCap,dh.getListener())
 			
 		}else{
@@ -888,7 +896,8 @@ return new ICadGenerator(){
 			return encoderCapCache
 		
 		double bearingHolder = bearingDiameter/2 + encoderCapRodRadius/2
-		CSG pin  =new Cylinder(encoderCapRodRadius,encoderCapRodRadius,encoderBearingHeight,(int)30).toCSG()
+		double SidePlateThickness = encoderBearingHeight 
+		CSG pin  =new Cylinder(encoderCapRodRadius,encoderCapRodRadius,SidePlateThickness,(int)30).toCSG()
 					.movex(-pinOffset)
 		double mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
 		
@@ -896,7 +905,7 @@ return new ICadGenerator(){
 					.rotz(mountPlatePinAngle)
 					.union(pin.rotz(-mountPlatePinAngle))
 		
-		CSG center  =new Cylinder(bearingHolder,bearingHolder,encoderBearingHeight,(int)30).toCSG()
+		CSG center  =new Cylinder(bearingHolder,bearingHolder,SidePlateThickness,(int)30).toCSG()
 		CSG pinColumn =pin .union(pin
 									.movez(topPlateOffset))
 								.hull() 
@@ -919,9 +928,12 @@ return new ICadGenerator(){
 		encoderCapCache = bottomBlock
 		return encoderCapCache
 	}	
-	private CSG getLinkSideEncoderCap(LinkConfiguration conf ){
+	private ArrayList<CSG> getLinkSideEncoderCap(LinkConfiguration conf ){
 		if(sidePlateLocal.get(conf.getXml())!=null)
-			return sidePlateLocal.get(conf.getXml()).clone()
+			return sidePlateLocal.get(conf.getXml()).collect{
+				it.clone()
+			}
+		double SidePlateThickness = encoderBearingHeight 
 		HashMap<String, Object> shaftmap = Vitamins.getConfiguration(conf.getShaftType(),conf.getShaftSize())
 		HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
 		
@@ -938,7 +950,7 @@ return new ICadGenerator(){
 		double servoTop = servoReference.getMaxZ()-servoNub
 		double bearingHolder = bearingDiameter/2 + encoderCapRodRadius
 		
-		CSG pin  =new Cylinder(encoderCapRodRadius,encoderCapRodRadius,encoderBearingHeight,(int)30).toCSG()
+		CSG pin  =new Cylinder(encoderCapRodRadius,encoderCapRodRadius,SidePlateThickness,(int)30).toCSG()
 					.movex(-pinOffset)
 		double mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
 		
@@ -946,11 +958,11 @@ return new ICadGenerator(){
 					.rotz(mountPlatePinAngle)
 					.union(pin.rotz(-mountPlatePinAngle))
 		
-		CSG center  =new Cylinder(bearingHolder,bearingHolder,encoderBearingHeight,(int)30).toCSG()
+		CSG center  =new Cylinder(bearingHolder,bearingHolder,SidePlateThickness,(int)30).toCSG()
 		
 		CSG baseShape = new Cube(servoMeasurments.servoThinDimentionThickness+encoderCapRodRadius,
 							servoMeasurments.flangeLongDimention+encoderCapRodRadius,
-							encoderBearingHeight)
+							SidePlateThickness)
 						
 						.toCSG()
 						.toZMin()
@@ -958,12 +970,27 @@ return new ICadGenerator(){
 						.movey(-servoMeasurments.shaftToShortSideFlandgeEdge-encoderCapRodRadius/2)
 						.movex(-gearDistance)
 		CSG bottomBlock = capPinSet.union([center,baseShape]).hull()
-						.movez(-encoderToEncoderDistance)
+						.toZMax()
+						.movez(encoderBearingHeight-encoderToEncoderDistance)
 						.difference(encoderKeepaway)
 						.difference(screwSet.movez(-encoderBearingHeight))
 						.minkowskiDifference(servoReference,printerOffset.getMM())
 						.minkowskiDifference(servoReference.movez(-2),printerOffset.getMM())
-		sidePlateLocal.put(conf.getXml(),bottomBlock) 
+		double plateThickness = (-bottomBlock.getMinZ()+bottomBlock.getMaxZ())
+		CSG boundingBox = new Cube(   (-bottomBlock.getMinX()+bottomBlock.getMaxX()),
+								(-bottomBlock.getMinY()+bottomBlock.getMaxY()),
+								plateThickness)
+								.toCSG()
+								.toXMax()
+								.movex(bottomBlock.getMaxX())
+								.toYMax()
+								.movey(bottomBlock.getMaxY())
+								.toZMax()
+								.movez(bottomBlock.getMaxZ())
+								.movez(- bearingData.width)
+		CSG lowerbottomBlock=bottomBlock.difference(boundingBox)
+		CSG upperbottomBlock = bottomBlock.intersect(boundingBox)						
+		sidePlateLocal.put(conf.getXml(),[bottomBlock]) 
 		return sidePlateLocal.get(conf.getXml())
 	}
 	private CSG reverseDHValues(CSG incoming,DHLink dh ){
@@ -982,12 +1009,13 @@ return new ICadGenerator(){
 
 	private ArrayList<CSG> getCameraMount(){
 		//cameraLocationCSG
-		double cameraMountSize = 40
+		
+		double cameraMountSize = 38+5+thickness.getMM()
 		Log.enableSystemPrint(true)
 		println "Camera at "+cameraLocationNR
 		double cameraBolt = (workcellSize-cameraMountSize)/2
-		CSG camerMount = new Cube(	cameraMountSize,
-								cameraMountSize,
+		CSG camerMount = new Cube(	cameraMountSize+5,
+								cameraMountSize+5,
 								thickness.getMM()).toCSG()
 								.toZMax()
 								.transformed(cameraLocationCSG)
@@ -999,9 +1027,9 @@ return new ICadGenerator(){
 								.toZMin()
 		CSG notch = new Cube(	thickness.getMM()).toCSG()
 								.toZMax()
-								.toYMin()		
-								.movey(-cameraMountSize/2)								
-								.movex(cameraBolt)						
+								.toYMax()		
+								.movey(cameraMountSize/2)								
+													
 		CSG topLug=	camerMountLug.transformed(cameraLocationCSG)
 		CSG baseLug = camerMountLug
 						.rotz(180)
@@ -1016,6 +1044,8 @@ return new ICadGenerator(){
 					.movex(10)
 					.union(	notch
 							.movex(-10)	)
+		CSG bottomNotches = notches.rotx(180).movex(cameraBolt)	
+		CSG topNotches = notches.transformed(cameraLocationCSG)	
 		CSG  nut= Vitamins.get( "lockNut",boltSizeParam.getStrValue());
 		nut = nut.movey(thickness.getMM())
 				.union(nut.movey(-thickness.getMM()))
@@ -1032,11 +1062,11 @@ return new ICadGenerator(){
 											.toZMax(),
 											nut
 							)
-							.movex(cameraBolt)	
+								
 		boltCutout=boltCutout.movey(	-(cameraMountSize-thickness.getMM())/2				)
 				.union(boltCutout.movey(	(cameraMountSize-thickness.getMM())/2				))
-		
-		
+		CSG topBolts = boltCutout.transformed(cameraLocationCSG)
+		CSG bottomBolts = boltCutout.movex(cameraBolt)
 		CSG bracketA = topLug
 					.union(midLug)
 					.hull()
@@ -1044,13 +1074,14 @@ return new ICadGenerator(){
 						baseLug
 						.union(midLug)
 						.hull()
-						,notches)
-					.difference(boltCutout)
+						,bottomNotches,topNotches)
+					.difference(bottomBolts,topBolts)
+		
 		CSG bracketB = bracketA
 						.toYMax()
 						.movey(cameraMountSize/2)
-		
-		return [camerMount,bracketA,bracketB,boltCutout]
+		camerMount=camerMount.difference(topBolts,bracketA,bracketB)
+		return [camerMount,bracketA,bracketB,bottomBolts,topBolts]
 	}
 
 	private add(ArrayList<CSG> csg ,CSG object, Affine dh ){
