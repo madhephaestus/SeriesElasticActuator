@@ -333,10 +333,19 @@ return new ICadGenerator(){
 								.movey(baseShape.getMinY()+(keepAwayDistance/2+screwHeadKeepaway))
 						)				
 		baseShape = baseShape.difference([bottomScrewSet,screwAcross])	
+		CSG nucleoBoard = nucleo.get(0)
 		double baseBackSet = 	-baseShape.getMaxX()+keepAwayDistance+encoderKeepawayDistance
 		double spacing = 75
+		double workcellSize = 620
+		double nucleoMountPlacement = spacing+baseBackSet+nucleoBoard.getMaxX()
+		CSG boxCut = new Cube(workcellSize/2+nucleoMountPlacement,workcellSize,thickness.getMM()*2).toCSG()
+					.toXMax()
+					.movex(workcellSize/2)
+
+		
+		
 		CSG footing =new Cylinder(310,310,thickness.getMM(),(int)90).toCSG()
-		CSG nucleoBoard = nucleo.get(0)
+		
 		CSG basePlate = footing
 						.toZMax()
 						.difference(nucleoBoard
@@ -346,7 +355,7 @@ return new ICadGenerator(){
 							.movex(baseBackSet)
 						)
 						.difference(	bottomScrewSet.movex(baseBackSet))
-						
+						.intersect(boxCut)
 						.movez(0.1)
 						/*
 		CSG sidePlateA=sidePlate
