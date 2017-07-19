@@ -20,7 +20,7 @@ return new ICadGenerator(){
 	
 	HashMap<String , HashMap<String,ArrayList<CSG>>> map =  new HashMap<>();
 	HashMap<String,ArrayList<CSG>> bodyMap =  new HashMap<>();
-	LengthParameter thickness 				= new LengthParameter("Material Thickness",3.15,[10,1])
+	LengthParameter thickness 				= new LengthParameter("Material Thickness",5.1,[10,1])
 	LengthParameter printerOffset 			= new LengthParameter("printerOffset",0.5,[1.2,0])
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M5",Vitamins.listVitaminSizes("capScrew"))
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","R8-60355K505",Vitamins.listVitaminSizes("ballBearing"))
@@ -203,6 +203,11 @@ return new ICadGenerator(){
 				maxz=thisZ
 		}
 		DHParameterKinematics sourceLimb=base.getAppendages() .get(0)
+	
+		TransformNR step = sourceLimb.calcHome();
+		
+		Transform tipatHome = TransformFactory.nrToCSG(step)
+		
 		LinkConfiguration conf = sourceLimb.getLinkConfiguration(0);
 		ArrayList<DHLink> dhLinks=sourceLimb.getChain().getLinks();
 		DHLink dh = dhLinks.get(0);
@@ -343,6 +348,10 @@ return new ICadGenerator(){
 					.movex(workcellSize/2)
 
 		
+		CSG tipHole =new Cylinder(10,10,thickness.getMM()*3,(int)90).toCSG()
+					.movez(-thickness.getMM()*1.5)
+					.roty(90)
+					.transformed(tipatHome)
 		
 		CSG footing =new Cylinder(310,310,thickness.getMM(),(int)90).toCSG()
 		
@@ -356,6 +365,7 @@ return new ICadGenerator(){
 						)
 						.difference(	bottomScrewSet.movex(baseBackSet))
 						.intersect(boxCut)
+						.difference(tipHole)
 						.movez(0.1)
 						/*
 		CSG sidePlateA=sidePlate
@@ -759,7 +769,7 @@ return new ICadGenerator(){
 		double platewidth  = (-plate.getMinY()+plate.getMaxY())
 		plate=plate.movex(plateThickenss)
 		CSG pyramid = new Cylinder(	platewidth/2, // Radius at the bottom
-                      		7, // Radius at the top
+                      		14, // Radius at the top
                       		Math.abs(plate.getMaxX()), // Height
                       		(int)6 //resolution
                       		).toCSG()//convert to CSG to display 
