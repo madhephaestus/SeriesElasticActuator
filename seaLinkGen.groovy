@@ -37,7 +37,7 @@ return new ICadGenerator(){
 	HashMap<String, Object>  nutMeasurments = Vitamins.getConfiguration( "nut",boltSizeParam.getStrValue())
 	HashMap<String, Object>  gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
 	HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
-	double workcellSize = 620
+	double workcellSize = 710
 	double cameraLocation =(workcellSize-20)/2
 	TransformNR cameraLocationNR = new TransformNR(cameraLocation,0,cameraLocation,new RotationNR(0,-180,-45))
 	Transform cameraLocationCSG =TransformFactory.nrToCSG(cameraLocationNR)
@@ -361,8 +361,8 @@ return new ICadGenerator(){
 					.roty(90)
 					.transformed(tipatHome)
 		
-		CSG footing =new Cylinder(310,310,thickness.getMM(),(int)90).toCSG()
-		
+		CSG footing =new Cylinder(workcellSize/2,workcellSize/2,thickness.getMM(),(int)90).toCSG()
+		def cameraParts = getCameraMount()
 		CSG basePlate = footing
 						.toZMax()
 						.difference(nucleoBoard
@@ -374,7 +374,9 @@ return new ICadGenerator(){
 						.difference(	bottomScrewSet.movex(baseBackSet))
 						.intersect(boxCut)
 						.difference(tipHole)
-						.movez(0.1)
+						.difference(cameraParts)
+		
+		
 						/*
 		CSG sidePlateA=sidePlate
 				.difference(screwAcross)
@@ -430,6 +432,8 @@ return new ICadGenerator(){
 					.movex(basePlate.getMaxX())
 		})
 		*/
+		
+		attachmentParts.addAll(cameraParts)
 		//if(showRightPrintedParts)attachmentParts.add(sidePlateA)
 		//if(showRightPrintedParts)attachmentParts.add(sidePlateB)
 		if(showLeftPrintedParts)attachmentParts.add(baseShapeA)
@@ -980,6 +984,7 @@ return new ICadGenerator(){
 		double cameraMountSize = 40
 		Log.enableSystemPrint(true)
 		println "Camera at "+cameraLocationNR
+		double cameraBolt = (workcellSize-cameraMountSize)/2
 		CSG camerMount = new Cube(	cameraMountSize,
 								cameraMountSize,
 								thickness.getMM()).toCSG()
@@ -991,7 +996,11 @@ return new ICadGenerator(){
 								.toYMax()
 								.movey(cameraMountSize/2)
 								.toZMin()
-								
+		CSG notch = new Cube(	thickness.getMM()).toCSG()
+								.toZMax()
+								.toYMin()		
+								.movey(-cameraMountSize/2)								
+								.movex(cameraBolt)						
 		CSG topLug=	camerMountLug.transformed(cameraLocationCSG)
 		CSG baseLug = camerMountLug
 						.rotz(180)
@@ -1001,16 +1010,46 @@ return new ICadGenerator(){
 						.rotz(180)
 						.toXMin()
 						.movex(camerMount.getMaxX()+20)
-						.movez(workcellSize/2-20)			
-		CSG bracket = topLug
+						.movez(cameraBolt)
+		CSG notches =  notch
+					.movex(10)
+					.union(	notch
+							.movex(-10)	)
+		CSG  nut= Vitamins.get( "lockNut",boltSizeParam.getStrValue());
+		nut = nut.movey(thickness.getMM())
+				.union(nut.movey(-thickness.getMM()))
+				.hull()
+				.movez(thickness.getMM())
+		//boltSizeParam
+		CSG boltCutout = new Cube(boltMeasurments.outerDiameter,
+							thickness.getMM(),
+							25-thickness.getMM()).toCSG()
+							.toZMin()
+							.union(new Cylinder(boltMeasurments.outerDiameter/2,
+											boltMeasurments.outerDiameter/2,
+											thickness.getMM(),(int)30).toCSG()
+											.toZMax(),
+											nut
+							)
+							.movex(cameraBolt)	
+		boltCutout=boltCutout.movey(	-(cameraMountSize-thickness.getMM())/2				)
+				.union(boltCutout.movey(	(cameraMountSize-thickness.getMM())/2				))
+		
+		
+		CSG bracketA = topLug
 					.union(midLug)
 					.hull()
 					.union(
 						baseLug
 						.union(midLug)
 						.hull()
-						)
-		return [camerMount,camerMountLug,topLug,baseLug,midLug,bracket]
+						,notches)
+					.difference(boltCutout)
+		CSG bracketB = bracketA
+						.toYMax()
+						.movey(cameraMountSize/2)
+		
+		return [camerMount,bracketA,bracketB,boltCutout]
 	}
 
 	private add(ArrayList<CSG> csg ,CSG object, Affine dh ){
