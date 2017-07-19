@@ -735,7 +735,8 @@ return new ICadGenerator(){
 									.intersect(handMountPart)
 									.hull()
 									.toolOffset(printerOffset.getMM()*2))
-							.difference(myArmScrews	)
+							.difference(myArmScrews,springMoved.toolOffset(2)	)
+							
 			tipCalibrationPart.setColor(javafx.scene.paint.Color.PINK);
 			handMountPart.setColor(javafx.scene.paint.Color.WHITE);
 			
