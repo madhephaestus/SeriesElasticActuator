@@ -20,7 +20,7 @@ CSG makeEncoder(){
 	double bearingOffset = magnetThickness+magnetOffset+1
 	double bearingHole =  bearingData.innerDiameter
 	double bearingHoleWithOffset =(bearingHole - printerOffset.getMM()/2)/2
-	
+	double PCBsurfaceTobearing = -2
 	
 	
 	CSG bearing = Vitamins.get("ballBearing",bearingSizeParam.getStrValue())
@@ -83,7 +83,7 @@ CSG makeEncoder(){
 				.movex(-bearing.getMaxX()-2)
 	board=board
 		.union(	cordCutOut)
-		.movez(-2)
+		.movez(PCBsurfaceTobearing)
 		
 	if (args ==  null)	return board
 	
