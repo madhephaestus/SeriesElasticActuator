@@ -1057,7 +1057,7 @@ return new ICadGenerator(){
 		//boltSizeParam
 		CSG boltCutout = new Cube(boltMeasurments.outerDiameter,
 							thickness.getMM(),
-							25-thickness.getMM()).toCSG()
+							30-thickness.getMM()).toCSG()
 							.toZMin()
 							.union(new Cylinder(boltMeasurments.outerDiameter/2,
 											boltMeasurments.outerDiameter/2,
