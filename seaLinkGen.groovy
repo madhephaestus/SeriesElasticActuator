@@ -1044,7 +1044,10 @@ return new ICadGenerator(){
 					.movex(10)
 					.union(	notch
 							.movex(-10)	)
-		CSG bottomNotches = notches.rotx(180).movex(cameraBolt)	
+		CSG bottomNotches = notches
+						.rotx(180)
+						.movex(cameraBolt)	
+						.toZMax()
 		CSG topNotches = notches.transformed(cameraLocationCSG)	
 		CSG  nut= Vitamins.get( "lockNut",boltSizeParam.getStrValue());
 		nut = nut.movey(thickness.getMM())
@@ -1081,7 +1084,8 @@ return new ICadGenerator(){
 						.toYMax()
 						.movey(cameraMountSize/2)
 		camerMount=camerMount.difference(topBolts,bracketA,bracketB)
-		return [camerMount,bracketA,bracketB,bottomBolts,topBolts]
+		//return [bottomNotches]
+		return [camerMount,bracketA,bracketB,bottomBolts]
 	}
 
 	private add(ArrayList<CSG> csg ,CSG object, Affine dh ){
@@ -1090,4 +1094,3 @@ return new ICadGenerator(){
 		BowlerStudioController.addCsg(object);
 	}
 }
-
