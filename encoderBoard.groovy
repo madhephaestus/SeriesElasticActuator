@@ -17,10 +17,12 @@ CSG makeEncoder(){
 	double boardLong = 28
 	double boardShort = 22
 	double cornerOffset = (boardShort-(chipToLongSide*2))/2
-	double bearingOffset = magnetThickness+magnetOffset+1
+	double PCBsurfaceTobearing = -6
+	
+	double bearingOffset = magnetThickness+magnetOffset+(-PCBsurfaceTobearing)+1
 	double bearingHole =  bearingData.innerDiameter
 	double bearingHoleWithOffset =(bearingHole - printerOffset.getMM()/2)/2
-	double PCBsurfaceTobearing = -2
+	
 	
 	
 	CSG bearing = Vitamins.get("ballBearing",bearingSizeParam.getStrValue())
@@ -52,7 +54,7 @@ CSG makeEncoder(){
 	CSG bolt =new Cylinder(mountHoleRadius,mountHoleRadius,10,(int)30).toCSG() // a one line Cylinder
 							.movez(-5)
 	
-	board=board.union(bolt
+	board=magnet.union(bolt
 					.movex(chipToLongSide)
 					.movey(chipToShortside)
 					)
@@ -70,7 +72,8 @@ CSG makeEncoder(){
 					)
 			.union(magnet)
 			.union(bearing)
-			.union(bearingCutterSlot)
+			//.union(bearingCutterSlot)
+			.union(board)
 			.setParameter(printerOffset)
 			.setRegenerate({makeEncoder()})
 	double shadowy = -chipToShortside-cornerOffset-3
