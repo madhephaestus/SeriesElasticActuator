@@ -677,6 +677,21 @@ return new ICadGenerator(){
 			if(esp.size()>1)esp.get(1).setColor(javafx.scene.paint.Color.WHITE);
 			previousEncoder = linkEncoder
 			previousServo = thirdPlusLinkServo
+
+			double chipToShortside = 8
+			double chipToLongSide  = 9.0
+			double mountHoleRadius = 2.0/2                   
+		     CSG standoffBLock = new Cube((chipToLongSide+mountHoleRadius*1.5)*2,(chipToShortside+mountHoleRadius*1.5)*2,	6).toCSG()	
+		     					.toZMin()
+		     					.movez(encoderToEncoderDistance)
+		     					.difference([otherEncoder,otherEncoder.movez(0.5)])
+		     					.setColor(javafx.scene.paint.Color.GREY);
+		     standoffBLock.setManufacturing({ toMfg ->
+				return toMfg
+						.toXMin()
+						.toYMin()
+						.toZMin()
+			})
 			myGearA.setManufacturing({ toMfg ->
 				return toMfg
 						.toXMin()
@@ -700,6 +715,8 @@ return new ICadGenerator(){
 						.toXMin()
 						.toZMin()
 			})
+			
+			add(csg,standoffBLock,dh.getListener())
 			if(showRightPrintedParts)add(csg,myGearA,dh.getListener())
 			if(showVitamins)add(csg,thirdPlusLinkServo,dh.getListener())
 			if(showVitamins)add(csg,linkEncoder,dh.getListener())
