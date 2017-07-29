@@ -589,7 +589,7 @@ return new ICadGenerator(){
 			ArrayList<CSG> esp = getLinkSideEncoderCap(nextLink)
 			double linkCconnectorOffset = drivenLinkXFromCenter-(encoderCapRodRadius+bearingDiameter)/2
 			def end = [-dh.getR()+linkCconnectorOffset,dh.getD()*0.98,0]
-			def controlOne = [0,end.get(1)*1.1,0]
+			def controlOne = [0,end.get(1)*0.9,0]
 			def controlTwo = [end.get(0),0,end.get(2)*1.1]
 
 			CSG connectorArmCross = new RoundedCube(cornerRadius*2,
