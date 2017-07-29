@@ -68,7 +68,7 @@
 	<rotz>-0.0</rotz></imuFromCentroid>
 
 	<DHParameters>
-		<Delta>90.0</Delta>
+		<Delta>114.09638554216868</Delta>
 		<Theta>0.0</Theta>
 		<Radius>0.0</Radius>
 		<Alpha>-90.0</Alpha>
@@ -178,7 +178,7 @@
 	<DHParameters>
 		<Delta>0.0</Delta>
 		<Theta>90.0</Theta>
-		<Radius>200.0</Radius>
+		<Radius>224.096</Radius>
 		<Alpha>0.0</Alpha>
 	</DHParameters>
 
