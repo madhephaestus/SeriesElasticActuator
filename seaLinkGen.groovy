@@ -416,6 +416,12 @@ return new ICadGenerator(){
 						.rotx(-90)
 						.toZMin()
 			})
+		basePlate.setManufacturing({ toMfg ->
+				return toMfg
+						.toXMin()
+						.toYMin()
+						.toZMin()
+			})
 		/*
 		sidePlateA.setManufacturing({ toMfg ->
 				return toMfg
