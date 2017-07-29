@@ -80,7 +80,7 @@ CSG makeEncoder(){
 					)
 			.union(magnet)
 			.union(bearing)
-			//.union(bearingCutterSlot)
+			.union(bearingCutterSlot)
 			.union(boardCad)
 			.setParameter(printerOffset)
 			.setRegenerate({makeEncoder()})
