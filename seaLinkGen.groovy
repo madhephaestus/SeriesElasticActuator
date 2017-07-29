@@ -693,7 +693,7 @@ return new ICadGenerator(){
 		     CSG standoffBLock = new Cube((chipToLongSide+mountHoleRadius*1.5)*2,(chipToShortside+mountHoleRadius*1.5)*2,	6).toCSG()	
 		     					.toZMin()
 		     					.movez(encoderToEncoderDistance)
-		     					.difference([otherEncoder,otherEncoder.movez(0.5)])
+		     					.difference([otherEncoder,otherEncoder.movez(0.5),springBlockPart])
 		     					.setColor(javafx.scene.paint.Color.GREY);
 		     standoffBLock.setManufacturing({ toMfg ->
 				return toMfg
