@@ -62,6 +62,8 @@ CSG makeEncoder(){
                         .rotz(90)
                         .movex(-10.8)
                         .movey(10.4)
+                        
+ 
 	board=magnet.union(bolt
 					.movex(chipToLongSide)
 					.movey(chipToShortside)
@@ -81,9 +83,11 @@ CSG makeEncoder(){
 			.union(magnet)
 			.union(bearing)
 			.union(bearingCutterSlot)
+			//.union(standoffBLock)
 			.union(boardCad)
 			.setParameter(printerOffset)
 			.setRegenerate({makeEncoder()})
+			
 	double shadowy = -chipToShortside-cornerOffset-3
 	CSG cordCutOut = new Cube(	6,// X dimention
 				6,// Y dimention
@@ -109,7 +113,7 @@ CSG makeEncoder(){
 				
 				.toYMin()
 				.movey(shadowy)
-				
+		
 	board=board
 		.union([bearingHoleInner,bearingHoleInner.movez(bearingHoleInner.getMaxZ()),shaddow])
 	
