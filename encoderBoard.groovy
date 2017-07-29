@@ -51,7 +51,7 @@ CSG makeEncoder(){
 				.toZMax()
 				.toYMin()
 				.movey(-chipToShortside-cornerOffset)
-	CSG bolt =new Cylinder(mountHoleRadius,mountHoleRadius,10,(int)30).toCSG() // a one line Cylinder
+	CSG bolt =new Cylinder(mountHoleRadius,mountHoleRadius,16,(int)30).toCSG() // a one line Cylinder
 							.movez(-5)
 	
 	board=magnet.union(bolt
