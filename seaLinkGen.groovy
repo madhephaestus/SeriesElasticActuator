@@ -185,6 +185,7 @@ return new ICadGenerator(){
             )
             .rotx(-90)
             .movey(-drivenLinkWidth/2)
+            .movez(1)
 	/**
 	 * Gets the all dh chains.
 	 *
@@ -490,6 +491,7 @@ return new ICadGenerator(){
 	
 	
 		CSG springMoved = moveDHValues(loadCell
+							
 									.rotz(-Math.toDegrees(dh.getTheta()))
 									.movez(springBlockPart.getMinZ())
 									//.rotz(linkIndex==0?180:0)
