@@ -876,7 +876,7 @@ return new ICadGenerator(){
 		//	springCut=springCut.union(springCut.movez(-springData.wireDiameter*i))
 		//}
 		double magnetPinDiameter = bearingData.innerDiameter/2
-		CSG magnetPin = new Cylinder(magnetPinDiameter,magnetPinDiameter,encoderBearingHeight+2,(int)30).toCSG()
+		CSG magnetPin = new Cylinder(magnetPinDiameter,magnetPinDiameter,encoderBearingHeight+7,(int)30).toCSG()
 						.movez(linkBlank.getMaxZ())
 		
 		linkBlank =linkBlank
