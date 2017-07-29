@@ -53,7 +53,15 @@ CSG makeEncoder(){
 				.movey(-chipToShortside-cornerOffset)
 	CSG bolt =new Cylinder(mountHoleRadius,mountHoleRadius,16,(int)30).toCSG() // a one line Cylinder
 							.movez(-5)
-	
+	CSG boardCad = (CSG)ScriptingEngine
+	                    .gitScriptRun(
+                                "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+	                              "encoderBoard.stl" , // file to load
+	                              null
+                        )
+                        .rotz(90)
+                        .movex(-10.8)
+                        .movey(10.4)
 	board=magnet.union(bolt
 					.movex(chipToLongSide)
 					.movey(chipToShortside)
@@ -72,8 +80,8 @@ CSG makeEncoder(){
 					)
 			.union(magnet)
 			.union(bearing)
-			.union(bearingCutterSlot)
-			.union(board)
+			//.union(bearingCutterSlot)
+			.union(boardCad)
 			.setParameter(printerOffset)
 			.setRegenerate({makeEncoder()})
 	double shadowy = -chipToShortside-cornerOffset-3
