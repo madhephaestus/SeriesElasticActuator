@@ -8,7 +8,7 @@ CSG makeEncoder(){
 	HashMap<String, Object>  bearingData = Vitamins.getConfiguration("ballBearing",bearingSizeParam.getStrValue())
 	
 	
-	double magnetDiameter =6.0 - printerOffset.getMM()
+	double magnetDiameter =6.0+ printerOffset.getMM()
 	double magnetThickness = 2.5+printerOffset.getMM()
 	double magnetOffset =1.5
 	double mountHoleRadius = 2.0/2
@@ -21,7 +21,7 @@ CSG makeEncoder(){
 	
 	double bearingOffset = magnetThickness+magnetOffset+(-PCBsurfaceTobearing)+1
 	double bearingHole =  bearingData.innerDiameter
-	double bearingHoleWithOffset =(bearingHole - printerOffset.getMM()/2)/2
+	double bearingHoleWithOffset =(bearingHole )/2
 	
 	
 	
@@ -83,7 +83,7 @@ CSG makeEncoder(){
 			.union(magnet)
 			.union(bearing)
 			.union(bearingCutterSlot)
-			//.union(standoffBLock)
+			//.union(boardCad.minkowski(new Cube(2,2,0.1).toCSG().toZMax()))
 			.union(boardCad)
 			.setParameter(printerOffset)
 			.setRegenerate({makeEncoder()})
