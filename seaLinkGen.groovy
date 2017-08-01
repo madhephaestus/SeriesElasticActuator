@@ -14,7 +14,7 @@ import javafx.scene.transform.Affine;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 return new ICadGenerator(){
-	boolean showVitamins = true
+	boolean showVitamins = false
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	
