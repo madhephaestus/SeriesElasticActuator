@@ -14,7 +14,7 @@ import javafx.scene.transform.Affine;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 return new ICadGenerator(){
-	boolean showVitamins = false
+	boolean showVitamins = true
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	
@@ -397,7 +397,7 @@ return new ICadGenerator(){
 				.toYMin()
 				.movey(-servoCentering-keepAwayDistance)
 				.movex(baseBackSet)
-				.difference([encoderBaseKeepaway,servoReference.toolOffset(printerOffset.getMM()),screws])
+				.difference([encoderBaseKeepaway,servoReference,screws])
 
 				
 		CSG baseCap = getEncoderCap()
@@ -1007,8 +1007,8 @@ return new ICadGenerator(){
 						.movez(encoderBearingHeight-encoderToEncoderDistance)
 						.difference(encoderKeepaway)
 						.difference(screwSet.movez(-encoderBearingHeight))
-						.minkowskiDifference(servoReference,printerOffset.getMM())
-						.minkowskiDifference(servoReference.movez(-2),printerOffset.getMM())
+						.difference(servoReference)
+						.difference(servoReference.movez(-2))
 		double plateThickness = (-bottomBlock.getMinZ()+bottomBlock.getMaxZ())
 		CSG boundingBox = new Cube(   (-bottomBlock.getMinX()+bottomBlock.getMaxX()),
 								(-bottomBlock.getMinY()+bottomBlock.getMaxY()),
