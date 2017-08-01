@@ -327,25 +327,32 @@ return new ICadGenerator(){
 					.movex(screwHeadKeepaway)
 			)	
 		CSG bottomScrews = screwTotal.rotx(180)
-		
+		// Originally calculated, fixed to make sure maunfactured parts mesh
+		//Bottom Bolt hole pattern x= 97.78700180053711 y = 77.5 inset = 9.75
+		//double inset = (keepAwayDistance/2+screwHeadKeepaway)
+		//double screwX = baseShape.toXMin().getMaxX()-(inset*2)
+		//double screwY = baseShape.toYMin().getMaxY()-(inset*2)
+		double inset =  9.75
+		double screwX = 97.78700180053711
+		double screwY = 77.5					
+		println "Bottom Bolt hole pattern x= "+screwX+" y = "+screwY+" inset = "+inset
 		CSG bottomScrewSet =bottomScrews
-					.movex(baseShape.getMaxX()-(keepAwayDistance/2+screwHeadKeepaway))
-					.movey(baseShape.getMaxY()-(keepAwayDistance/2+screwHeadKeepaway))
+					.movex(-screwX)
+					.movey(screwY/2)
 					.union(
 							bottomScrews
-								.movex(baseShape.getMinX()+(keepAwayDistance/2+screwHeadKeepaway))
-								.movey(baseShape.getMaxY()-(keepAwayDistance/2+screwHeadKeepaway))
+								.movex(-screwX)
+								.movey(-screwY/2)
 						)
 						.union(
 							bottomScrews
-								.movex(baseShape.getMinX()+(keepAwayDistance/2+screwHeadKeepaway))
-								.movey(baseShape.getMinY()+(keepAwayDistance/2+screwHeadKeepaway))
+								.movey(screwY/2)
 						)
 						.union(
 							bottomScrews
-								.movex(baseShape.getMaxX()-(keepAwayDistance/2+screwHeadKeepaway))
-								.movey(baseShape.getMinY()+(keepAwayDistance/2+screwHeadKeepaway))
-						)				
+								.movey(-screwY/2)
+						)
+						.movex(baseShape.getMaxX() - inset)				
 		baseShape = baseShape.difference([bottomScrewSet,screwAcross])	
 		CSG nucleoBoard = nucleo.get(0)
 		double baseBackSet = 	-baseShape.getMaxX()+keepAwayDistance+encoderKeepawayDistance
