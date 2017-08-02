@@ -1043,15 +1043,24 @@ return new ICadGenerator(){
 	private ArrayList<CSG> getCameraMount(){
 		//cameraLocationCSG
 		
-		double cameraMountSize = 38+5+thickness.getMM()
+		double cameraMountSize = 45+5+thickness.getMM()
 		Log.enableSystemPrint(true)
 		println "Camera at "+cameraLocationNR
 		double cameraBolt = (workcellSize-cameraMountSize)/2
+		CSG camera = (CSG) ScriptingEngine
+					 .gitScriptRun(
+			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+			            "camera.groovy" , // file to load
+			            null// create a keepaway version
+			            )
+		camera = camera.union(camera.rotz(90))
+			            .transformed(cameraLocationCSG)
 		CSG camerMount = new Cube(	cameraMountSize+5,
 								cameraMountSize+5,
 								thickness.getMM()).toCSG()
 								.toZMax()
 								.transformed(cameraLocationCSG)
+								.difference(camera)
 		CSG camerMountLug = new Cube(	cameraMountSize,
 								thickness.getMM(),
 								30).toCSG()
@@ -1117,8 +1126,31 @@ return new ICadGenerator(){
 						.toYMax()
 						.movey(cameraMountSize/2)
 		camerMount=camerMount.difference(topBolts,bracketA,bracketB)
+		camerMount.setManufacturing({ toMfg ->
+				TransformNR step = cameraLocationNR.inverse()
+				Transform move = TransformFactory.nrToCSG(step)
+				return toMfg
+						.transformed(move)
+						.toXMin()
+						.toYMin()
+						.toZMin()
+		})
+		bracketA.setManufacturing({ toMfg ->
+				return toMfg
+						.rotx(90)
+						.toXMin()
+						.toYMin()
+						.toZMin()
+		})
+		bracketB.setManufacturing({ toMfg ->
+				return toMfg
+						.rotx(90)
+						.toXMin()
+						.toYMin()
+						.toZMin()
+		})
 		//return [bottomNotches]
-		return [camerMount,bracketA,bracketB,bottomBolts]
+		return [camerMount,bracketA,bracketB,bottomBolts,camera]
 	}
 
 	private add(ArrayList<CSG> csg ,CSG object, Affine dh ){
