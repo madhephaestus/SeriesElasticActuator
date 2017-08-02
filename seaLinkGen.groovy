@@ -1149,6 +1149,9 @@ return new ICadGenerator(){
 						.toYMin()
 						.toZMin()
 		})
+		bottomBolts.setManufacturing({ toMfg ->
+				return null
+		})
 		//return [bottomNotches]
 		return [camerMount,bracketA,bracketB,bottomBolts,camera]
 	}
