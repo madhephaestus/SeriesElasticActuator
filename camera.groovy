@@ -27,4 +27,4 @@ for (int i=0;i<=360;i+=90){
 }
 
 
-return assembly
+return assembly.setColor(javafx.scene.paint.Color.WHITE)
