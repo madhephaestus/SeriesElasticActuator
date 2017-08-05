@@ -1091,7 +1091,8 @@ return new ICadGenerator(){
 						.movex(cameraBolt)	
 						.toZMax()
 		CSG topNotches = notches.transformed(cameraLocationCSG)	
-		CSG  nut= Vitamins.get( "lockNut",boltSizeParam.getStrValue());
+		CSG  nut= Vitamins.get( "lockNut",boltSizeParam.getStrValue())
+					.rotz(30)
 		nut = nut.movey(thickness.getMM())
 				.union(nut.movey(-thickness.getMM()))
 				.hull()
