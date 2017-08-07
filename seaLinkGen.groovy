@@ -221,6 +221,9 @@ return new ICadGenerator(){
 		ArrayList<DHLink> dhLinks=sourceLimb.getChain().getLinks();
 		DHLink dh = dhLinks.get(0);
 		HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
+		double totalFlangLen = (servoMeasurments.flangeLongDimention-servoMeasurments.servoThickDimentionThickness)/2
+		double shaftToShortSideFlandgeEdge = servoMeasurments.shaftToShortSideDistance+totalFlangLen
+		
 		LengthParameter tailLength		= new LengthParameter("Cable Cut Out Length",maxz,[500,0.01])
 		tailLength.setMM(maxz)
 		CSG servoReference=   Vitamins.get(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
@@ -232,7 +235,7 @@ return new ICadGenerator(){
 		double servoPlane = topLevel - servoMeasurments.bottomOfFlangeToTopOfBody
 		double basexLength = gearDistance + servoMeasurments.servoThinDimentionThickness/2
 		//double baseyLength = servoMeasurments.flangeLongDimention 
-		double servoCentering = servoMeasurments.flangeLongDimention -servoMeasurments.shaftToShortSideFlandgeEdge
+		double servoCentering = servoMeasurments.flangeLongDimention -shaftToShortSideFlandgeEdge
 		double minimumWidth = (capPinSpacing-encoderCapRodRadius-cornerRadius)
 		if(servoCentering<minimumWidth)
 			servoCentering=minimumWidth
@@ -972,7 +975,8 @@ return new ICadGenerator(){
 		double SidePlateThickness = encoderBearingHeight 
 		HashMap<String, Object> shaftmap = Vitamins.getConfiguration(conf.getShaftType(),conf.getShaftSize())
 		HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
-		
+		double totalFlangLen = (servoMeasurments.flangeLongDimention-servoMeasurments.servoThickDimentionThickness)/2
+		double shaftToShortSideFlandgeEdge = servoMeasurments.shaftToShortSideDistance+totalFlangLen
 		double hornOffset = 	shaftmap.get("hornThickness")	
 		double servoNub = servoMeasurments.tipOfShaftToBottomOfFlange - servoMeasurments.bottomOfFlangeToTopOfBody
 		// creating the servo
@@ -1003,7 +1007,7 @@ return new ICadGenerator(){
 						.toCSG()
 						.toZMin()
 						.toYMin()
-						.movey(-servoMeasurments.shaftToShortSideFlandgeEdge-encoderCapRodRadius/2)
+						.movey(-shaftToShortSideFlandgeEdge-encoderCapRodRadius/2)
 						.movex(-gearDistance)
 		CSG bottomBlock = capPinSet.union([center,baseShape]).hull()
 						.toZMax()
