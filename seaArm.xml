@@ -41,7 +41,7 @@
 		<vitamin>
 			<name>electroMechanical</name>
 			<type>hobbyServo</type>
-			<id>hv6214mg</id>
+			<id>hv5932mg</id>
 		</vitamin>
 		<vitamin>
 			<name>shaft</name>
@@ -95,7 +95,7 @@
 		<vitamin>
 			<name>electroMechanical</name>
 			<type>hobbyServo</type>
-			<id>hv6214mg</id>
+			<id>hv5932mg</id>
 		</vitamin>
 		<vitamin>
 			<name>shaft</name>
@@ -149,7 +149,7 @@
 		<vitamin>
 			<name>electroMechanical</name>
 			<type>hobbyServo</type>
-			<id>hv6214mg</id>
+			<id>hv5932mg</id>
 		</vitamin>
 		<vitamin>
 			<name>shaft</name>
