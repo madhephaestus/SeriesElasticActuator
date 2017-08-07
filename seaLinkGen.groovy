@@ -14,7 +14,7 @@ import javafx.scene.transform.Affine;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 return new ICadGenerator(){
-	boolean showVitamins = false
+	boolean showVitamins = true
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	
@@ -229,7 +229,7 @@ return new ICadGenerator(){
 		double servoNub = servoMeasurments.tipOfShaftToBottomOfFlange - servoMeasurments.bottomOfFlangeToTopOfBody
 		double servoTop = servoReference.getMaxZ()-servoNub
 		double topLevel = maxz -(springHeight/2)-linkMaterialThickness +encoderBearingHeight
-		double servoPlane = topLevel - encoderBearingHeight
+		double servoPlane = topLevel - servoMeasurments.bottomOfFlangeToTopOfBody
 		double basexLength = gearDistance + servoMeasurments.servoThinDimentionThickness/2
 		//double baseyLength = servoMeasurments.flangeLongDimention 
 		double servoCentering = servoMeasurments.flangeLongDimention -servoMeasurments.shaftToShortSideFlandgeEdge
