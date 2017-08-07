@@ -561,6 +561,9 @@ return new ICadGenerator(){
 								.movez(hornOffset*i)
 								)
 			}
+			// special recess for measured difference
+			myGearA=myGearA
+					.difference(horn.movez(-2.0))
 			myGearA = myGearA
 						.rotz(90+Math.toDegrees(dh.getTheta()))
 						.movez(-centerLinkToBearingTop)	
