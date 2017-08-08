@@ -14,7 +14,7 @@ import javafx.scene.transform.Affine;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 return new ICadGenerator(){
-	boolean showVitamins = true
+	boolean showVitamins = false
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	
@@ -565,8 +565,8 @@ return new ICadGenerator(){
 								)
 			}
 			// special recess for measured difference
-			myGearA=myGearA
-					.difference(horn.movez(-2.0))
+			//myGearA=myGearA
+			//		.difference(horn.movez(-2.0))
 			myGearA = myGearA
 						.rotz(90+Math.toDegrees(dh.getTheta()))
 						.movez(-centerLinkToBearingTop)	
