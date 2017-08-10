@@ -14,7 +14,7 @@ import javafx.scene.transform.Affine;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 return new ICadGenerator(){
-	boolean showVitamins = false
+	boolean showVitamins = true
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	
@@ -233,6 +233,7 @@ return new ICadGenerator(){
 		double servoTop = servoReference.getMaxZ()-servoNub
 		double topLevel = maxz -(springHeight/2)-linkMaterialThickness +encoderBearingHeight
 		double servoPlane = topLevel - servoMeasurments.bottomOfFlangeToTopOfBody
+		double servoEncoderPlane = topLevel - encoderBearingHeight
 		double basexLength = gearDistance + servoMeasurments.servoThinDimentionThickness/2
 		//double baseyLength = servoMeasurments.flangeLongDimention 
 		double servoCentering = servoMeasurments.flangeLongDimention -shaftToShortSideFlandgeEdge
@@ -251,7 +252,7 @@ return new ICadGenerator(){
 			            "encoderBoard.groovy" , // file to load
 			            [topLevel+5]// create a keepaway version
 			            )
-			            .movez(servoPlane)
+			            .movez(servoEncoderPlane)
 		double encoderKeepawayDistance= encoderBaseKeepaway.getMaxX()
 		double sidePlateclearenceHeight = 10*24.5
 		/*
