@@ -14,7 +14,7 @@ import javafx.scene.transform.Affine;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 return new ICadGenerator(){
-	boolean showVitamins = true
+	boolean showVitamins = false
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	
@@ -947,8 +947,9 @@ return new ICadGenerator(){
 		
 		CSG center  =new Cylinder(bearingHolder,bearingHolder,SidePlateThickness,(int)30).toCSG()
 		CSG pinColumn =pin .union(pin
-									.movez(topPlateOffset))
+									.movez(topPlateOffset+printerOffset.getMM()/2))
 								.hull() 
+								.movez(-printerOffset.getMM()/2)
 		CSG pivot = center.movex(-encoderCapRodRadius*4)
 		CSG bottomBlock = capPinSet
 						.union(pivot)
