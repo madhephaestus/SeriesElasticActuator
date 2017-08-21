@@ -39,7 +39,7 @@ return new ICadGenerator(){
 	HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
 	double workcellSize = 760
 	double cameraLocation =(workcellSize-20)/2
-	TransformNR cameraLocationNR = new TransformNR(cameraLocation,0,cameraLocation,new RotationNR(0,-180,-45))
+	TransformNR cameraLocationNR = new TransformNR(cameraLocation,0,cameraLocation,new RotationNR(0,-180,-35))
 	Transform cameraLocationCSG =TransformFactory.nrToCSG(cameraLocationNR)
 	double gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
 	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
