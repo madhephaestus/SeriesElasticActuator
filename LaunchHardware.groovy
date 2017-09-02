@@ -109,7 +109,7 @@ public class HIDSimpleComsDevice extends NonBowlerDevice{
 							disconnect()
 						}
 					}else{
-						println "Simulation"
+						//println "Simulation"
 						for(int j=0;j<downstream.length&&j<upstream.length;j++){
 							upstream[j]=downstream[j];
 						}
