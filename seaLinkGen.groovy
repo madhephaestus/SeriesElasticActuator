@@ -14,7 +14,7 @@ import javafx.scene.transform.Affine;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 return new ICadGenerator(){
-	boolean showVitamins = false
+	boolean showVitamins = true
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	
@@ -80,7 +80,7 @@ return new ICadGenerator(){
 	
 	DHParameterKinematics neck=null;
 	CSG gearA = Vitamins.get( "vexGear",gearAParam.getStrValue())
-				.movey(-gearDistance)
+				.movex(-gearDistance)
 	CSG gearB = Vitamins.get( "vexGear",gearBParam.getStrValue());
 	CSG bolt = Vitamins.get( "capScrew",boltSizeParam.getStrValue());
 	//CSG spring = Vitamins.get( "torsionSpring",springType)	
@@ -545,19 +545,19 @@ return new ICadGenerator(){
 			double servoNub = servoMeasurments.tipOfShaftToBottomOfFlange - servoMeasurments.bottomOfFlangeToTopOfBody
 		
 			CSG servoReference=   Vitamins.get(nextLink.getElectroMechanicalType(),nextLink.getElectroMechanicalSize())
-			.transformed(new Transform().rotZ(90))
+			.rotz(180)
 			
 			double servoTop = servoReference.getMaxZ()-servoNub
 							
 			CSG horn = Vitamins.get(nextLink.getShaftType(),nextLink.getShaftSize())	
 						.rotx(180)
 						.movez(hornOffset)
-						.movey(-gearDistance)
+						.movex(-gearDistance)
 			servoReference=servoReference
 				.toZMax()
 				.movez(servoNub-centerLinkToBearingTop)			
-				.movey(-gearDistance)
-				.rotz(90+Math.toDegrees(dh.getTheta()))
+				.movex(-gearDistance)
+				//.rotz(90+Math.toDegrees(dh.getTheta()))
 			CSG myGearA = gearA.clone()	
 			for(int i=0;i<2;i++){
 				myGearA=myGearA
@@ -569,7 +569,7 @@ return new ICadGenerator(){
 			//myGearA=myGearA
 			//		.difference(horn.movez(-2.0))
 			myGearA = myGearA
-						.rotz(90+Math.toDegrees(dh.getTheta()))
+						//.rotz(-90)
 						.movez(-centerLinkToBearingTop)	
 						.setColor(javafx.scene.paint.Color.BLUE);
 			if(linkIndex==0){
