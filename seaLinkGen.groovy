@@ -715,12 +715,39 @@ return new ICadGenerator(){
 
 			double chipToShortside = 8
 			double chipToLongSide  = 9.0
-			double mountHoleRadius = 2.0/2                   
-		     CSG standoffBLock = new Cube((chipToLongSide+mountHoleRadius*1.5)*2.2,(chipToShortside+mountHoleRadius*1.5)*2.2,	6).toCSG()	
+			double mountHoleRadius = 2.0/2  
+			double chipToShortsideReal = 5.5
+			double chipToLongSideReal  = 9.0 
+			
+			double standoffHeight = 6
+			CSG bolt =new Cylinder(4,4,standoffHeight,(int)20).toCSG() // a one line Cylinder
+							           
+			CSG boltSet = bolt
+					.movex(chipToLongSideReal)
+					.movey(chipToShortsideReal)
+					
+			.union(bolt
+					.movex(-chipToLongSideReal)
+					.movey(chipToShortsideReal)
+					)
+			.union(bolt
+					.movex(chipToLongSideReal)
+					.movey(-chipToShortsideReal)
+					)
+			.union(bolt
+					.movex(-chipToLongSideReal)
+					.movey(-chipToShortsideReal)
+					) 
+			print "Creating standoff block..."		    
+		     CSG standoffBLock = new Cube((chipToLongSide+mountHoleRadius*1.5)*2.2,(chipToShortside+mountHoleRadius*1.5)*2.2,	2).toCSG()	
 		     					.toZMin()
+		     					.union(boltSet )
+		     					.union(boltSet.rotz(90))
 		     					.movez(encoderToEncoderDistance)
-		     					.difference([otherEncoder.toolOffset(0.7),springBlockPart])
+		     					.difference(otherEncoder.toolOffset(1))
+		     					.difference(springBlockPart)
 		     					.setColor(javafx.scene.paint.Color.GREY);
+		     print "done\n"	
 		     standoffBLock.setManufacturing({ toMfg ->
 				return toMfg
 						.toXMin()

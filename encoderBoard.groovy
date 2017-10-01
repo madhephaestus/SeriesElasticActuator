@@ -85,8 +85,8 @@ CSG makeEncoder(){
 			.union(magnet)
 			.union(bearing)
 			.union(bearingCutterSlot)
-			.union(boardCad.minkowski(new Cube(2,2,0.01).toCSG().toZMax()))
-			//.union(boardCad)
+			//.union(boardCad.minkowski(new Cube(2,2,0.01).toCSG().toZMax()))
+			.union(boardCad)
 			.setParameter(printerOffset)
 			.setRegenerate({makeEncoder()})
 			
