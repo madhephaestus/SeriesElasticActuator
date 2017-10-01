@@ -14,7 +14,7 @@ import javafx.scene.transform.Affine;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 return new ICadGenerator(){
-	boolean showVitamins = false
+	boolean showVitamins = true
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	
@@ -93,7 +93,16 @@ return new ICadGenerator(){
 	HashMap<Double,ArrayList<CSG>> sidePlateLocal=new HashMap<Double,ArrayList<CSG>>();
 	
 	
-       	
+      double rectParam = 0.1*25.4
+	CSG part = new Cube(rectParam,rectParam,2*rectParam).toCSG()
+	def loadCellCutoutLocal = CSG.unionAll( Extrude.bezier(	part,
+					[21,0,0], // Control point one
+					[21,0,25], // Control point two
+					[0,0,20+(3*rectParam)+3], // Endpoint
+					10)
+					).movex(-21.5)
+					 .movez(-1-rectParam)
+				
 	CSG encoderSimple = (CSG) ScriptingEngine
 					 .gitScriptRun(
             "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
@@ -112,8 +121,9 @@ return new ICadGenerator(){
 			            "encoderBoard.groovy" , // file to load
 			            [10]// create a keepaway version
 			            )
+			            .union(loadCellCutoutLocal)
 			            .movez(-encoderToEncoderDistance)
-     CSG encoder =   encoderSimple .movez(-encoderToEncoderDistance)
+     CSG encoder1 =   encoderSimple.union(loadCellCutoutLocal).movez(-encoderToEncoderDistance)
 	CSG screwHole = new Cylinder(screwDrillHole,screwDrillHole,screwLength,(int)8).toCSG() // a one line Cylinder
 					.toZMax()
      CSG screwHoleKeepaway = new Cylinder(screwthreadKeepAway,screwthreadKeepAway,50,(int)8).toCSG() // a one line Cylinder
@@ -252,8 +262,9 @@ return new ICadGenerator(){
 			            "encoderBoard.groovy" , // file to load
 			            [topLevel+5]// create a keepaway version
 			            )
+			            
 			            .movez(servoEncoderPlane)
-		double encoderKeepawayDistance= encoderBaseKeepaway.getMaxX()
+		double encoderKeepawayDistance= 20
 		double sidePlateclearenceHeight = 10*24.5
 		/*
 		for (int i=1;i<3;i++){
@@ -575,10 +586,9 @@ return new ICadGenerator(){
 			if(linkIndex==0){
 				CSG baseServo =servoReference.clone()
 				CSG secondLinkServo =servoReference.clone()
-				CSG baseForceSenseEncoder = encoder
-										.rotz(180-Math.toDegrees(dh.getTheta()))
-										.rotx(180)
-				CSG baseEncoder = encoder.clone()
+				CSG baseForceSenseEncoder = encoder1
+										
+				CSG baseEncoder = encoder1
 				
 				previousEncoder = baseEncoder
 				previousServo = baseServo
@@ -599,14 +609,16 @@ return new ICadGenerator(){
 					" "+nextLink.getElectroMechanicalSize() +
 					" "+nextLink.getShaftSize()
 					
-			CSG forceSenseEncoder = encoder
+			CSG forceSenseEncoder = encoder1
+								
 								.rotz(180-Math.toDegrees(dh.getTheta()))
 								.rotx(180)
 			CSG baseEncoderCap = getEncoderCap()
 							.movez(-centerLinkToBearingTop)
 							
 			CSG thirdPlusLinkServo =servoReference.clone()
-			CSG linkEncoder = encoder.clone()
+			CSG linkEncoder = encoder1
+								
 								.rotz(-Math.toDegrees(dh.getTheta()))
 			ArrayList<CSG> esp = getLinkSideEncoderCap(nextLink)
 			double linkCconnectorOffset = drivenLinkXFromCenter-(encoderCapRodRadius+bearingDiameter)/2
@@ -921,7 +933,8 @@ return new ICadGenerator(){
 		
 		linkBlank =linkBlank
 					.union(magnetPin)
-					.difference(encoder.rotx(180))
+					.difference(encoder1.rotx(180))
+					
 					.difference(armScrews.movex(linkBlank.getMaxX()))
 					.union(linkBackBlank)
 					.difference([springCut])

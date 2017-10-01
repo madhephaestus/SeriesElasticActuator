@@ -82,11 +82,11 @@ CSG makeEncoder(){
 					)
 	board=magnet.union(boltSet)
 			.union(boltSet.rotz(90))
-			//.union(magnet)
+			.union(magnet)
 			.union(bearing)
-			//.union(bearingCutterSlot)
-			//.union(boardCad.minkowski(new Cube(2,2,0.1).toCSG().toZMax()))
-			.union(boardCad)
+			.union(bearingCutterSlot)
+			.union(boardCad.minkowski(new Cube(2,2,0.01).toCSG().toZMax()))
+			//.union(boardCad)
 			.setParameter(printerOffset)
 			.setRegenerate({makeEncoder()})
 			
@@ -102,19 +102,10 @@ CSG makeEncoder(){
 				.union(
 					cordCutOut.movey(-13)
 					)
-	double rectParam = 0.1*25.4
-	CSG part = new Cube(rectParam,rectParam,2*rectParam).toCSG()
-	def fullBezier =  Extrude.bezier(	part,
-					[20,0,0], // Control point one
-					[20,0,10], // Control point two
-					[0,0,20], // Endpoint
-					10).collect{
-						it.movex(-20)
-							.movez(5+rectParam)
-					}
+	
 	board=board
 		.union(	cordCutOut)
-		.union(fullBezier)
+		//.union(fullBezier)
 		.movez(PCBsurfaceTobearing)
 		
 	if (args ==  null)	return board
