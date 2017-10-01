@@ -96,8 +96,8 @@ return new ICadGenerator(){
       double rectParam = 0.1*25.4
 	CSG part = new Cube(rectParam,rectParam,2*rectParam).toCSG()
 	def loadCellCutoutLocal = CSG.unionAll( Extrude.bezier(	part,
-					[21,0,0], // Control point one
-					[21,0,25], // Control point two
+					[20,0,0], // Control point one
+					[20,0,25], // Control point two
 					[0,0,20+(3*rectParam)+3], // Endpoint
 					10)
 					).movex(-21.5)
