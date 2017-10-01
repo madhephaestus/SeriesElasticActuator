@@ -62,6 +62,7 @@ CSG makeEncoder(){
                         .rotz(90)
                         .movex(-10.8)
                         .movey(10.4)
+                        .rotz(-180)
                         
  
 	board=magnet.union(bolt
@@ -95,7 +96,11 @@ CSG makeEncoder(){
 				).toCSG()
 				.toZMin()
 				.toXMax()
-				.movex(-bearing.getMaxX()-2)
+				.movex(-30)
+	cordCutOut=cordCutOut.movey(6)
+				.union(
+					cordCutOut.movey(-13)
+					)
 	board=board
 		.union(	cordCutOut)
 		.movez(PCBsurfaceTobearing)
