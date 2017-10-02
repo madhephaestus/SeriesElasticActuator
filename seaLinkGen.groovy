@@ -69,7 +69,7 @@ return new ICadGenerator(){
 	
 	//Encoder Cap mesurments
 	double encoderCapRodRadius =7
-	double cornerRadius =3
+	double cornerRadius =1
 	double capPinSpacing = gearAMeasurments.diameter*0.75+encoderCapRodRadius
 	double pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
 	double mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
