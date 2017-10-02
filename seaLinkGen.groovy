@@ -14,7 +14,7 @@ import javafx.scene.transform.Affine;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 return new ICadGenerator(){
-	boolean showVitamins = true
+	boolean showVitamins = false
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	
@@ -69,7 +69,7 @@ return new ICadGenerator(){
 	
 	//Encoder Cap mesurments
 	double encoderCapRodRadius =7
-	double cornerRadius = 1
+	double cornerRadius =3
 	double capPinSpacing = gearAMeasurments.diameter*0.75+encoderCapRodRadius
 	double pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
 	double mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
@@ -196,6 +196,7 @@ return new ICadGenerator(){
             .rotx(-90)
             .movey(-drivenLinkWidth/2)
             .movez(1)
+     CSG standoffBLock=null
 	/**
 	 * Gets the all dh chains.
 	 *
@@ -720,35 +721,39 @@ return new ICadGenerator(){
 			double chipToLongSideReal  = 9.0 
 			
 			double standoffHeight = 6
-			CSG bolt =new Cylinder(4,4,standoffHeight,(int)20).toCSG() // a one line Cylinder
-							           
-			CSG boltSet = bolt
-					.movex(chipToLongSideReal)
-					.movey(chipToShortsideReal)
-					
-			.union(bolt
-					.movex(-chipToLongSideReal)
-					.movey(chipToShortsideReal)
-					)
-			.union(bolt
-					.movex(chipToLongSideReal)
-					.movey(-chipToShortsideReal)
-					)
-			.union(bolt
-					.movex(-chipToLongSideReal)
-					.movey(-chipToShortsideReal)
-					) 
-			print "Creating standoff block..."		    
-		     CSG standoffBLock = new Cube((chipToLongSide+mountHoleRadius*1.5)*2.2,(chipToShortside+mountHoleRadius*1.5)*2.2,	2).toCSG()	
-		     					.toZMin()
-		     					.union(boltSet )
-		     					.union(boltSet.rotz(90))
-		     					.movez(encoderToEncoderDistance)
-		     					.difference(otherEncoder.toolOffset(1))
-		     					.difference(springBlockPart)
-		     					.setColor(javafx.scene.paint.Color.GREY);
-		     print "done\n"	
-		     standoffBLock.setManufacturing({ toMfg ->
+			if( standoffBLock==null){
+				CSG bolt =new Cylinder(3,3,standoffHeight,(int)20).toCSG() // a one line Cylinder
+								           
+				CSG boltSet = bolt
+						.movex(chipToLongSideReal)
+						.movey(chipToShortsideReal)
+						
+				.union(bolt
+						.movex(-chipToLongSideReal)
+						.movey(chipToShortsideReal)
+						)
+				.union(bolt
+						.movex(chipToLongSideReal)
+						.movey(-chipToShortsideReal)
+						)
+				.union(bolt
+						.movex(-chipToLongSideReal)
+						.movey(-chipToShortsideReal)
+						) 
+				
+				print "Creating standoff block..."		    
+			     standoffBLock = new Cube((chipToLongSide+mountHoleRadius*1.5)*2.2,(chipToShortside+mountHoleRadius*1.5)*2.2,	2).toCSG()	
+			     					.toZMin()
+			     					.union(boltSet )
+			     					.union(boltSet.rotz(90))
+			     					.movez(encoderToEncoderDistance)
+			     					.difference(otherEncoder.toolOffset(0.7))
+			     					.difference(springBlockPart)
+			     					.setColor(javafx.scene.paint.Color.GREY);
+			     print "done\n"	
+			}
+			CSG myStandoff= standoffBLock.clone()
+		     myStandoff.setManufacturing({ toMfg ->
 				return toMfg
 						.toXMin()
 						.toYMin()
@@ -778,7 +783,7 @@ return new ICadGenerator(){
 						.toZMin()
 			})
 			
-			add(csg,standoffBLock,dh.getListener())
+			add(csg,myStandoff,dh.getListener())
 			if(showRightPrintedParts)add(csg,myGearA,dh.getListener())
 			if(showVitamins)add(csg,thirdPlusLinkServo,dh.getListener())
 			if(showVitamins)add(csg,linkEncoder,dh.getListener())
