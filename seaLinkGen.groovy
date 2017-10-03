@@ -195,7 +195,7 @@ return new ICadGenerator(){
             null// no parameters (see next tutorial)
             )
             .rotx(-90)
-            .movey(-drivenLinkWidth/2)
+            //.movey(-drivenLinkWidth/2)
             .movez(1)
      CSG standoffBLock=null
 	/**

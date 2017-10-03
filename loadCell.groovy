@@ -1,9 +1,9 @@
 //Your code here
 LengthParameter printerOffset		= new LengthParameter("printerOffset",0.5,[2,0.001])
 double barWidth = 12.7
-double nubWidth = 15.5
-double holeRad = 9.5/2.0
-double holeOffsetEdgeToEdge = 16.5
+double nubWidth = 16.5
+double holeRad = 9.5/2.0-printerOffset.getMM()*2
+double holeOffsetEdgeToEdge = 16.5-printerOffset.getMM()*2
 
 CSG  loadHole =new Cylinder(holeRad,holeRad,nubWidth*2,(int)20).toCSG() // a one line Cylinder
 				.movez(-nubWidth)
@@ -16,7 +16,7 @@ loadHole=loadHole
 		.rotx(90)
 
 
-CSG bar = new Cube(80,barWidth,barWidth).toCSG()
+CSG bar = new Cube(80,nubWidth,barWidth).toCSG()
 				
 CSG nub = new RoundedCube(30,nubWidth,nubWidth)
 					.cornerRadius(1)// sets the radius of the corner
@@ -43,6 +43,6 @@ CSG bolts= endBolt.union(baseBolt)
 bar=bar.union(bolts)
 		.movex(-bar.getMaxX()/2)
 		.movey(barWidth/2)
-		.movez(barWidth/2)
+		//.movez(barWidth/2)
 
 return bar
