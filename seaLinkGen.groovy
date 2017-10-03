@@ -747,7 +747,7 @@ return new ICadGenerator(){
 			     					.union(boltSet )
 			     					.union(boltSet.rotz(90))
 			     					.movez(encoderToEncoderDistance)
-			     					.difference(otherEncoder.toolOffset(0.7))
+			     					.difference(otherEncoder)
 			     					.difference(springBlockPart)
 			     					.setColor(javafx.scene.paint.Color.GREY);
 			     print "done\n"	
