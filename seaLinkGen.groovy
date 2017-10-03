@@ -14,7 +14,7 @@ import javafx.scene.transform.Affine;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 return new ICadGenerator(){
-	boolean showVitamins = true
+	boolean showVitamins = false
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	
@@ -145,14 +145,15 @@ return new ICadGenerator(){
 							.toCSG()
 							.movez(-10)
 							.roty(90)
-	double screwCenterLine = boltHeadKeepaway
+	double loadCellwidth = 12.7
+	double screwCenterLine = boltHeadKeepaway+loadCellwidth-2
 	double encoderBearingHeight = encoderSimple.getMaxZ()
 	double topPlateOffset = encoderToEncoderDistance*2-encoderBearingHeight*2
 	double centerLinkToBearingTop = encoderToEncoderDistance-encoderBearingHeight
 	double topOfGearToCenter = (centerLinkToBearingTop-gearBMeasurments.height)
 	double totalSpringLength = 47.5
 	double drivenLinkThickness =centerLinkToBearingTop+topOfGearToCenter
-	double drivenLinkWidth = screwCenterLine*1.5+encoderCapRodRadius
+	double drivenLinkWidth = screwCenterLine*1.5+encoderCapRodRadius+2
 	double drivenLinkX = totalSpringLength+encoderCapRodRadius
 	double legLength = totalSpringLength
 	double drivenLinkXFromCenter = legLength+encoderCapRodRadius
