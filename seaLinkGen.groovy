@@ -14,7 +14,7 @@ import javafx.scene.transform.Affine;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 return new ICadGenerator(){
-	boolean showVitamins = false
+	boolean showVitamins = true
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	
@@ -50,17 +50,18 @@ return new ICadGenerator(){
 	double boltHeadKeepaway = boltMeasurments.headDiameter*1.25
 	double nutDimeMeasurment = nutMeasurments.get("width")
 	double nutThickMeasurment = nutMeasurments.get("height")
-	//pin https://www.mcmaster.com/#98381a514/=16s6brg
-	// PN: 98381a514		
+	//pin https://www.mcmaster.com/#98381a516/=19n8j9z
+	// PN: 98381A516		
 	double pinRadius = ((3/16)*25.4+printerOffset.getMM())/2
-	double pinLength = (1.5*25.4) + (printerOffset.getMM()*2)
+	double pinExtraDepth = 1.0/2.0*25.4
+	double pinLength = (1.5*25.4)+pinExtraDepth + (printerOffset.getMM()*2)
 	// bushing
 	//https://www.mcmaster.com/#6391k123/=16s6one
 	//double brassBearingRadius = ((1/4)*25.4+printerOffset.getMM())/2
 	double brassBearingRadius = pinRadius
 	double brassBearingLength = (5/8)*25.4
 	
-	double linkMaterialThickness = pinLength/2-3
+	double linkMaterialThickness = pinLength/2-3-(pinExtraDepth/2)
 	// #8x 1-5/8 wood screw
 	double screwDrillHole=((boltMeasurments.outerDiameter-1.2)+printerOffset.getMM())/2
 	double screwthreadKeepAway= (boltMeasurments.outerDiameter+printerOffset.getMM()+0.25)/2
@@ -98,10 +99,10 @@ return new ICadGenerator(){
 	def loadCellCutoutLocal = CSG.unionAll( Extrude.bezier(	part,
 					[20,0,0], // Control point one
 					[20,0,25], // Control point two
-					[0,0,20+(3*rectParam)+3], // Endpoint
+					[0,0,20+(3*rectParam)+4], // Endpoint
 					10)
 					).movex(-21.5)
-					 .movez(-1-rectParam)
+					 .movez(-2-rectParam)
 				
 	CSG encoderSimple = (CSG) ScriptingEngine
 					 .gitScriptRun(
