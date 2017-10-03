@@ -145,7 +145,7 @@ CSG makeEncoder(){
 	board=board
 		.union(	cordCutOut)
 		//.union(fullBezier)
-		//.movez(PCBsurfaceTobearing)
+		.movez(PCBsurfaceTobearing)
 		
 	if (args ==  null)	return board
 	

@@ -670,6 +670,8 @@ return new ICadGenerator(){
 					10
 					)
 			print "\r\nUnioning link..."
+			long start = System.currentTimeMillis()
+			
 			CSG linkSection = CSG.unionAll(linkParts)
 						//
 						.toZMin()
@@ -706,7 +708,8 @@ return new ICadGenerator(){
 							.difference(myArmScrews)
 							.difference(springMoved)
 							.difference(bottomCut)
-			print "Done\r\n"
+			double took = System.currentTimeMillis()-start
+			print "Done, took "+(took/1000.0) +" seconds\r\n"
 			baseEncoderCap=baseEncoderCap.union(linkSection)
 			baseEncoderCap.setColor(javafx.scene.paint.Color.LIGHTBLUE);
 			esp.get(0).setColor(javafx.scene.paint.Color.ORANGE);
