@@ -827,13 +827,16 @@ return new ICadGenerator(){
 					.movex(-plateOffset-plateThickenss+cornerRadius*2)
 			handMountPart=handMountPart
 						.union(section)
-			handMountPart=handMountPart
-							.difference(myspringBlockPart
-									.intersect(handMountPart)
-									.hull()
-									.toolOffset(printerOffset.getMM()*2))
-							.difference(myArmScrews,springMoved.toolOffset(2)	)
-							
+			try{
+				handMountPart=handMountPart
+								.difference(myspringBlockPart
+										.intersect(handMountPart)
+										.hull()
+										.toolOffset(printerOffset.getMM()*2))
+								.difference(myArmScrews,springMoved.toolOffset(2)	)
+			}catch(Exception ex){
+				BowlerStudio.printStackTrace(ex)
+			}				
 			tipCalibrationPart.setColor(javafx.scene.paint.Color.PINK);
 			handMountPart.setColor(javafx.scene.paint.Color.WHITE);
 			
