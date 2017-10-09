@@ -13,7 +13,7 @@ import javafx.scene.transform.Affine;
 
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
-return new ICadGenerator(){
+ICadGenerator c= new ICadGenerator(){
 	boolean showVitamins = false
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
@@ -508,7 +508,7 @@ return new ICadGenerator(){
 		CSG springBlockPartRaw=springBlock(drivenLinkThickness)
 		CSG springBlockPart =springBlockPartRaw
 								.rotz(-Math.toDegrees(dh.getTheta()))
-		CSG springBlockPartGear = springBlock(gearBMeasurments.height)
+		CSG springBlockPartGear = springBlockPin(gearBMeasurments.height)
 								.rotx(180)
 								.rotz(-Math.toDegrees(dh.getTheta()))
 		// creating the servo
@@ -943,9 +943,11 @@ return new ICadGenerator(){
 	}
 	private CSG springBlockPin(double thickness){
 		double magnetPinDiameter = bearingData.innerDiameter/2
-		return new Cylinder(magnetPinDiameter,magnetPinDiameter,encoderBearingHeight+6,(int)30).toCSG()
-				.movez(thickness-3)
+		return new Cylinder(magnetPinDiameter,magnetPinDiameter,encoderBearingHeight+6+thickness,(int)30).toCSG()
+				.toZMax()
+				.movez(encoderToEncoderDistance+6)
 				.difference(encoder1.rotx(180))
+				//.toZMin()
 	}
 	private CSG springBlock(double thickness){
 		if(springLinkBlockLocal.get(thickness)!=null)
@@ -1225,3 +1227,5 @@ return new ICadGenerator(){
 		BowlerStudioController.addCsg(object);
 	}
 }
+return c//[c.springBlock(c.drivenLinkThickness), c.springBlockPin(c.gearBMeasurments.height).movey(60)]
+
