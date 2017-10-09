@@ -140,20 +140,21 @@ ICadGenerator c= new ICadGenerator(){
 					.union(screwTotal
 						.movex(-pinOffset)
 						.rotz(-mountPlatePinAngle))
-	double centerHoleRad=(10.3+printerOffset.getMM())/2
+	double centerHoleRad=(20)/2
 	CSG centerHole =new Cylinder(centerHoleRad,centerHoleRad,20,(int)30)
 							.toCSG()
 							.movez(-10)
 							.roty(90)
 	double loadCellwidth = 12.7
-	double screwCenterLine = boltHeadKeepaway+loadCellwidth-2
+	double screwOffsetFromSides = 5
+	double screwCenterLine = boltHeadKeepaway+loadCellwidth-screwOffsetFromSides
 	double encoderBearingHeight = encoderSimple.getMaxZ()
 	double topPlateOffset = encoderToEncoderDistance*2-encoderBearingHeight*2
 	double centerLinkToBearingTop = encoderToEncoderDistance-encoderBearingHeight
 	double topOfGearToCenter = (centerLinkToBearingTop-gearBMeasurments.height)
 	double totalSpringLength = 47.5
 	double drivenLinkThickness =centerLinkToBearingTop+topOfGearToCenter
-	double drivenLinkWidth = screwCenterLine*1.5+encoderCapRodRadius+2
+	double drivenLinkWidth = screwCenterLine*1.5+encoderCapRodRadius+screwOffsetFromSides
 	double drivenLinkX = totalSpringLength+encoderCapRodRadius
 	double legLength = totalSpringLength
 	double drivenLinkXFromCenter = legLength+encoderCapRodRadius
@@ -809,7 +810,7 @@ ICadGenerator c= new ICadGenerator(){
 
 			double springBlockWidth =(-myspringBlockPart.getMinY()+myspringBlockPart.getMaxY())
 			double linkLength = dh.getR() -plateOffset-plateThickenss -drivenLinkXFromCenter+8
-			CSG connectorArmCross = new RoundedCube(plateThickenss,platewidth,drivenLinkThickness)
+			CSG connectorArmCross = new RoundedCube(plateThickenss,drivenLinkWidth,drivenLinkThickness)
 					.cornerRadius(cornerRadius)
 					.toCSG()
 					.toXMin()
@@ -820,11 +821,12 @@ ICadGenerator c= new ICadGenerator(){
 					.union(connectorArmCross
 							.movex(linkLength )
 					)
-					.union(screwHead)
+					//.union(screwHead)
 					.hull()
 					.toXMax()
 					.toZMin()
 					.movex(-plateOffset-plateThickenss+cornerRadius*2)
+					.movez(-topOfGearToCenter)
 			handMountPart=handMountPart
 						.union(section)
 			try{
@@ -906,7 +908,7 @@ ICadGenerator c= new ICadGenerator(){
 	}
 	private CSG handMount(){
 		
-		CSG mountPlate = new RoundedCube(8,30,70)
+		CSG mountPlate = new RoundedCube(8,drivenLinkWidth,70)
 					.cornerRadius(cornerRadius)
 					.toCSG()
 
@@ -1229,5 +1231,5 @@ ICadGenerator c= new ICadGenerator(){
 		BowlerStudioController.addCsg(object);
 	}
 }
-return [c.springBlock(c.drivenLinkThickness), c.springBlockPin(c.gearBMeasurments.height).movey(60)]
+return c//[c.springBlock(c.drivenLinkThickness), c.springBlockPin(c.gearBMeasurments.height).movey(60)]
 
