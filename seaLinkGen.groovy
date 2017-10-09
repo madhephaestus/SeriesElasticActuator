@@ -947,7 +947,6 @@ ICadGenerator c= new ICadGenerator(){
 				.toZMax()
 				.movez(encoderToEncoderDistance+6)
 				.difference(encoder1.rotx(180))
-				//.toZMin()
 	}
 	private CSG springBlock(double thickness){
 		if(springLinkBlockLocal.get(thickness)!=null)
@@ -1227,5 +1226,5 @@ ICadGenerator c= new ICadGenerator(){
 		BowlerStudioController.addCsg(object);
 	}
 }
-return c//[c.springBlock(c.drivenLinkThickness), c.springBlockPin(c.gearBMeasurments.height).movey(60)]
+return [c.springBlock(c.drivenLinkThickness), c.springBlockPin(c.gearBMeasurments.height).movey(60)]
 
