@@ -941,7 +941,12 @@ return new ICadGenerator(){
 		mountPlate=mountPlate.movex(-54.4)
 		return mountPlate
 	}
-
+	private CSG springBlockPin(double thickness){
+		double magnetPinDiameter = bearingData.innerDiameter/2
+		return new Cylinder(magnetPinDiameter,magnetPinDiameter,encoderBearingHeight+6,(int)30).toCSG()
+				.movez(thickness-3)
+				.difference(encoder1.rotx(180))
+	}
 	private CSG springBlock(double thickness){
 		if(springLinkBlockLocal.get(thickness)!=null)
 			return springLinkBlockLocal.get(thickness).clone()
@@ -967,19 +972,14 @@ return new ICadGenerator(){
 		//for(int i=1;i<springData.numOfCoils;i++){
 		//	springCut=springCut.union(springCut.movez(-springData.wireDiameter*i))
 		//}
-		double magnetPinDiameter = bearingData.innerDiameter/2
-		CSG magnetPin = new Cylinder(magnetPinDiameter,magnetPinDiameter,encoderBearingHeight+6,(int)30).toCSG()
-						.movez(linkBlank.getMaxZ())
+		
+		CSG magnetPin = springBlockPin(thickness)
 		
 		linkBlank =linkBlank
 					.union(magnetPin)
-					.difference(encoder1.rotx(180))
-					
 					.difference(armScrews.movex(linkBlank.getMaxX()))
 					.union(linkBackBlank)
 					.difference([springCut])
-					
-					
 					
 		springLinkBlockLocal.put(thickness,linkBlank)
 		return linkBlank
