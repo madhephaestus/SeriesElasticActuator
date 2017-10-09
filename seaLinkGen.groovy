@@ -963,12 +963,15 @@ ICadGenerator c= new ICadGenerator(){
 		double loadCellNub = loadCell.getMaxZ()
 		if(loadCellNub>thickness)
 			loadCellNub=thickness
-		CSG connectionLink = new Cylinder(drivenLinkWidth/2-5,drivenLinkWidth/2-5,loadCellNub,(int)30).toCSG()	
+		CSG connectionLink = new RoundedCube(25,drivenLinkWidth-20,loadCellNub)
+							.cornerRadius(cornerRadius)
+							.toCSG()	
+							.toZMin()
 		CSG linkBackBlank = new RoundedCube(25,drivenLinkWidth,loadCellNub)
 						.cornerRadius(cornerRadius)
 						.toCSG()
 						.toZMin()
-						.union(connectionLink.movex(-5))
+						.union(connectionLink.movex(-3))
 						.movez(linkBlank.getMinZ())
 						.movex(loadCellBoltCenter)
 		
