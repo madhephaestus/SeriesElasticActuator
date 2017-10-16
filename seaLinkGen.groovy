@@ -131,8 +131,9 @@ ICadGenerator c= new ICadGenerator(){
      					.toZMin()
 	CSG screwHead= new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() // a one line Cylinder
 						.movez(screwHoleKeepaway.getMaxZ())
-
-	CSG screwTotal = screwHead.union([screwHoleKeepaway,screwHole])
+	CSG screwChampher = new Cylinder(screwDrillHole,screwthreadKeepAway,printerOffset.getMM()*4,(int)8).toCSG() // a one line Cylinder
+					.toZMax()
+	CSG screwTotal = CSG.unionAll([screwHead,screwChampher,screwHoleKeepaway,screwHole])
 					//.movez()
      CSG screwSet =screwTotal
 					.movex(-pinOffset)
@@ -710,6 +711,7 @@ ICadGenerator c= new ICadGenerator(){
 						)
 					.union([supportRib
 							.mirrorz()
+							.movex(-2)
 							.scalex(1.1)
 							]
 							)
