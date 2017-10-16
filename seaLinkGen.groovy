@@ -710,12 +710,12 @@ ICadGenerator c= new ICadGenerator(){
 						)
 					.union([supportRib
 							.mirrorz()
-							.movex(5)
+							.scalex(1.1)
 							]
 							)
 				sidePlateWithServo =sidePlateWithServo			
 					.difference(linkEncoder)
-					.difference(baseEncoderCap)	
+					//.difference(baseEncoderCap)	
 					.difference([springBlockPart,
 							tmpMyGear,myGearB])	
 					.difference(myArmScrews)
@@ -1105,7 +1105,7 @@ ICadGenerator c= new ICadGenerator(){
 						.toZMax()
 						.movez(encoderBearingHeight-encoderToEncoderDistance)
 						.difference(encoderKeepaway)
-						.difference(screwSet.movez(-encoderBearingHeight*2))
+						.difference(screwSet.movez(-encoderToEncoderDistance-encoderBearingHeight))
 						.difference(servoReference)
 						.difference(servoReference.movez(-2))
 		double plateThickness = (-bottomBlock.getMinZ()+bottomBlock.getMaxZ())
