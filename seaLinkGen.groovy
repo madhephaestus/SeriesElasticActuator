@@ -711,8 +711,7 @@ ICadGenerator c= new ICadGenerator(){
 						)
 					.union([supportRib
 							.mirrorz()
-							.movex(-2)
-							.scalex(1.1)
+							.movex(5)
 							]
 							)
 				sidePlateWithServo =sidePlateWithServo			
