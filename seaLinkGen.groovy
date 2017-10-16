@@ -952,13 +952,13 @@ ICadGenerator c= new ICadGenerator(){
 	private CSG springBlock(double thickness){
 		if(springLinkBlockLocal.get(thickness)!=null)
 			return springLinkBlockLocal.get(thickness).clone()
-		CSG linkBlank = new RoundedCube(drivenLinkX,drivenLinkWidth,thickness)
+		CSG linkBlank = new RoundedCube(drivenLinkX-1,drivenLinkWidth,thickness)
 						.cornerRadius(cornerRadius)
 						.toCSG()
 						.toXMin()
 						.toZMax()
 						.movez(centerLinkToBearingTop)
-						.movex(-(bearingData.innerDiameter/2)-2)
+						.movex(-(bearingData.innerDiameter/2)-1)
 		double loadCellNub = loadCell.getMaxZ()
 		if(loadCellNub>thickness)
 			loadCellNub=thickness
