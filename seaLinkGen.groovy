@@ -988,7 +988,7 @@ ICadGenerator c= new ICadGenerator(){
 					.difference(armScrews.movex(linkBlank.getMaxX()))
 					.union(linkBackBlank)
 					.difference([springCut])
-					
+					.difference(encoder1.rotx(180))
 		springLinkBlockLocal.put(thickness,linkBlank)
 		return linkBlank
 	}
