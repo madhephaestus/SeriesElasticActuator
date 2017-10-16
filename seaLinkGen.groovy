@@ -140,6 +140,7 @@ ICadGenerator c= new ICadGenerator(){
 					.union(screwTotal
 						.movex(-pinOffset)
 						.rotz(-mountPlatePinAngle))
+					//.movez(-encoderSimple.getMaxZ())
 	double centerHoleRad=(20)/2
 	CSG centerHole =new Cylinder(centerHoleRad,centerHoleRad,20,(int)30)
 							.toCSG()
@@ -624,7 +625,7 @@ ICadGenerator c= new ICadGenerator(){
 			CSG linkEncoder = encoder1
 								
 								.rotz(-Math.toDegrees(dh.getTheta()))
-			ArrayList<CSG> esp = getLinkSideEncoderCap(nextLink)
+			ArrayList<CSG> esp = getServoCap(nextLink)
 			double linkCconnectorOffset = drivenLinkXFromCenter-(encoderCapRodRadius+bearingDiameter)/2
 			def end = [-dh.getR()+linkCconnectorOffset,dh.getD()*0.98,0]
 			def controlOne = [-5 ,end.get(1)*0.8,0]
@@ -682,17 +683,7 @@ ICadGenerator c= new ICadGenerator(){
 							.movex(5)// offset to avoid hitting pervious link
 							.movey(-2)// offset to avoid hitting pervious link
 
-			CSG sidePlateWithServo =esp.get(0)
-
-			sidePlateWithServo =sidePlateWithServo
-							.union(
-								bracketBezier
-									.toZMin()
-									.movez(sidePlateWithServo.getMinZ())							
-								)
-							.union(supportRib.mirrorz())
-							.difference(linkEncoder)
-							
+			CSG sidePlateWithServo =esp.get(0)							
 			
 			CSG linkSection = bracketBezier
 						
@@ -710,29 +701,28 @@ ICadGenerator c= new ICadGenerator(){
 											.rotz(-Math.toDegrees(dh.getTheta()))
 											,dh)	
 			CSG otherEncoder = linkEncoder.rotx(180)			
-			
-			sidePlateWithServo =sidePlateWithServo
-				.union(
-					bracketBezier
-						.toZMin()
-						.movez(sidePlateWithServo.getMinZ())							
-					)
-				.union(supportRib
-						.mirrorz()
-						.movex(5)
+			if(linkIndex==0){
+				sidePlateWithServo =sidePlateWithServo
+					.union(
+						bracketBezier
+							.toZMin()
+							.movez(sidePlateWithServo.getMinZ())							
 						)
-			sidePlateWithServo =sidePlateWithServo			
-				.difference(linkEncoder)
-				.difference(baseEncoderCap//.hull()
-							.intersect(sidePlateWithServo)
-							.hull()
-							)	
-				.difference([springBlockPart,myGearB])	
-				.difference(myArmScrews)
-				.difference(springMoved)
-				.difference(bottomCut)
-				.difference(linkSection)
-				
+					.union([supportRib
+							.mirrorz()
+							.movex(5)
+							]
+							)
+				sidePlateWithServo =sidePlateWithServo			
+					.difference(linkEncoder)
+					.difference(baseEncoderCap)	
+					.difference([springBlockPart,
+							tmpMyGear,myGearB])	
+					.difference(myArmScrews)
+					.difference(springMoved)
+					//.difference(bottomCut)
+					.difference(linkSection)
+			}
 			linkSection = 	linkSection				
 				.difference(myspringBlockPart
 						.intersect(linkSection)
@@ -1069,7 +1059,7 @@ ICadGenerator c= new ICadGenerator(){
 		encoderCapCache = bottomBlock
 		return encoderCapCache
 	}	
-	private ArrayList<CSG> getLinkSideEncoderCap(LinkConfiguration conf ){
+	private ArrayList<CSG> getServoCap(LinkConfiguration conf ){
 		if(sidePlateLocal.get(conf.getXml())!=null)
 			return sidePlateLocal.get(conf.getXml()).collect{
 				it.clone()
@@ -1115,7 +1105,7 @@ ICadGenerator c= new ICadGenerator(){
 						.toZMax()
 						.movez(encoderBearingHeight-encoderToEncoderDistance)
 						.difference(encoderKeepaway)
-						.difference(screwSet.movez(-encoderBearingHeight))
+						.difference(screwSet.movez(-encoderBearingHeight*2))
 						.difference(servoReference)
 						.difference(servoReference.movez(-2))
 		double plateThickness = (-bottomBlock.getMinZ()+bottomBlock.getMaxZ())
