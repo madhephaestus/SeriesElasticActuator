@@ -1071,7 +1071,7 @@ ICadGenerator c= new ICadGenerator(){
 						.toZMin()
 						//.toYMin()
 						//.movey(-encoderCapRodRadius/2)
-						.movex(-gearDistance-encoderCapRodRadius/2)
+						.movex(-gearDistance-encoderCapRodRadius)
 		CSG bottomBlock = capPinSet.union([center,baseShape]).hull()
 						.toZMax()
 						.movez(encoderBearingHeight-encoderToEncoderDistance)
