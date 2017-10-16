@@ -164,14 +164,14 @@ ICadGenerator c= new ICadGenerator(){
 					.movey(-screwCenterLine+screwHeadKeepaway)
 					.union(screwTotal
 						.movey(screwCenterLine-screwHeadKeepaway))
-					.union(screwTotal
-							.union(new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() 
-									.movez(27-drivenLinkThickness)
-							)
-							.movez(centerLinkToBearingTop-encoderBearingHeight)
-							.movex(-thirdarmBoltBackSetDistance)
-							.roty(90)
-							)
+					//.union(screwTotal
+					//		.union(new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() 
+					//				.movez(27-drivenLinkThickness)
+					//		)
+					//		.movez(centerLinkToBearingTop-encoderBearingHeight)
+					///		.movex(-thirdarmBoltBackSetDistance)
+					//		.roty(90)
+					//		)
 					.roty(-90)
 					//.movex(legLength+encoderCapRodRadius/2)
 					.movez(centerLinkToBearingTop-screwHeadKeepaway*1.5)
@@ -666,6 +666,8 @@ ICadGenerator c= new ICadGenerator(){
 							.movez(centerLinkToBearingTop-encoderBearingHeight+ cornerRadius*2)
 							.union(mountLug)
 							.hull()
+							.movex(5)// offset to avoid hitting pervious link
+							.movey(-2)// offset to avoid hitting pervious link
 			def linkParts = Extrude.bezier(	connectorArmCross,
 					controlOne, // Control point one
 					controlTwo, // Control point two
@@ -675,14 +677,28 @@ ICadGenerator c= new ICadGenerator(){
 			print "\r\nUnioning link..."
 			long start = System.currentTimeMillis()
 			CSG bracketBezier = CSG.unionAll(linkParts)
-			CSG linkSection = bracketBezier
 						.toZMin()
 						.movez(centerLinkToBearingTop )
+							.movex(5)// offset to avoid hitting pervious link
+							.movey(-2)// offset to avoid hitting pervious link
+
+			CSG sidePlateWithServo =esp.get(0)
+
+			sidePlateWithServo =sidePlateWithServo
+							.union(
+								bracketBezier
+									.toZMin()
+									.movez(sidePlateWithServo.getMinZ())							
+								)
+							.union(supportRib.mirrorz())
+							.difference(linkEncoder)
+							
+			
+			CSG linkSection = bracketBezier
+						
 						
 			linkSection = 	linkSection
 							.union(supportRib)
-							.movex(5)// offset to avoid hitting pervious link
-							.movey(-2)// offset to avoid hitting pervious link
 			double xSize= (-linkSection.getMinX()+linkSection.getMaxX())
 			double ySize= (-linkSection.getMinY()+linkSection.getMaxY())
 			double zSize= (-linkSection.getMinZ()+linkSection.getMaxZ())
@@ -694,27 +710,50 @@ ICadGenerator c= new ICadGenerator(){
 											.rotz(-Math.toDegrees(dh.getTheta()))
 											,dh)	
 			CSG otherEncoder = linkEncoder.rotx(180)			
+			
+			sidePlateWithServo =sidePlateWithServo
+				.union(
+					bracketBezier
+						.toZMin()
+						.movez(sidePlateWithServo.getMinZ())							
+					)
+				.union(supportRib
+						.mirrorz()
+						.movex(5)
+						)
+			sidePlateWithServo =sidePlateWithServo			
+				.difference(linkEncoder)
+				.difference(baseEncoderCap//.hull()
+							.intersect(sidePlateWithServo)
+							.hull()
+							)	
+				.difference([springBlockPart,myGearB])	
+				.difference(myArmScrews)
+				.difference(springMoved)
+				.difference(bottomCut)
+				.difference(linkSection)
+				
 			linkSection = 	linkSection				
-							.difference(myspringBlockPart
-									.intersect(linkSection)
-									.hull()
-									.toolOffset(printerOffset.getMM()))
-							.difference(baseEncoderCap//.hull()
-										.intersect(linkSection)
-										.hull()
-										)
-							.difference(otherEncoder.rotz(180)
-										.intersect(linkSection)
-										)	
-							.difference(	springBlockPart)	
-							.difference(myArmScrews)
-							.difference(springMoved)
-							.difference(bottomCut)
+				.difference(myspringBlockPart
+						.intersect(linkSection)
+						.hull()
+						.toolOffset(printerOffset.getMM()))
+				.difference(baseEncoderCap//.hull()
+							.intersect(linkSection)
+							.hull()
+							)
+				.difference(otherEncoder.rotz(180)
+							.intersect(linkSection)
+							)	
+				.difference(	springBlockPart)	
+				.difference(myArmScrews)
+				.difference(springMoved)
+				.difference(bottomCut)
 			double took = System.currentTimeMillis()-start
 			print "Done, took "+(took/1000.0) +" seconds\r\n"
 			baseEncoderCap=baseEncoderCap.union(linkSection)
 			baseEncoderCap.setColor(javafx.scene.paint.Color.LIGHTBLUE);
-			esp.get(0).setColor(javafx.scene.paint.Color.ORANGE);
+			sidePlateWithServo.setColor(javafx.scene.paint.Color.ORANGE);
 			if(esp.size()>1)esp.get(1).setColor(javafx.scene.paint.Color.WHITE);
 			previousEncoder = linkEncoder
 			previousServo = thirdPlusLinkServo
@@ -775,7 +814,7 @@ ICadGenerator c= new ICadGenerator(){
 						.toXMin()
 						.toZMin()
 			})
-			esp.get(0).setManufacturing({ toMfg ->
+			sidePlateWithServo.setManufacturing({ toMfg ->
 				return toMfg
 						.toXMin()
 						.toZMin()
@@ -793,7 +832,7 @@ ICadGenerator c= new ICadGenerator(){
 			if(showVitamins)add(csg,thirdPlusLinkServo,dh.getListener())
 			if(showVitamins)add(csg,linkEncoder,dh.getListener())
 			if(showVitamins)add(csg,otherEncoder,dh.getListener())
-			if(showRightPrintedParts)add(csg,esp.get(0),dh.getListener())
+			if(showRightPrintedParts)add(csg,sidePlateWithServo,dh.getListener())
 			if(esp.size()>1)if(showLeftPrintedParts)add(csg,esp.get(1),dh.getListener())
 			if(showLeftPrintedParts)add(csg,baseEncoderCap,dh.getListener())
 			
