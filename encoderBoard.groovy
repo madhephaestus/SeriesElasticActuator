@@ -89,7 +89,7 @@ CSG makeEncoder(){
 											PCBsurfaceTobearing,(int)30).toCSG() 
 											.movez(-PCBsurfaceTobearing)
 								)
-													
+	/*												
 	CSG boardCad = (CSG)ScriptingEngine
 	                    .gitScriptRun(
                                 "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
@@ -100,7 +100,7 @@ CSG makeEncoder(){
                         .movex(-10.8)
                         .movey(10.4)
                         .rotz(-180)
-                        
+      */                  
  	CSG boltSet = bolt
 					.movex(chipToLongSide)
 					.movey(chipToShortside)

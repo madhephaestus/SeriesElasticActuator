@@ -674,9 +674,8 @@ ICadGenerator c= new ICadGenerator(){
 					)
 			print "\r\nUnioning link..."
 			long start = System.currentTimeMillis()
-			
-			CSG linkSection = CSG.unionAll(linkParts)
-						//
+			CSG bracketBezier = CSG.unionAll(linkParts)
+			CSG linkSection = bracketBezier
 						.toZMin()
 						.movez(centerLinkToBearingTop )
 						
@@ -1045,7 +1044,7 @@ ICadGenerator c= new ICadGenerator(){
 		double servoNub = servoMeasurments.tipOfShaftToBottomOfFlange - servoMeasurments.bottomOfFlangeToTopOfBody
 		// creating the servo
 		CSG servoReference=   Vitamins.get(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
-			.transformed(new Transform().rotZ(90))
+			//.transformed(new Transform().rotZ(180))
 			.toZMax()
 			.movez(servoNub-centerLinkToBearingTop)			
 			.movey(-gearDistance)
@@ -1064,15 +1063,15 @@ ICadGenerator c= new ICadGenerator(){
 		
 		CSG center  =new Cylinder(bearingHolder,bearingHolder,SidePlateThickness,(int)30).toCSG()
 		
-		CSG baseShape = new Cube(servoMeasurments.servoThinDimentionThickness+encoderCapRodRadius,
-							servoMeasurments.flangeLongDimention+encoderCapRodRadius,
+		CSG baseShape = new Cube(servoMeasurments.flangeLongDimention+encoderCapRodRadius,
+							servoMeasurments.servoThinDimentionThickness+encoderCapRodRadius,
 							SidePlateThickness)
 						
 						.toCSG()
 						.toZMin()
-						.toYMin()
-						.movey(-shaftToShortSideFlandgeEdge-encoderCapRodRadius/2)
-						.movex(-gearDistance)
+						//.toYMin()
+						//.movey(-encoderCapRodRadius/2)
+						.movex(-gearDistance-encoderCapRodRadius/2)
 		CSG bottomBlock = capPinSet.union([center,baseShape]).hull()
 						.toZMax()
 						.movez(encoderBearingHeight-encoderToEncoderDistance)
