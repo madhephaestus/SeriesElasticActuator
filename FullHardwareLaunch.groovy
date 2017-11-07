@@ -424,11 +424,13 @@ def base =DeviceManager.getSpecificDevice( "HephaestusArm",{
 	println "Connecting new device robot arm "+m
 	return m
 })
+/*
 def physics =DeviceManager.getSpecificDevice( "HephaestusPhysics",{
 	PhysicicsDevice pd = new PhysicicsDevice(dev,base. getAllDHChains().get(0))
 	
 	return pd
 })
+*/
 
 /*
 ThreadUtil.wait(100)
