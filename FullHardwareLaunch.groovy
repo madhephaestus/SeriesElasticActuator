@@ -4,7 +4,7 @@ import org.hid4java.*
 import org.hid4java.event.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-
+import Jama.Matrix;
 class PacketProcessor{
 	ByteOrder be =ByteOrder.LITTLE_ENDIAN; 
 	int packetSize = 64
@@ -78,7 +78,12 @@ public class HIDSimpleComsDevice extends NonBowlerDevice{
 			Thread.sleep(1)
 		}
 	}
-	
+	void removeEvent(Integer id, Closure event){
+		if(events.get(id)==null){
+			events.put(id,[])
+		}
+		events.get(id).remove(event)
+	}
 	void addEvent(Integer id, Closure event){
 		if(events.get(id)==null){
 			events.put(id,[])
@@ -254,6 +259,8 @@ public class HIDRotoryLink extends AbstractRotoryLink{
 	HIDSimpleComsDevice device;
 	int index =0;
 	int lastPushedVal = 0;
+	double velocityTerm = 0;
+	double gravityCompTerm = 0;
 	/**
 	 * Instantiates a new HID rotory link.
 	 *
@@ -282,7 +289,7 @@ public class HIDRotoryLink extends AbstractRotoryLink{
 	 */
 	@Override
 	public void cacheTargetValueDevice() {
-		device.setValues(index,(float)getTargetValue(),(float)0,(float)0)
+		device.setValues(index,(float)getTargetValue(),(float)velocityTerm ,(float)gravityCompTerm)
 	}
 
 	/* (non-Javadoc)
@@ -311,6 +318,58 @@ public class HIDRotoryLink extends AbstractRotoryLink{
 
 }
 
+public class PhysicicsDevice extends NonBowlerDevice{
+	HIDSimpleComsDevice hidEventEngine;
+	DHParameterKinematics physicsSource ;
+	int count = 0;
+	Closure event = {
+			//Get the DHChain object
+			DHChain chain = physicsSource.getChain()
+			// Setup of variables done, next perfoem one compute cycle
+			
+			//get the current FK pose to update the data used by the jacobian computation
+			TransformNR pose = physicsSource.getCurrentTaskSpaceTransform()
+			// Convert the tip transform to Matrix form for math
+			Matrix matrixForm= pose.getMatrixTransform()
+			// get the position of all the joints in engineering units
+			double[] jointSpaceVector = physicsSource.getCurrentJointSpaceVector()
+			// compute the Jacobian using Jama matrix library
+			Matrix jacobian =  chain.getJacobian(jointSpaceVector);
+			// convert to the 3x6 marray of doubles for display
+			double [][] data = jacobian.getArray();
+
+			
+			
+			count ++
+			if(count >100){
+				count =0
+				
+				println data[0].toString()+"\n"+data[1].toString()+"\n"+data[2].toString()
+			}
+		}
+	public PhysicicsDevice(HIDSimpleComsDevice c,DHParameterKinematics  d){
+		hidEventEngine=c;
+		physicsSource=d;
+		hidEventEngine.addEvent(37,event)
+		
+	}
+	@Override
+	public  void disconnectDeviceImp(){		
+		println "Physics Termination signel shutdown"
+		hidEventEngine.removeEvent(37,event)
+	}
+	
+	@Override
+	public  boolean connectDeviceImp(){
+		println "Physics Startup signel "
+	}
+	public  ArrayList<String>  getNamespacesImp(){
+		// no namespaces on dummy
+		return [];
+	}
+	
+}
+
 
 def dev = DeviceManager.getSpecificDevice( "hidbowler",{
 	//If the device does not exist, prompt for the connection
@@ -337,6 +396,12 @@ def base =DeviceManager.getSpecificDevice( "HephaestusArm",{
 	println "Connecting new device robot arm "+m
 	return m
 })
+def physics =DeviceManager.getSpecificDevice( "HephaestusPhysics",{
+	PhysicicsDevice pd = new PhysicicsDevice(dev,base. getAllDHChains().get(0))
+	
+	return pd
+})
+
 /*
 ThreadUtil.wait(100)
 while(MobileBaseCadManager.get( base).getProcesIndictor().getProgress()<1){
