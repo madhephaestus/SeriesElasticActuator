@@ -137,8 +137,7 @@ public class HIDSimpleComsDevice extends NonBowlerDevice{
 						try{
 							e.call()
 						}catch (Throwable t){
-							t.printStackTrace(System.out)
-							
+							t.printStackTrace(System.out)							
 						}
 					}
 				}
@@ -323,28 +322,57 @@ public class PhysicicsDevice extends NonBowlerDevice{
 	DHParameterKinematics physicsSource ;
 	int count = 0;
 	Closure event = {
-			//Get the DHChain object
-			DHChain chain = physicsSource.getChain()
-			// Setup of variables done, next perfoem one compute cycle
-			
-			//get the current FK pose to update the data used by the jacobian computation
-			TransformNR pose = physicsSource.getCurrentTaskSpaceTransform()
-			// Convert the tip transform to Matrix form for math
-			Matrix matrixForm= pose.getMatrixTransform()
-			// get the position of all the joints in engineering units
-			double[] jointSpaceVector = physicsSource.getCurrentJointSpaceVector()
-			// compute the Jacobian using Jama matrix library
-			Matrix jacobian =  chain.getJacobian(jointSpaceVector);
-			// convert to the 3x6 marray of doubles for display
-			double [][] data = jacobian.getArray();
-
-			
-			
+	
+	
 			count ++
 			if(count >100){
 				count =0
+						//Get the DHChain object
+				DHChain chain = physicsSource.getChain()
+				// Setup of variables done, next perfoem one compute cycle
 				
-				println data[0].toString()+"\n"+data[1].toString()+"\n"+data[2].toString()
+				//get the current FK pose to update the data used by the jacobian computation
+				TransformNR pose = physicsSource.getCurrentTaskSpaceTransform()
+				// Convert the tip transform to Matrix form for math
+				Matrix matrixForm= pose.getMatrixTransform()
+				// get the position of all the joints in engineering units
+				double[] jointSpaceVector = physicsSource.getCurrentJointSpaceVector()
+				// compute the Jacobian using Jama matrix library
+				Matrix jacobian =  chain.getJacobian(jointSpaceVector);
+				// convert to the 3x6 marray of doubles for display
+				double [][] data = jacobian.getArray();
+	
+			     ArrayList<TransformNR> intChainLocal = chain.intChain
+				ArrayList<TransformNR> stateChainLocal = chain.chain
+			     double PreviousOmega = 0
+			     double [] corilousTerm =[0,0,0]
+				for (int i=0;i<jointSpaceVector.length;i++){
+					TransformNR previousTransform = i==0?new TransformNR():intChainLocal.get(i-1)
+					
+					TransformNR previousTransformTranspose = new TransformNR(previousTransform.getMatrixTransform().transpose() );
+					
+					RotationNR  perviousRot = previousTransform.getRotation()
+					double [][] rotationMatrix = perviousRot.getRotationMatrix() 
+					
+					TransformNR rotationBetweenZeroAndI = stateChainLocal.get(i)
+					TransformNR rotationBetweenZeroAndITranspose = new TransformNR(0,0,0,new TransformNR(rotationBetweenZeroAndI .getMatrixTransform().transpose()).getRotation() )
+					
+					
+					double [][] zVector = [rotationMatrix[2]]				
+					Matrix zMatrix = new Matrix(zVector)
+					Matrix bRotationToAllignFrames = rotationBetweenZeroAndITranspose.getMatrixTransform().times(zMatrix)
+					
+					double [][] perviousTerm = [[0,0,0]]
+					if(i>0){
+						perviousTerm[i-1]=PreviousOmega
+					}
+					Matrix angularVelocityOfLink = rotationBetweenZeroAndITranspose.times(new Matrix(perviousTerm))
+												.add(bRotationToAllignFrames)
+					
+					corilousTerm[i]=angularVelocityOfLink.get(0,i)
+					PreviousOmega= angularVelocityOfLink.get(0,i)
+				}
+				println corilousTerm
 			}
 		}
 	public PhysicicsDevice(HIDSimpleComsDevice c,DHParameterKinematics  d){
@@ -439,6 +467,7 @@ for( int i=1;i<sinWaveInc;i++){
 }
 */
 
+return null
 dev.setVelocity(0,0)
 dev.setVelocity(1,(float)(-300+10.0*Math. random()))
 dev.setVelocity(2,0)
