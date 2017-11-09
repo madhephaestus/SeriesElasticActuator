@@ -15,8 +15,10 @@ loadHole=loadHole
 		.movex(-holeOffsetEdgeToEdge/2))
 		.rotx(90)
 
-
-CSG bar = new Cube(80,nubWidth,barWidth).toCSG()
+double nubOffset = ((-barWidth+nubWidth)/2)
+double barLength = 80
+CSG bar = new Cube(barLength+2,barWidth+nubOffset+printerOffset.getMM(),barWidth+printerOffset.getMM()).toCSG()
+			.movey(-nubOffset/2+printerOffset.getMM()/2)
 				
 CSG nub = new RoundedCube(30,nubWidth,nubWidth)
 					.cornerRadius(1)// sets the radius of the corner
@@ -24,20 +26,16 @@ CSG nub = new RoundedCube(30,nubWidth,nubWidth)
 				
 bar=bar.union(nub)
 		.difference(loadHole)
-		.toXMin()
+		//.toXMin()
 HashMap<String, Object>  m5boltMeasurments = Vitamins.getConfiguration( "capScrew","M5")
 HashMap<String, Object>  m4boltMeasurments = Vitamins.getConfiguration( "capScrew","M4")
 
 CSG baseBolt =new Cylinder(m5boltMeasurments.outerDiameter/2,
 					m5boltMeasurments.outerDiameter/2,100,(int)30).toCSG()
-			.union(new Cylinder((m5boltMeasurments.outerDiameter+printerOffset.getMM())/2,
-					(m5boltMeasurments.outerDiameter+printerOffset.getMM())/2,100,(int)30).toCSG()
-					.toZMax())
+			.movez(-50)
 CSG endBolt =new Cylinder(m4boltMeasurments.outerDiameter/2,
 					m4boltMeasurments.outerDiameter/2,100,(int)30).toCSG()
-			.union(new Cylinder((m4boltMeasurments.outerDiameter+printerOffset.getMM())/2,
-					(m4boltMeasurments.outerDiameter+printerOffset.getMM())/2,100,(int)30).toCSG()
-					.toZMax())
+			.movez(-50)
 baseBolt=baseBolt.union(baseBolt.movex(15))
 			.movex(5)
 endBolt=endBolt.union(endBolt.movex(15))
@@ -48,8 +46,7 @@ CSG bolts= endBolt.union(baseBolt)
 			
 			//.movez(bar.getMaxZ())
 			
-bar=bar.union(bolts)
-		.movex(-bar.getMaxX()/2)
+bar=bar.union(bolts.movex(-barLength/2))
 		.movey(barWidth/2)
 		//.movez(barWidth/2)
 
