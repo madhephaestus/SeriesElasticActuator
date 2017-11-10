@@ -128,7 +128,7 @@ ICadGenerator c= new ICadGenerator(){
      CSG encoder1 =   encoderSimple.union(loadCellCutoutLocal).movez(-encoderToEncoderDistance)
 	CSG screwHole = new Cylinder(screwDrillHole,screwDrillHole,screwLength,(int)8).toCSG() // a one line Cylinder
 					.toZMax()
-     CSG screwHoleKeepaway = new Cylinder(screwthreadKeepAway,screwthreadKeepAway,50+(washerThickness*2),(int)8).toCSG() // a one line Cylinder
+     CSG screwHoleKeepaway = new Cylinder(screwthreadKeepAway,screwthreadKeepAway,50+(washerThickness*4),(int)8).toCSG() // a one line Cylinder
      					.toZMin()
 	CSG screwHead= new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() // a one line Cylinder
 						.movez(screwHoleKeepaway.getMaxZ())
