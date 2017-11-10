@@ -520,7 +520,7 @@ ICadGenerator c= new ICadGenerator(){
 	
 	
 		CSG springMoved = moveDHValues(loadCell
-							
+            							.movez(washerThickness)
 									.rotz(-Math.toDegrees(dh.getTheta()))
 									.movez(springBlockPart.getMinZ())
 									//.rotz(linkIndex==0?180:0)
@@ -741,7 +741,7 @@ ICadGenerator c= new ICadGenerator(){
 				.difference(myArmScrews)
 				.difference(springMoved)
 				.difference(bottomCut)
-				.difference(loadCellBolts)
+				//.difference(loadCellBolts)
 			double took = System.currentTimeMillis()-start
 			print "Done, took "+(took/1000.0) +" seconds\r\n"
 			baseEncoderCap=baseEncoderCap.union(linkSection)
