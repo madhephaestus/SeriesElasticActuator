@@ -75,7 +75,8 @@ ICadGenerator c= new ICadGenerator(){
 	double pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
 	double mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
 	double bearingDiameter = bearingData.outerDiameter
-	double encoderToEncoderDistance = (springHeight/2)+linkMaterialThickness
+	double washerThickness = 2
+	double encoderToEncoderDistance = (springHeight/2)+linkMaterialThickness + (washerThickness*2)
 	
 	
 	
@@ -127,7 +128,7 @@ ICadGenerator c= new ICadGenerator(){
      CSG encoder1 =   encoderSimple.union(loadCellCutoutLocal).movez(-encoderToEncoderDistance)
 	CSG screwHole = new Cylinder(screwDrillHole,screwDrillHole,screwLength,(int)8).toCSG() // a one line Cylinder
 					.toZMax()
-     CSG screwHoleKeepaway = new Cylinder(screwthreadKeepAway,screwthreadKeepAway,50,(int)8).toCSG() // a one line Cylinder
+     CSG screwHoleKeepaway = new Cylinder(screwthreadKeepAway,screwthreadKeepAway,50+(washerThickness*2),(int)8).toCSG() // a one line Cylinder
      					.toZMin()
 	CSG screwHead= new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() // a one line Cylinder
 						.movez(screwHoleKeepaway.getMaxZ())
@@ -155,7 +156,7 @@ ICadGenerator c= new ICadGenerator(){
 	double centerLinkToBearingTop = encoderToEncoderDistance-encoderBearingHeight
 	double topOfGearToCenter = (centerLinkToBearingTop-gearBMeasurments.height)
 	double totalSpringLength = 47.5
-	double drivenLinkThickness =centerLinkToBearingTop+topOfGearToCenter
+	double drivenLinkThickness =centerLinkToBearingTop+topOfGearToCenter-(washerThickness*2)
 	double drivenLinkWidth = screwCenterLine*1.5+encoderCapRodRadius+screwOffsetFromSides
 	double drivenLinkX = totalSpringLength+encoderCapRodRadius
 	double legLength = totalSpringLength
@@ -182,7 +183,7 @@ ICadGenerator c= new ICadGenerator(){
 					.union(screwTotal
 						.movey(screwCenterLine-screwHeadKeepaway))
 					.movex(loadCellBoltCenter)
-					.movez(-topOfGearToCenter)				
+					.movez(-topOfGearToCenter+(washerThickness*2))						
 	CSG loadBearingPinBearing =new Cylinder(	brassBearingRadius,
 										brassBearingRadius,
 										drivenLinkThickness+encoderBearingHeight,
@@ -247,7 +248,7 @@ ICadGenerator c= new ICadGenerator(){
 		
 		double servoNub = servoMeasurments.tipOfShaftToBottomOfFlange - servoMeasurments.bottomOfFlangeToTopOfBody
 		double servoTop = servoReference.getMaxZ()-servoNub
-		double topLevel = maxz -(springHeight/2)-linkMaterialThickness +encoderBearingHeight
+		double topLevel = maxz -(springHeight/2)-linkMaterialThickness +encoderBearingHeight-(washerThickness*2)
 		double servoPlane = topLevel - servoMeasurments.bottomOfFlangeToTopOfBody
 		double servoEncoderPlane = topLevel - encoderBearingHeight
 		double basexLength = gearDistance + servoMeasurments.servoThinDimentionThickness/2
@@ -526,7 +527,7 @@ ICadGenerator c= new ICadGenerator(){
 									,dh)
 		CSG tmpMyGear = gearB
 					.rotz(5)
-					.movez(-centerLinkToBearingTop)
+					.movez(-centerLinkToBearingTop+washerThickness)
 		tmpMyGear = 	tmpMyGear	
 					.difference(springBlockPartGear
 								.intersect(tmpMyGear)
@@ -740,6 +741,7 @@ ICadGenerator c= new ICadGenerator(){
 				.difference(myArmScrews)
 				.difference(springMoved)
 				.difference(bottomCut)
+				.difference(loadCellBolts)
 			double took = System.currentTimeMillis()-start
 			print "Done, took "+(took/1000.0) +" seconds\r\n"
 			baseEncoderCap=baseEncoderCap.union(linkSection)
@@ -782,8 +784,9 @@ ICadGenerator c= new ICadGenerator(){
 			     					.union(boltSet )
 			     					.union(boltSet.rotz(90))
 			     					.movez(encoderToEncoderDistance)
+			     standoffBLock = standoffBLock
 			     					.difference(otherEncoder)
-			     					.difference(springBlockPart)
+			     					.difference(springBlockPart.hull())
 			     					.setColor(javafx.scene.paint.Color.GREY);
 			     print "done\n"	
 			}
@@ -856,6 +859,7 @@ ICadGenerator c= new ICadGenerator(){
 					.toZMin()
 					.movex(-plateOffset-plateThickenss+cornerRadius*2)
 					.movez(-topOfGearToCenter)
+					.movez(washerThickness)
 			handMountPart=handMountPart
 						.union(section)
 			try{
@@ -974,7 +978,7 @@ ICadGenerator c= new ICadGenerator(){
 	}
 	private CSG springBlockPin(double thickness){
 		double magnetPinDiameter = bearingData.innerDiameter/2
-		return new Cylinder(magnetPinDiameter,magnetPinDiameter,encoderBearingHeight+6+thickness,(int)30).toCSG()
+		return new Cylinder(magnetPinDiameter,magnetPinDiameter,encoderBearingHeight+6+thickness+(washerThickness),(int)30).toCSG()
 				.toZMax()
 				.movez(encoderToEncoderDistance+6)
 				.difference(encoder1.rotx(180))
@@ -1015,10 +1019,14 @@ ICadGenerator c= new ICadGenerator(){
 		
 		linkBlank =linkBlank
 					.union(magnetPin)
-					.difference(armScrews.movex(linkBlank.getMaxX()))
+					.difference(armScrews
+						.movex(linkBlank.getMaxX())
+						.movez(washerThickness)
+						)
 					.union(linkBackBlank)
 					.difference([springCut])
 					.difference(encoder1.rotx(180))
+					.movez(-washerThickness)
 		springLinkBlockLocal.put(thickness,linkBlank)
 		return linkBlank
 	}
