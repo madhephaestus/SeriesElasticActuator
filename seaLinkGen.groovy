@@ -535,7 +535,7 @@ ICadGenerator c= new ICadGenerator(){
 									//.rotz(linkIndex==0?180:0)
 									,dh)
 		CSG washerMoved = washerWithKeepaway
-					.movez(centerLinkToBearingTop)
+					.movez(centerLinkToBearingTop-washerThickness)
 		CSG tmpMyGear = gearB
 					.rotz(5)
 					.union(washer.toZMax())
