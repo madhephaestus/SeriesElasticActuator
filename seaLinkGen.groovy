@@ -76,9 +76,17 @@ ICadGenerator c= new ICadGenerator(){
 	double mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
 	double bearingDiameter = bearingData.outerDiameter
 	double washerThickness = 2.0
+	double washerOd = 17
+	double washerId = 12.75
 	double encoderToEncoderDistance = (springHeight/2)+linkMaterialThickness + (washerThickness*2)
 	
-	
+	CSG washerInner =new Cylinder(washerId/2,washerId/2,washerThickness,(int)30).toCSG() // a one line Cylinder
+	CSG washerOuter      =new Cylinder(washerOd/2,washerOd/2,washerThickness,(int)30).toCSG() // a one line Cylinder
+	CSG washer = 		washerOuter.difference(washerInner)
+	CSG washerWithKeepaway = washerOuter
+							.difference(washerInner
+										.makeKeepaway(printerOffset.getMM()
+										))
 	
 	DHParameterKinematics neck=null;
 	CSG gearA = Vitamins.get( "vexGear",gearAParam.getStrValue())
@@ -518,15 +526,19 @@ ICadGenerator c= new ICadGenerator(){
 		// creating the servo
 		
 	
-	
+		
+		
 		CSG springMoved = moveDHValues(loadCell
             							//.movez(washerThickness)
 									.rotz(-Math.toDegrees(dh.getTheta()))
 									.movez(springBlockPart.getMinZ())
 									//.rotz(linkIndex==0?180:0)
 									,dh)
+		CSG washerMoved = washerWithKeepaway
+					.movez(centerLinkToBearingTop)
 		CSG tmpMyGear = gearB
 					.rotz(5)
+					.union(washer.toZMax())
 					.movez(-centerLinkToBearingTop+washerThickness)
 		tmpMyGear = 	tmpMyGear	
 					.difference(springBlockPartGear
@@ -793,6 +805,12 @@ ICadGenerator c= new ICadGenerator(){
 			     print "done\n"	
 			}
 			CSG myStandoff= standoffBLock.clone()
+			washerMoved.setManufacturing({ toMfg ->
+				return toMfg
+						.toXMin()
+						.toYMin()
+						.toZMin()
+			})
 		     myStandoff.setManufacturing({ toMfg ->
 				return toMfg
 						.toXMin()
@@ -822,7 +840,7 @@ ICadGenerator c= new ICadGenerator(){
 						.toXMin()
 						.toZMin()
 			})
-			
+			add(csg,washerMoved,dh.getListener())
 			add(csg,myStandoff,dh.getListener())
 			if(showRightPrintedParts)add(csg,myGearA,dh.getListener())
 			if(showVitamins)add(csg,thirdPlusLinkServo,dh.getListener())
