@@ -75,7 +75,7 @@ ICadGenerator c= new ICadGenerator(){
 	double pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
 	double mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
 	double bearingDiameter = bearingData.outerDiameter
-	double washerThickness = 2
+	double washerThickness = 2.0
 	double encoderToEncoderDistance = (springHeight/2)+linkMaterialThickness + (washerThickness*2)
 	
 	
@@ -183,7 +183,7 @@ ICadGenerator c= new ICadGenerator(){
 					.union(screwTotal
 						.movey(screwCenterLine-screwHeadKeepaway))
 					.movex(loadCellBoltCenter)
-					.movez(-topOfGearToCenter+(washerThickness*2))						
+					.movez(-topOfGearToCenter+(washerThickness))						
 	CSG loadBearingPinBearing =new Cylinder(	brassBearingRadius,
 										brassBearingRadius,
 										drivenLinkThickness+encoderBearingHeight,
@@ -520,7 +520,7 @@ ICadGenerator c= new ICadGenerator(){
 	
 	
 		CSG springMoved = moveDHValues(loadCell
-            							.movez(washerThickness)
+            							//.movez(washerThickness)
 									.rotz(-Math.toDegrees(dh.getTheta()))
 									.movez(springBlockPart.getMinZ())
 									//.rotz(linkIndex==0?180:0)
@@ -549,7 +549,9 @@ ICadGenerator c= new ICadGenerator(){
 										.difference(loadBearingPin)
 										,dh)	
 							.difference(loadCellBolts)
+							.difference(myGearB)
 							.setColor(javafx.scene.paint.Color.BROWN);
+							
 		CSG handMountPart=null;
 		CSG myArmScrews = moveDHValues(armScrews
 											.rotz(-Math.toDegrees(dh.getTheta()))
@@ -978,7 +980,7 @@ ICadGenerator c= new ICadGenerator(){
 	}
 	private CSG springBlockPin(double thickness){
 		double magnetPinDiameter = bearingData.innerDiameter/2
-		return new Cylinder(magnetPinDiameter,magnetPinDiameter,encoderBearingHeight+6+thickness+(washerThickness),(int)30).toCSG()
+		return new Cylinder(magnetPinDiameter,magnetPinDiameter,encoderBearingHeight+6+thickness,(int)30).toCSG()
 				.toZMax()
 				.movez(encoderToEncoderDistance+6)
 				.difference(encoder1.rotx(180))
