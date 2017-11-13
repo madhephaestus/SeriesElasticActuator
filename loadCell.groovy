@@ -1,6 +1,6 @@
 //Your code here
 LengthParameter printerOffset		= new LengthParameter("printerOffset",0.5,[2,0.001])
-double barWidth = 12.7
+double barWidth = 12.7+printerOffset.getMM()
 double nubWidth = 16.5
 double holeRad = 9.5/2.0-printerOffset.getMM()*2
 double holeOffsetEdgeToEdge = 16.5-printerOffset.getMM()*2
