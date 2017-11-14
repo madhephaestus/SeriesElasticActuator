@@ -103,15 +103,15 @@ ICadGenerator c= new ICadGenerator(){
 	HashMap<Double,ArrayList<CSG>> sidePlateLocal=new HashMap<Double,ArrayList<CSG>>();
 	
 	
-      double rectParam = 0.1*25.4
+     double rectParam = 0.1*25.4
 	CSG part = new Cube(rectParam,rectParam,2*rectParam).toCSG()
 	def loadCellCutoutLocal = CSG.unionAll( Extrude.bezier(	part,
-					[20,0,0], // Control point one
-					[20,0,25], // Control point two
-					[0,0,20+(3*rectParam)+4], // Endpoint
-					10)
+					[(double)20.0,(double)0.0,(double)0.0], // Control point one
+					[(double)20.0,(double)0.0,(double)25.0], // Control point two
+					[(double)0.0,(double)0.0,(double)(20.0+(3.0*rectParam)+4.0)], // Endpoint
+					(int)10)
 					).movex(-21.5)
-					 .movez(-2-rectParam)
+					 .movez(-2.0-rectParam)
 				
 	CSG encoderSimple = (CSG) ScriptingEngine
 					 .gitScriptRun(
@@ -476,7 +476,11 @@ ICadGenerator c= new ICadGenerator(){
 					.movex(basePlate.getMaxX())
 		})
 		*/
-		
+		int[] version = com.neuronrobotics.javacad.JavaCadBuildInfo.getBuildInfo();
+		if(version[0]>0 || version[1]>=11){
+			println "Name API found"
+			baseShapeA.setName("BaseShapeA")
+		}
 		attachmentParts.addAll(cameraParts)
 		//if(showRightPrintedParts)attachmentParts.add(sidePlateA)
 		//if(showRightPrintedParts)attachmentParts.add(sidePlateB)
@@ -840,6 +844,7 @@ ICadGenerator c= new ICadGenerator(){
 						.toXMin()
 						.toZMin()
 			})
+
 			add(csg,washerMoved,dh.getListener())
 			add(csg,myStandoff,dh.getListener())
 			if(showRightPrintedParts)add(csg,myGearA,dh.getListener())
