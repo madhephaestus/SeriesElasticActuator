@@ -136,7 +136,7 @@ CSG makeEncoder(){
 				).toCSG()
 				.toZMin()
 				.toXMax()
-				.movex(-30)
+				.movex(-45)
 	cordCutOut=cordCutOut.movey(6)
 				.union(
 					cordCutOut.movey(-13)
