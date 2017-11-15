@@ -1,7 +1,8 @@
 //Your code here
 LengthParameter printerOffset		= new LengthParameter("printerOffset",0.5,[2,0.001])
 double barWidth = 12.7+printerOffset.getMM()
-double nubWidth = 16.5
+double nubOffset = 1.9
+double nubWidth = barWidth+nubOffset
 double holeRad = 9.5/2.0-printerOffset.getMM()*2
 double holeOffsetEdgeToEdge = 16.5-printerOffset.getMM()*2
 
@@ -15,16 +16,19 @@ loadHole=loadHole
 		.movex(-holeOffsetEdgeToEdge/2))
 		.rotx(90)
 
-double nubOffset = ((-barWidth+nubWidth)/2)
+
 double barLength = 80
-CSG bar = new Cube(barLength+2,barWidth+nubOffset+printerOffset.getMM(),barWidth+printerOffset.getMM()).toCSG()
-			.movey(-nubOffset/2+printerOffset.getMM()/2)
-				
+CSG bar = new Cube(barLength+2,barWidth+printerOffset.getMM(),barWidth+printerOffset.getMM()).toCSG()
+			.movey(printerOffset.getMM()/2)
+CSG backKeepaway = new Cube(barLength/2+1,nubWidth,barWidth+printerOffset.getMM()).toCSG()
+			.movey((nubOffset))	
+			.toXMax()			
 CSG nub = new RoundedCube(30,nubWidth,nubWidth)
 					.cornerRadius(1)// sets the radius of the corner
 					.toCSG()
+					.movey(nubOffset)
 				
-bar=bar.union(nub)
+bar=CSG.unionAll([bar,nub,backKeepaway])
 		.difference(loadHole)
 		//.toXMin()
 HashMap<String, Object>  m5boltMeasurments = Vitamins.getConfiguration( "capScrew","M5")
