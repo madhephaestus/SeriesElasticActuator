@@ -51,7 +51,7 @@ CSG bolts= endBolt.union(baseBolt)
 			//.movez(bar.getMaxZ())
 			
 bar=bar.union(bolts.movex(-barLength/2))
-		.movey(barWidth/2)
+		.movey(barWidth/2-nubOffset)
 		//.movez(barWidth/2)
 
 return bar
