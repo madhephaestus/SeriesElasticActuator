@@ -17,7 +17,7 @@ ICadGenerator c= new ICadGenerator(){
 	boolean showVitamins = false
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
-	
+	int[] version = com.neuronrobotics.javacad.JavaCadBuildInfo.getBuildInfo();
 	HashMap<String , HashMap<String,ArrayList<CSG>>> map =  new HashMap<>();
 	HashMap<String,ArrayList<CSG>> bodyMap =  new HashMap<>();
 	LengthParameter thickness 				= new LengthParameter("Material Thickness",11.88,[10,1])
@@ -476,18 +476,20 @@ ICadGenerator c= new ICadGenerator(){
 					.movex(basePlate.getMaxX())
 		})
 		*/
-		int[] version = com.neuronrobotics.javacad.JavaCadBuildInfo.getBuildInfo();
-		if(version[0]>0 || version[1]>=11){
-			println "Name API found"
-			baseShapeA.setName("BaseShapeA")
-		}
+		
+
 		attachmentParts.addAll(cameraParts)
 		//if(showRightPrintedParts)attachmentParts.add(sidePlateA)
 		//if(showRightPrintedParts)attachmentParts.add(sidePlateB)
-		if(showLeftPrintedParts)attachmentParts.add(baseShapeA)
-		if(showRightPrintedParts)attachmentParts.add(baseShapeB)
-		if(showRightPrintedParts)attachmentParts.add(basePlate)
-		if(showLeftPrintedParts)attachmentParts.add(baseCap)
+		//if(showLeftPrintedParts)attachmentParts.add(baseShapeA)
+		//if(showRightPrintedParts)attachmentParts.add(baseShapeB)
+		//if(showRightPrintedParts)attachmentParts.add(basePlate)
+		//if(showLeftPrintedParts)attachmentParts.add(baseCap)
+
+		add(attachmentParts,baseShapeA,null,"baseLeft")
+		add(attachmentParts,baseShapeB,null,"baseRight")
+		add(attachmentParts,basePlate,null,"basePlate")
+		add(attachmentParts,baseCap,null,"baseCap")
 		return attachmentParts;
 	}
 	@Override 
@@ -624,10 +626,10 @@ ICadGenerator c= new ICadGenerator(){
 							.toXMin()
 							.toZMin()
 				})
-				add(csg,baseMyGearA,sourceLimb.getRootListener())
-				if(showVitamins)add(csg,baseServo,sourceLimb.getRootListener())
-				if(showVitamins)add(csg,baseEncoder,sourceLimb.getRootListener())
-				if(showVitamins)add(csg,baseForceSenseEncoder,sourceLimb.getRootListener())
+				add(csg,baseMyGearA,sourceLimb.getRootListener(),"servoGear")
+				if(showVitamins)add(csg,baseServo,sourceLimb.getRootListener(),"servo")
+				if(showVitamins)add(csg,baseEncoder,sourceLimb.getRootListener(),"encoder")
+				if(showVitamins)add(csg,baseForceSenseEncoder,sourceLimb.getRootListener(),"encoder")
 			}
 			println "Link Hardware: using from index "+
 					(linkIndex+1)+
@@ -647,9 +649,9 @@ ICadGenerator c= new ICadGenerator(){
 								.rotz(-Math.toDegrees(dh.getTheta()))
 			ArrayList<CSG> esp = getServoCap(nextLink)
 			double linkCconnectorOffset = drivenLinkXFromCenter-(encoderCapRodRadius+bearingDiameter)/2
-			def end = [-dh.getR()+linkCconnectorOffset,dh.getD()*0.98,0]
-			def controlOne = [-5 ,end.get(1)*0.8,0]
-			def controlTwo = [end.get(0),0,end.get(2)*1.1]
+			def end = [(double)-dh.getR()+linkCconnectorOffset,(double)dh.getD()*0.98,(double)0]
+			def controlOne = [(double)-5 ,(double)end.get(1)*0.8,(double)0]
+			def controlTwo = [(double)end.get(0),(double)0,(double)end.get(2)*1.1]
 
 			CSG connectorArmCross = new RoundedCube(cornerRadius*2,
 											encoderCapRodRadius+bearingDiameter -cornerRadius-5,
@@ -662,7 +664,7 @@ ICadGenerator c= new ICadGenerator(){
 					controlTwo, // Control point two
 					end ,// Endpoint
 					
-					5
+					(int)5
 					)
 			CSG mountLug = new RoundedCube(encoderCapRodRadius+bearingDiameter,drivenLinkWidth,drivenLinkThickness)
 						.cornerRadius(cornerRadius)
@@ -845,15 +847,15 @@ ICadGenerator c= new ICadGenerator(){
 						.toZMin()
 			})
 
-			add(csg,washerMoved,dh.getListener())
-			add(csg,myStandoff,dh.getListener())
-			if(showRightPrintedParts)add(csg,myGearA,dh.getListener())
-			if(showVitamins)add(csg,thirdPlusLinkServo,dh.getListener())
-			if(showVitamins)add(csg,linkEncoder,dh.getListener())
-			if(showVitamins)add(csg,otherEncoder,dh.getListener())
-			if(showRightPrintedParts)add(csg,sidePlateWithServo,dh.getListener())
-			if(esp.size()>1)if(showLeftPrintedParts)add(csg,esp.get(1),dh.getListener())
-			if(showLeftPrintedParts)add(csg,baseEncoderCap,dh.getListener())
+			add(csg,washerMoved,dh.getListener(),"washer")
+			add(csg,myStandoff,dh.getListener(),"encoderStandoff")
+			if(showRightPrintedParts)add(csg,myGearA,dh.getListener(),"servoGear")
+			if(showVitamins)add(csg,thirdPlusLinkServo,dh.getListener(),"servo")
+			if(showVitamins)add(csg,linkEncoder,dh.getListener(),"encoder")
+			if(showVitamins)add(csg,otherEncoder,dh.getListener(),"otherEncoder")
+			if(showRightPrintedParts)add(csg,sidePlateWithServo,dh.getListener(),"sidePlate")
+			if(esp.size()>1)if(showLeftPrintedParts)add(csg,esp.get(1),dh.getListener(),"encoderPlate")
+			if(showLeftPrintedParts)add(csg,baseEncoderCap,dh.getListener(),"baseEncoderCap")
 			
 		}else{
 			// load the end of limb
@@ -913,8 +915,8 @@ ICadGenerator c= new ICadGenerator(){
 					.toXMin()
 					.toZMin()
 			})
-			if(showRightPrintedParts)add(csg,tipCalibrationPart,dh.getListener())
-			if(showLeftPrintedParts)add(csg,handMountPart,dh.getListener())
+			if(showRightPrintedParts)add(csg,tipCalibrationPart,dh.getListener(),"calibrationTip")
+			if(showLeftPrintedParts)add(csg,handMountPart,dh.getListener(),"lastLink")
 		}
 		
 		myGearB.setManufacturing({ toMfg ->
@@ -930,10 +932,10 @@ ICadGenerator c= new ICadGenerator(){
 					.rotz(-Math.toDegrees(dh.getTheta()))
 					.toXMin()
 		})
-		if(showLeftPrintedParts)add(csg,myspringBlockPart,dh.getListener())
-		if(showVitamins)add(csg,myPin,dh.getListener())
-		if(showRightPrintedParts)add(csg,myGearB,dh.getListener())
-		if(showVitamins)add(csg,springMoved,dh.getListener())
+		if(showLeftPrintedParts)add(csg,myspringBlockPart,dh.getListener(),"loadCellBlock")
+		if(showVitamins)add(csg,myPin,dh.getListener(),"pin")
+		if(showRightPrintedParts)add(csg,myGearB,dh.getListener(),"drivenGear")
+		if(showVitamins)add(csg,springMoved,dh.getListener(),"loadCell")
 		return csg;
 	}
 	private CSG tipCalibration(){
@@ -1290,10 +1292,15 @@ ICadGenerator c= new ICadGenerator(){
 		return [camerMount,bracketA,bracketB,bottomBolts,camera]
 	}
 
-	private add(ArrayList<CSG> csg ,CSG object, Affine dh ){
-		object.setManipulator(dh);
+	private add(ArrayList<CSG> csg ,CSG object, Affine dh , String name){
+		if(dh!=null)
+			object.setManipulator(dh);
 		csg.add(object);
 		BowlerStudioController.addCsg(object);
+		if(version[0]>0 || version[1]>=11){
+			println "Name API found"
+			object.setName(name)
+		}
 	}
 }
 return c//[c.springBlock(c.drivenLinkThickness), c.springBlockPin(c.gearBMeasurments.height).movey(60)]
