@@ -85,7 +85,7 @@ ICadGenerator c= new ICadGenerator(){
 	CSG washer = 		washerOuter.difference(washerInner)
 	CSG washerWithKeepaway = washerOuter
 							.difference(washerInner
-										.makeKeepaway(printerOffset.getMM()
+										.makeKeepaway(printerOffset.getMM()*2
 										))
 	
 	DHParameterKinematics neck=null;
