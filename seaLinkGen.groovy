@@ -97,7 +97,8 @@ ICadGenerator c= new ICadGenerator(){
 	CSG	LockNutKeepaway = tmpNut.movey(thickness.getMM())
 				.union(tmpNut.movey(-thickness.getMM()))
 				.hull()
-				
+	CSG	LockNutCentered = LockNutKeepaway.movey(thickness.getMM())	
+	
 	CSG gearA = Vitamins.get( "vexGear",gearAParam.getStrValue())
 				.movex(-gearDistance)
 	CSG gearB = Vitamins.get( "vexGear",gearBParam.getStrValue());
@@ -180,9 +181,13 @@ ICadGenerator c= new ICadGenerator(){
 	double drivenLinkXFromCenter = legLength+encoderCapRodRadius
 	double loadCellBoltCenter = -(40.0-5.0-(15.0/2))
 	double thirdarmBoltBackSetDistance = 16.0
-	CSG armScrews = screwTotal
+	CSG screwWithNut = screwTotal.union(LockNutCentered.makeKeepaway(printerOffset.getMM())
+									.rotx(180)
+									.rotz(90)
+									.movez(-15))
+	CSG armScrews = screwWithNut
 					.movey(-screwCenterLine+screwHeadKeepaway)
-					.union(screwTotal
+					.union(screwWithNut
 						.movey(screwCenterLine-screwHeadKeepaway))
 					//.union(screwTotal
 					//		.union(new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() 
