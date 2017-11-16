@@ -1,9 +1,10 @@
 double holeDiam = 3.2
 double standoff =10
-CSG boltHole =new Cylinder(holeDiam/2,holeDiam/2,30,(int)30).toCSG()
+LengthParameter thickness 				= new LengthParameter("Material Thickness",11.88,[10,1])
+CSG boltHole =new Cylinder(holeDiam/2,holeDiam/2,thickness.getMM()*4,(int)30).toCSG()
 			.toXMin()
 			.toYMin()
-			.movez(-10)
+			.movez(-thickness.getMM()*2)
 double standoffThickness = 2
 CSG standoffShaft =new Cylinder((holeDiam/2)+standoffThickness,(holeDiam/2)+standoffThickness,standoff,(int)30).toCSG()
 			.toXMin()

@@ -14,7 +14,7 @@ import javafx.scene.transform.Affine;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 ICadGenerator c= new ICadGenerator(){
-	boolean showVitamins =true
+	boolean showVitamins =false
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	int[] version = com.neuronrobotics.javacad.JavaCadBuildInfo.getBuildInfo();
@@ -39,7 +39,7 @@ ICadGenerator c= new ICadGenerator(){
 	HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
 	double workcellSize = 760
 	double cameraLocation =(workcellSize-20)/2
-	TransformNR cameraLocationNR = new TransformNR(cameraLocation,0,cameraLocation,new RotationNR(0,-180,-35))
+	TransformNR cameraLocationNR = new TransformNR(cameraLocation+20,0,cameraLocation+20,new RotationNR(0,-180,-35))
 	Transform cameraLocationCSG =TransformFactory.nrToCSG(cameraLocationNR)
 	double gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
 	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
@@ -399,7 +399,19 @@ ICadGenerator c= new ICadGenerator(){
 					.roty(90)
 					.transformed(tipatHome)
 		
-		CSG footing =new Cylinder(workcellSize/2,workcellSize/2,thickness.getMM(),(int)90).toCSG()
+		CSG footing =new Cube(workcellSize,workcellSize/3,thickness.getMM()).toCSG()
+		
+		double etchWith = 0.1
+		CSG etchX =new Cube((workcellSize/2)-2,etchWith,thickness.getMM()).toCSG()
+					.toXMin()
+		CSG etchY =new Cube(etchWith,(workcellSize/3)-2,thickness.getMM()).toCSG()
+		def etchParts = [etchX,etchY]
+		for(double i=-100;i<101;i+=50){
+			etchParts.add(etchX.movey(i))
+		}
+		for(double i=0;i<etchX.getMaxX();i+=50){
+			etchParts.add(etchY.movex(i))
+		}
 		def cameraParts = getCameraMount()
 		CSG basePlate = footing
 						.toZMax()
@@ -413,8 +425,10 @@ ICadGenerator c= new ICadGenerator(){
 						.intersect(boxCut)
 						.difference(tipHole)
 						.difference(cameraParts)
+						.difference(etchParts)
 		
-		
+		basePlateUpper=basePlate.intersect(footing)
+		basePlateLower=basePlate.difference(footing)
 						/*
 		CSG sidePlateA=sidePlate
 				.difference(screwAcross)
@@ -454,12 +468,18 @@ ICadGenerator c= new ICadGenerator(){
 						.rotx(-90)
 						.toZMin()
 			})
-		basePlate.setManufacturing({ toMfg ->
+		basePlateUpper.setManufacturing({ toMfg ->
 				return toMfg
 						.toXMin()
 						.toYMin()
 						.toZMin()
 			})
+		basePlateLower.setManufacturing({ toMfg ->
+			return toMfg
+					.toXMin()
+					.toYMin()
+					.toZMin()
+		})
 		/*
 		sidePlateA.setManufacturing({ toMfg ->
 				return toMfg
@@ -478,23 +498,26 @@ ICadGenerator c= new ICadGenerator(){
 		*/
 		
 
-		attachmentParts.addAll(cameraParts)
+		
 		//if(showRightPrintedParts)attachmentParts.add(sidePlateA)
 		//if(showRightPrintedParts)attachmentParts.add(sidePlateB)
 		//if(showLeftPrintedParts)attachmentParts.add(baseShapeA)
 		//if(showRightPrintedParts)attachmentParts.add(baseShapeB)
 		//if(showRightPrintedParts)attachmentParts.add(basePlate)
 		//if(showLeftPrintedParts)attachmentParts.add(baseCap)
-
+		cameraParts.forEach{
+			add(attachmentParts,it,null,"cameraStand_SVG")
+		}
 		add(attachmentParts,baseShapeA,null,"baseLeft")
 		add(attachmentParts,baseShapeB,null,"baseRight")
-		add(attachmentParts,basePlate,null,"basePlate")
+		add(attachmentParts,basePlateUpper,null,"basePlateEtching_SVG")
+		add(attachmentParts,basePlateLower,null,"basePlateCut_SVG")
 		add(attachmentParts,baseCap,null,"baseCap")
 		return attachmentParts;
 	}
 	@Override 
 	public ArrayList<CSG> generateCad(DHParameterKinematics sourceLimb, int linkIndex) {
-		//return new ArrayList<CSG>()
+		return new ArrayList<CSG>()
 		//Creating the horn
 		ArrayList<DHLink> dhLinks=sourceLimb.getChain().getLinks();
 		String legStr = sourceLimb.getXml()
