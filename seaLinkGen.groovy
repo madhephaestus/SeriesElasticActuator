@@ -14,7 +14,7 @@ import javafx.scene.transform.Affine;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 ICadGenerator c= new ICadGenerator(){
-	boolean showVitamins = false
+	boolean showVitamins =true
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	int[] version = com.neuronrobotics.javacad.JavaCadBuildInfo.getBuildInfo();
