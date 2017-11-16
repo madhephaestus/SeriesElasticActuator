@@ -39,6 +39,7 @@ ICadGenerator c= new ICadGenerator(){
 	HashMap<String, Object>  nutMeasurments = Vitamins.getConfiguration( "nut",boltSizeParam.getStrValue())
 	HashMap<String, Object>  gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
 	HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
+	
 	double workcellSize = 760
 	double cameraLocation =(workcellSize-20)/2
 	TransformNR cameraLocationNR = new TransformNR(cameraLocation+20,0,cameraLocation+20,new RotationNR(0,-180,-35))
@@ -91,6 +92,12 @@ ICadGenerator c= new ICadGenerator(){
 										))
 	
 	DHParameterKinematics neck=null;
+	CSG  tmpNut= Vitamins.get( "lockNut",boltSizeParam.getStrValue())
+					.rotz(30)
+	CSG	LockNutKeepaway = tmpNut.movey(thickness.getMM())
+				.union(tmpNut.movey(-thickness.getMM()))
+				.hull()
+				
 	CSG gearA = Vitamins.get( "vexGear",gearAParam.getStrValue())
 				.movex(-gearDistance)
 	CSG gearB = Vitamins.get( "vexGear",gearBParam.getStrValue());
@@ -1253,11 +1260,8 @@ ICadGenerator c= new ICadGenerator(){
 						.movex(cameraBolt)	
 						.toZMax()
 		CSG topNotches = notches.transformed(cameraLocationCSG)	
-		CSG  nut= Vitamins.get( "lockNut",boltSizeParam.getStrValue())
-					.rotz(30)
-		nut = nut.movey(thickness.getMM())
-				.union(nut.movey(-thickness.getMM()))
-				.hull()
+
+		CSG nut = LockNutKeepaway
 				.movez(thickness.getMM())
 		//boltSizeParam
 		CSG boltCutout = new Cube(boltMeasurments.outerDiameter,
@@ -1316,7 +1320,7 @@ ICadGenerator c= new ICadGenerator(){
 				return null
 		})
 		//return [bottomNotches]
-		return [camerMount,bracketA,bracketB,bottomBolts,camera]
+		return [camerMount,bracketA,bracketB,bottomBolts]
 	}
 
 	private add(ArrayList<CSG> csg ,CSG object, Affine dh , String name){
