@@ -14,6 +14,8 @@ import javafx.scene.transform.Affine;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 ICadGenerator c= new ICadGenerator(){
+	double boardX = 1219.2
+	double boardY = 914.4
 	boolean showVitamins =false
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
@@ -389,7 +391,7 @@ ICadGenerator c= new ICadGenerator(){
 		double spacing = 75
 
 		double nucleoMountPlacement = spacing+baseBackSet+nucleoBoard.getMaxX()
-		CSG boxCut = new Cube(workcellSize/2+nucleoMountPlacement,workcellSize,thickness.getMM()*2).toCSG()
+		CSG boxCut = new Cube((workcellSize/2)+nucleoMountPlacement,workcellSize,thickness.getMM()*2).toCSG()
 					.toXMax()
 					.movex(workcellSize/2)
 
@@ -398,15 +400,15 @@ ICadGenerator c= new ICadGenerator(){
 					.movez(-thickness.getMM()*1.5)
 					.roty(90)
 					.transformed(tipatHome)
-		
-		CSG footing =new Cube(workcellSize,workcellSize/3,thickness.getMM()).toCSG()
+		double footingWidth = boardY/4
+		CSG footing =new Cube(workcellSize,footingWidth,thickness.getMM()).toCSG()
 		
 		double etchWith = 0.1
 		CSG etchX =new Cube((workcellSize/2)-2,etchWith,thickness.getMM()).toCSG()
 					.toXMin()
-		CSG etchY =new Cube(etchWith,(workcellSize/3)-2,thickness.getMM()).toCSG()
+		CSG etchY =new Cube(etchWith,footingWidth-2,thickness.getMM()).toCSG()
 		def etchParts = [etchX,etchY]
-		for(double i=-100;i<101;i+=50){
+		for(double i=-150;i<151;i+=50){
 			etchParts.add(etchX.movey(i))
 		}
 		for(double i=0;i<etchX.getMaxX();i+=50){
@@ -517,7 +519,7 @@ ICadGenerator c= new ICadGenerator(){
 	}
 	@Override 
 	public ArrayList<CSG> generateCad(DHParameterKinematics sourceLimb, int linkIndex) {
-		return new ArrayList<CSG>()
+		//return new ArrayList<CSG>()
 		//Creating the horn
 		ArrayList<DHLink> dhLinks=sourceLimb.getChain().getLinks();
 		String legStr = sourceLimb.getXml()
