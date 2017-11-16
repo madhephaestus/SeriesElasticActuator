@@ -408,10 +408,11 @@ ICadGenerator c= new ICadGenerator(){
 					.toXMin()
 		CSG etchY =new Cube(etchWith,footingWidth-2,thickness.getMM()).toCSG()
 		def etchParts = [etchX,etchY]
-		for(double i=-150;i<151;i+=50){
+		double gridDimention =25
+		for(double i=-150;i<151;i+=gridDimention){
 			etchParts.add(etchX.movey(i))
 		}
-		for(double i=0;i<etchX.getMaxX();i+=50){
+		for(double i=0;i<etchX.getMaxX();i+=gridDimention){
 			etchParts.add(etchY.movex(i))
 		}
 		def cameraParts = getCameraMount()
