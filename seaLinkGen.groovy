@@ -676,7 +676,7 @@ ICadGenerator c= new ICadGenerator(){
 			ArrayList<CSG> esp = getServoCap(nextLink)
 			double linkCconnectorOffset = drivenLinkXFromCenter-(encoderCapRodRadius+bearingDiameter)/2
 			def end = [(double)-dh.getR()+linkCconnectorOffset,(double)dh.getD()*0.98,(double)0]
-			def controlOne = [(double)-5 ,(double)end.get(1)*0.8,(double)0]
+			def controlOne = [(double)-2 ,(double)end.get(1)*0.8,(double)0]
 			def controlTwo = [(double)end.get(0),(double)0,(double)end.get(2)*1.1]
 
 			CSG connectorArmCross = new RoundedCube(cornerRadius*2,
@@ -716,7 +716,8 @@ ICadGenerator c= new ICadGenerator(){
 							.union(mountLug)
 							.hull()
 							.movex(5)// offset to avoid hitting pervious link
-							.movey(-2)// offset to avoid hitting pervious link
+							//.movey(-1)// offset to avoid hitting pervious link
+							//.movez(-2)// adjust support to met previous gear
 			def linkParts = Extrude.bezier(	connectorArmCross,
 					controlOne, // Control point one
 					controlTwo, // Control point two
