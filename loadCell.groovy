@@ -20,7 +20,7 @@ loadHole=loadHole
 double barLength = 80
 CSG bar = new Cube(barLength+2,barWidth+nubOffset+printerOffset.getMM(),barWidth+printerOffset.getMM()).toCSG()
 			.movey(printerOffset.getMM()/2-nubOffset/2)
-CSG backKeepaway = new Cube(barLength/2+1,barWidth,barWidth+printerOffset.getMM()).toCSG()
+CSG backKeepaway = new Cube(barLength/2+1,barWidth+nubOffset+printerOffset.getMM(),barWidth+printerOffset.getMM()).toCSG()
 			.movey((nubOffset))	
 			.toXMax()			
 CSG nub = new Cube(30,nubWidth,nubWidth)
@@ -33,11 +33,11 @@ bar=CSG.unionAll([bar,nub,backKeepaway])
 HashMap<String, Object>  m5boltMeasurments = Vitamins.getConfiguration( "capScrew","M5")
 HashMap<String, Object>  m4boltMeasurments = Vitamins.getConfiguration( "capScrew","M4")
 
-CSG baseBolt =new Cylinder(m5boltMeasurments.outerDiameter/2,
-					m5boltMeasurments.outerDiameter/2,100,(int)30).toCSG()
+CSG baseBolt =new Cylinder((m5boltMeasurments.outerDiameter+printerOffset.getMM())/2,
+					(m5boltMeasurments.outerDiameter+printerOffset.getMM())/2,100,(int)30).toCSG()
 			.movez(-50)
-CSG endBolt =new Cylinder(m4boltMeasurments.outerDiameter/2,
-					m4boltMeasurments.outerDiameter/2,100,(int)30).toCSG()
+CSG endBolt =new Cylinder((m4boltMeasurments.outerDiameter+printerOffset.getMM())/2,
+					(m4boltMeasurments.outerDiameter+printerOffset.getMM())/2,100,(int)30).toCSG()
 			.movez(-50)
 baseBolt=baseBolt.union(baseBolt.movex(15))
 			.movex(5)
