@@ -181,14 +181,25 @@ ICadGenerator c= new ICadGenerator(){
 	double drivenLinkXFromCenter = legLength+encoderCapRodRadius
 	double loadCellBoltCenter = -(40.0-5.0-(15.0/2))
 	double thirdarmBoltBackSetDistance = 16.0
+	CSG wrenchKeepaway=new Cube(20,40,6).toCSG()
+					.toYMax()
+					.movey(3)
+					.toZMax()
+					.movez(printerOffset.getMM())
+					.union(tmpNut
+							.makeKeepaway(printerOffset.getMM())
+							.rotx(180)	
+							.movez(0.5)
+							)
 	CSG screwWithNut = screwTotal.union(LockNutCentered.makeKeepaway(printerOffset.getMM())
 									.rotx(180)
+									.union(wrenchKeepaway)
 									.rotz(90)
 									)
-									.movez(-15)
-	CSG armScrews = screwWithNut
+									.movez(-30)
+	CSG armScrews = screwWithNut.rotz(-45)
 					.movey(-screwCenterLine+screwHeadKeepaway)
-					.union(screwWithNut
+					.union(screwWithNut.rotz(45)
 						.movey(screwCenterLine-screwHeadKeepaway))
 					//.union(screwTotal
 					//		.union(new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() 
