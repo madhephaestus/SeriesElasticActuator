@@ -2,7 +2,7 @@
 LengthParameter printerOffset		= new LengthParameter("printerOffset",0.5,[2,0.001])
 double barWidth = 12.7+printerOffset.getMM()
 double nubOffset = 1.9
-double nubWidth = barWidth+nubOffset
+double nubWidth = barWidth+(nubOffset*2)
 double holeRad = 9.5/2.0-printerOffset.getMM()*2
 double holeOffsetEdgeToEdge = 16.5-printerOffset.getMM()*2
 
@@ -18,15 +18,14 @@ loadHole=loadHole
 
 
 double barLength = 80
-CSG bar = new Cube(barLength+2,barWidth+printerOffset.getMM(),barWidth+printerOffset.getMM()).toCSG()
-			.movey(printerOffset.getMM()/2)
-CSG backKeepaway = new Cube(barLength/2+1,nubWidth,barWidth+printerOffset.getMM()).toCSG()
+CSG bar = new Cube(barLength+2,barWidth+nubOffset+printerOffset.getMM(),barWidth+printerOffset.getMM()).toCSG()
+			.movey(printerOffset.getMM()/2-nubOffset/2)
+CSG backKeepaway = new Cube(barLength/2+1,barWidth,barWidth+printerOffset.getMM()).toCSG()
 			.movey((nubOffset))	
 			.toXMax()			
-CSG nub = new RoundedCube(30,nubWidth,nubWidth)
-					.cornerRadius(1)// sets the radius of the corner
+CSG nub = new Cube(30,nubWidth,nubWidth)
 					.toCSG()
-					.movey(nubOffset)
+					//.movey(nubOffset)
 				
 bar=CSG.unionAll([bar,nub,backKeepaway])
 		.difference(loadHole)

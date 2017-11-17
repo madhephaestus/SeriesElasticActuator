@@ -184,7 +184,8 @@ ICadGenerator c= new ICadGenerator(){
 	CSG screwWithNut = screwTotal.union(LockNutCentered.makeKeepaway(printerOffset.getMM())
 									.rotx(180)
 									.rotz(90)
-									.movez(-15))
+									)
+									.movez(-15)
 	CSG armScrews = screwWithNut
 					.movey(-screwCenterLine+screwHeadKeepaway)
 					.union(screwWithNut
