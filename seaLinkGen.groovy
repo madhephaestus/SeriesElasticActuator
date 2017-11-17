@@ -67,7 +67,7 @@ ICadGenerator c= new ICadGenerator(){
 	double linkMaterialThickness = pinLength/2-3-(pinExtraDepth/2)
 	// #8x 1-5/8 wood screw
 	double screwDrillHole=((boltMeasurments.outerDiameter-1.2)+printerOffset.getMM())/2
-	double screwthreadKeepAway= (boltMeasurments.outerDiameter+printerOffset.getMM()+0.25)/2
+	double screwthreadKeepAway= (boltMeasurments.outerDiameter+(printerOffset.getMM()*2))/2
 	double screwHeadKeepaway =boltMeasurments.headDiameter/2 + printerOffset.getMM()
 	double screwLength = 200 //1-5/8 
 	
