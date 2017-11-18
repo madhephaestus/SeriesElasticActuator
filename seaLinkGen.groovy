@@ -47,7 +47,7 @@ ICadGenerator c= new ICadGenerator(){
 	double gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
 	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
 	double springHeight = 26
-	
+	double motorBackSetDistance =5
 	double boltDimeMeasurment = boltMeasurments.get("outerDiameter")
 	double boltHeadThickness =boltMeasurments.headHeight
 	double boltHeadKeepaway = boltMeasurments.headDiameter*1.25
@@ -103,8 +103,9 @@ ICadGenerator c= new ICadGenerator(){
 				.movex(-gearDistance)
 	CSG gearB = Vitamins.get( "vexGear",gearBParam.getStrValue());
 	CSG bolt = Vitamins.get( "capScrew",boltSizeParam.getStrValue());
-	//CSG spring = Vitamins.get( "torsionSpring",springType)	
-	//			.movez(-springHeight/2)
+	CSG gearStandoff = new Cylinder(gearA.getMaxX(),motorBackSetDistance+washerThickness).toCSG()
+						.toZMax()
+	
 	CSG previousServo = null;
 	CSG previousEncoder = null
 	CSG encoderCapCache=null
@@ -189,7 +190,7 @@ ICadGenerator c= new ICadGenerator(){
 					.union(tmpNut
 							.makeKeepaway(printerOffset.getMM())
 							.rotx(180)	
-							.movez(0.5)
+							.movez(1)
 							)
 	CSG screwWithNut = screwTotal.union(LockNutCentered.makeKeepaway(printerOffset.getMM())
 									.rotx(180)
@@ -1165,6 +1166,7 @@ ICadGenerator c= new ICadGenerator(){
 			.movez(servoNub-centerLinkToBearingTop)			
 			.movey(-gearDistance)
 			.rotz(90)
+			.movez(-motorBackSetDistance)
 			
 		double servoTop = servoReference.getMaxZ()-servoNub
 		double bearingHolder = bearingDiameter/2 + encoderCapRodRadius
