@@ -103,9 +103,10 @@ ICadGenerator c= new ICadGenerator(){
 				.movex(-gearDistance)
 	CSG gearB = Vitamins.get( "vexGear",gearBParam.getStrValue());
 	CSG bolt = Vitamins.get( "capScrew",boltSizeParam.getStrValue());
-	CSG gearStandoff = new Cylinder(gearA.getMaxX(),motorBackSetDistance+washerThickness).toCSG()
+	CSG gearStandoff = new Cylinder(gearA.getMaxY(),motorBackSetDistance+washerThickness).toCSG()
 						.toZMax()
-	
+						.movex(-gearDistance)
+	CSG gearKeepaway = gearStandoff.toolOffset(1)
 	CSG previousServo = null;
 	CSG previousEncoder = null
 	CSG encoderCapCache=null
@@ -280,6 +281,7 @@ ICadGenerator c= new ICadGenerator(){
 		tailLength.setMM(maxz)
 		CSG servoReference=   Vitamins.get(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
 								.rotz(180+Math.toDegrees(dh.getTheta()))
+								.movez(-motorBackSetDistance)
 		
 		double servoNub = servoMeasurments.tipOfShaftToBottomOfFlange - servoMeasurments.bottomOfFlangeToTopOfBody
 		double servoTop = servoReference.getMaxZ()-servoNub
@@ -294,7 +296,8 @@ ICadGenerator c= new ICadGenerator(){
 			servoCentering=minimumWidth
 		double baseyLength = servoCentering*2
 		double keepAwayDistance =10
-		
+		CSG gearHole = gearKeepaway
+					.movez(topLevel)
 		servoReference=servoReference
 					.movez(servoPlane)
 					.movex(-gearDistance)
@@ -469,7 +472,7 @@ ICadGenerator c= new ICadGenerator(){
 				.toYMin()
 				.movey(-servoCentering-keepAwayDistance)
 				.movex(baseBackSet)
-				.difference([encoderBaseKeepaway,servoReference,screws])
+				.difference([encoderBaseKeepaway,servoReference,screws,gearHole])
 
 				
 		CSG baseCap = getEncoderCap()
@@ -647,8 +650,15 @@ ICadGenerator c= new ICadGenerator(){
 				.movez(servoNub-centerLinkToBearingTop)			
 				.movex(-gearDistance)
 				//.rotz(90+Math.toDegrees(dh.getTheta()))
-			CSG myGearA = gearA.clone()	
-			for(int i=0;i<2;i++){
+			double gearPlacementVSMotor = -(motorBackSetDistance+washerThickness)
+			CSG myGearA = gearA.clone()
+						.union(gearStandoff
+							//.movez(gearPlacementVSMotor)
+							
+						)
+						.movez(washerThickness)	
+			horn=horn.movez(gearPlacementVSMotor)
+			for(int i=0;i<4;i++){
 				myGearA=myGearA
 					.difference(horn
 								.movez(hornOffset*i)
@@ -1167,7 +1177,8 @@ ICadGenerator c= new ICadGenerator(){
 			.movey(-gearDistance)
 			.rotz(90)
 			.movez(-motorBackSetDistance)
-			
+		CSG gearHole = gearKeepaway
+					.movez(servoNub-centerLinkToBearingTop)	
 		double servoTop = servoReference.getMaxZ()-servoNub
 		double bearingHolder = bearingDiameter/2 + encoderCapRodRadius
 		
@@ -1195,7 +1206,7 @@ ICadGenerator c= new ICadGenerator(){
 						.movez(encoderBearingHeight-encoderToEncoderDistance)
 						.difference(encoderKeepaway)
 						.difference(screwSet.movez(-encoderToEncoderDistance-encoderBearingHeight))
-						.difference(servoReference)
+						.difference([servoReference,gearHole.movez(-2)])
 						.difference(servoReference.movez(-2))
 		double plateThickness = (-bottomBlock.getMinZ()+bottomBlock.getMaxZ())
 		CSG boundingBox = new Cube(   (-bottomBlock.getMinX()+bottomBlock.getMaxX()),
