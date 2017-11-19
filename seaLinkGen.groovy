@@ -106,7 +106,7 @@ ICadGenerator c= new ICadGenerator(){
 	CSG gearStandoff = new Cylinder(gearA.getMaxY(),motorBackSetDistance+washerThickness).toCSG()
 						.toZMax()
 						.movex(-gearDistance)
-	CSG gearKeepaway = gearStandoff.toolOffset(1)
+	CSG gearKeepaway = gearStandoff.toolOffset(1).getBoundingBox()
 	CSG previousServo = null;
 	CSG previousEncoder = null
 	CSG encoderCapCache=null
