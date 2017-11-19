@@ -94,10 +94,7 @@ ICadGenerator c= new ICadGenerator(){
 	DHParameterKinematics neck=null;
 	CSG  tmpNut= Vitamins.get( "lockNut",boltSizeParam.getStrValue())
 					.rotz(30)
-	CSG	LockNutKeepaway = tmpNut.movey(thickness.getMM())
-				.union(tmpNut.movey(-thickness.getMM()))
-				.hull()
-	CSG	LockNutCentered = LockNutKeepaway.movey(thickness.getMM())	
+	
 	
 	CSG gearA = Vitamins.get( "vexGear",gearAParam.getStrValue())
 				.movex(-gearDistance)
@@ -183,6 +180,15 @@ ICadGenerator c= new ICadGenerator(){
 	double drivenLinkXFromCenter = legLength+encoderCapRodRadius
 	double loadCellBoltCenter = -(40.0-5.0-(15.0/2))
 	double thirdarmBoltBackSetDistance = 16.0
+	CSG	LockNutKeepaway = tmpNut.movey(thickness.getMM())
+				.union(tmpNut.movey(-thickness.getMM()))
+				.hull()
+	CSG	LockNutCentered = LockNutKeepaway.movey(thickness.getMM())	
+	double nutDriverRadius = (0.75*25.4)/2
+	double nutInsetDistance =tmpNut.getMaxZ();
+	CSG nutDriver = new Cylinder(nutDriverRadius,nutInsetDistance*2).toCSG()
+	CSG nutAndDriverKeepaway = nutDriver.union(tmpNut.movez(-1))
+	
 	CSG wrenchKeepaway=new Cube(20,40,6).toCSG()
 					.toYMax()
 					.movey(3)
@@ -214,12 +220,18 @@ ICadGenerator c= new ICadGenerator(){
 					.roty(-90)
 					//.movex(legLength+encoderCapRodRadius/2)
 					.movez(centerLinkToBearingTop-screwHeadKeepaway*1.5)
-	CSG LoadCellScrews = screwTotal
+	// Loading the gear bolts for the load cell
+	double distanceToTopOfGear = topOfGearToCenter
+	CSG gearScrew =screwTotal
+					.union(nutAndDriverKeepaway.roty(180))
+					.movez(-gearBMeasurments.height+washerThickness+nutInsetDistance)
+	CSG LoadCellScrews = gearScrew
 					.movey(-screwCenterLine+screwHeadKeepaway)
-					.union(screwTotal
+					.union(gearScrew
 						.movey(screwCenterLine-screwHeadKeepaway))
 					.movex(loadCellBoltCenter)
-					.movez(-topOfGearToCenter+(washerThickness))						
+					.movez(-distanceToTopOfGear)		
+									
 	CSG loadBearingPinBearing =new Cylinder(	brassBearingRadius,
 										brassBearingRadius,
 										drivenLinkThickness+encoderBearingHeight,
