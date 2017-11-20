@@ -14,7 +14,7 @@
 
 <name>HephaestustArm</name>
 	<cadEngine>
-		<git>https://github.com/madhephaestus/SeriesElasticActuator.git</git>
+		<git>https://github.com/osh1996/SeriesElasticActuator.git</git>
 		<file>seaLinkGen.groovy</file>
 	</cadEngine>
 	<kinematics>
