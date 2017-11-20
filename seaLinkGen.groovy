@@ -641,7 +641,7 @@ ICadGenerator c= new ICadGenerator(){
 											.rotz(-Math.toDegrees(dh.getTheta()))
 											,dh)
 					   .movex(springBlockPartRaw.getMaxX())
-		if(linkIndex<dhLinks.size()-1){
+		if(linkIndex<dhLinks.size()-1 && linkIndex!=2 ){
 			HashMap<String, Object> shaftmap = Vitamins.getConfiguration(nextLink.getShaftType(),nextLink.getShaftSize())
 			HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(nextLink.getElectroMechanicalType(),nextLink.getElectroMechanicalSize())
 			//println conf.getShaftType() +" "+conf.getShaftSize()+" "+shaftmap
@@ -931,6 +931,10 @@ ICadGenerator c= new ICadGenerator(){
 			if(esp.size()>1)if(showLeftPrintedParts)add(csg,esp.get(1),dh.getListener(),"encoderPlate")
 			if(showLeftPrintedParts)add(csg,baseEncoderCap,dh.getListener(),"baseEncoderCap")
 			
+		}else if(linkIndex==2){
+			// add link here
+			CSG DummyStandInForLink = new Cube(20).toCSG()
+			add(csg,DummyStandInForLink,dh.getListener(),"dummyLink")
 		}else{
 			// load the end of limb
 			// Target point
