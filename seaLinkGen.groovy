@@ -10,7 +10,6 @@ import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import eu.mihosoft.vrl.v3d.Transform;
 import javafx.scene.transform.Affine;
 
-
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 ICadGenerator c= new ICadGenerator(){
@@ -933,8 +932,14 @@ ICadGenerator c= new ICadGenerator(){
 			
 		}else if(linkIndex==2){
 			// add link here
-			CSG DummyStandInForLink = new Cube(20).toCSG()
-			add(csg,DummyStandInForLink,dh.getListener(),"dummyLink")
+			def parts = ScriptingEngine
+	                    .gitScriptRun(
+                                "https://github.com/osh1996/SeriesElasticActuator.git", // git location of the library
+	                              "MiraLink.groovy" , // file to load
+	                              [dh,linkIndex]// no parameters (see next tutorial)
+                        )
+                for(CSG DummyStandInForLink:parts)
+				add(csg,DummyStandInForLink,dh.getListener(),"dummyLink")
 		}else{
 			// load the end of limb
 			// Target point
