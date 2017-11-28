@@ -30,10 +30,7 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 						.toYMin()
 						.toZMax()
 						.setColor(Color.WHITE)					
-	ArrayList<CSG> beds = [bedA,
-						bedB
-	]
-	
+
 	
 	ArrayList<DHParameterKinematics> limbs = b.getAllDHChains();
 	double numLimbs = limbs.size();
@@ -92,19 +89,12 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 	baseRight = namedPart.baseRight
 	baseLeft = namedPart.baseLeft
 					.movex(baseRight.getMaxX()+delta)
-	loadCellBlock= namedPart.loadCellBlock
-	encoderStandoff= namedPart.encoderStandoff
-	sidePlate0= namedPart.sidePlate0
-	baseCap= namedPart.baseCap
-	sidePlate1= namedPart.sidePlate1
-	lastLink= namedPart.lastLink
-	calibrationTip= namedPart.calibrationTip
 	//Washers
 	ArrayList<CSG> washers = []		
 	for(int j=0;j<numLinks;j++){
 		washers.add(namedPart.washer
 			.movey(namedPart.washer.getMaxY()*j+delta*j)
-			.movex(baseLeft.getMaxX()+delta
+			.movex(baseLeft.getMaxX()+delta))
 			
 	}
 	washer=  CSG.unionAll(washers)
@@ -117,34 +107,123 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 			
 	}
 	gears.add(namedPart.drivenGear
-			.movex(bedB.getMinX()+delta-))
+			.movex(bedB.getMinX()+delta+namedPart.drivenGear.getMaxX() ))
 	drivenGear=  CSG.unionAll(gears)
-	servoGear= namedPart.servoGear
+	//Small Gears
+	ArrayList<CSG> sgears = []	
+	for(int j=0;j<numLinks;j++){
+		sgears.add(namedPart.servoGear
+			.movey(namedPart.servoGear.getMaxY()*j+delta*j)
+			.movex(bedB.getMaxX()-delta -namedPart.servoGear.getMaxX() ))
+			
+	}
+	servoGear= CSG.unionAll(sgears)
+	//LoadCell Block
+	ArrayList<CSG> blocks = []
+	loadCellBlock= namedPart.loadCellBlock	
+	for(int j=0;j<numLinks-1;j++){
+		blocks.add(loadCellBlock
+			.movey((loadCellBlock.getMaxY()*j+delta*j)+
+				namedPart.drivenGear.getMaxX()	+delta
+			)
+			.movex(bedB.getMinX()+delta*2 +namedPart.drivenGear.getMaxX() ))
+			
+	}
+	CSG otherBlock = loadCellBlock
+			.rotz(20)
+			.toXMax()
+			.toYMax()
+			.movey(bedA.getMaxY()-35)
+			.movex(bedA.getMaxX())
+	
+			
+	loadCellBlock= CSG.unionAll(blocks)
+	
+	ArrayList<CSG> sencoderStandoff = []	
+	for(int j=0;j<numLinks;j++){
+		sencoderStandoff.add(namedPart.encoderStandoff
+			.toXMax()
+			.movey(namedPart.encoderStandoff.getMaxY()*j+delta*j+delta)
+			.movex(bedB.getMaxX()-delta -namedPart.servoGear.getMaxX() ))
+			
+	}
+	encoderStandoff= CSG.unionAll(sencoderStandoff)
+	//encoderStandoff= namedPart.encoderStandoff
+	sidePlate0= namedPart.sidePlate0
+				.rotz(-112)
+				.toYMax()
+				.toXMax()
+				.movey(bedB.getMaxY())
+				.movex(bedB.getMaxX())
+	baseCap= namedPart.baseCap
+			.rotz(-75)
+			.movey(baseRight.getMaxY()+delta)
+			.movex(baseRight.getMaxX()+delta)
+	sidePlate1= namedPart.sidePlate1
+			.movey(baseRight.getMaxY()+delta-10)
+			.movex(baseRight.getMaxX()+delta)
+	lastLink= namedPart.lastLink
+			.rotz(-160)
+			.toXMin()
+			.toYMax()
+			.movey(otherBlock.getMinY()+delta+40)
+			.movex(baseCap.getMaxX()+delta-10)
+	//calibrationTip= namedPart.calibrationTip
+	
 	baseEncoderCap0= namedPart.baseEncoderCap0
+					.rotz(107)
+					.toYMax()
+					.toXMax()
+					.movey(bedA.getMaxY())
+					.movex(bedA.getMaxX())
 	
 	baseEncoderCap1= namedPart.baseEncoderCap1
+					.rotz(-99)
+					.toYMax()
+					.toXMin()
+					.movey(bedA.getMaxY())
+					.movex(bedA.getMinX())
+
+		ArrayList<CSG> beda = [
+	]
+
+		ArrayList<CSG> bedb = [
+	]
 	
-	beds.add(baseRight)
-	beds.add(baseLeft)
-	beds.add(loadCellBlock)
-	beds.add(encoderStandoff)
-	beds.add(sidePlate0)
-	beds.add(baseCap)
-	beds.add(sidePlate1)
-	beds.add(lastLink)
-	beds.add(calibrationTip)
-	beds.add(washer)
-	beds.add(servoGear)
-	beds.add(baseEncoderCap0)
-	beds.add(drivenGear)
-	beds.add(baseEncoderCap1)
-	return beds
+	beda.add(baseRight)
+	beda.add(baseLeft)
+	bedb.add(loadCellBlock)
+	bedb.add(encoderStandoff)
+	bedb.add(sidePlate0)
+	beda.add(baseCap)
+	beda.add(sidePlate1)
+	beda.add(lastLink)
+	//beds.add(calibrationTip)
+	beda.add(washer)
+	bedb.add(servoGear)
+	beda.add(baseEncoderCap0)
+	bedb.add(drivenGear)
+	beda.add(baseEncoderCap1)
+	beda.add(otherBlock)
+	//beds.addAll(beda)
+	//beds.addAll(bedb)
+	println "Making bed A "
+	BowlerStudioController.addCsg(beda , null);
+	CSG A = CSG.unionAll(beda)
+	A.setName("BedA")
+
+	println "Making bed B "
+	BowlerStudioController.addCsg(bedb , null);
+	CSG B = CSG.unionAll(bedb)
+	B.setName("BedB")
+
+	return [A,B]
 }
 
 ThreadUtil.wait(100)
 while(MobileBaseCadManager.get( base).getProcesIndictor().getProgress()<1){
 	ThreadUtil.wait(1000)
-	println "Waiting for cad to get to 1:"+MobileBaseCadManager.get(base).getProcesIndictor().getProgress()
+	println "Waiting for cad to get to 1, currently = "+MobileBaseCadManager.get(base).getProcesIndictor().getProgress()
 }
 
 List<CSG> totalAssembly = arrangeBed(base) ;
