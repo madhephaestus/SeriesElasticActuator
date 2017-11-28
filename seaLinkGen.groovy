@@ -927,9 +927,9 @@ ICadGenerator c= new ICadGenerator(){
 			if(showVitamins)add(csg,thirdPlusLinkServo,dh.getListener(),"servo")
 			if(showVitamins)add(csg,linkEncoder,dh.getListener(),"encoder")
 			if(showVitamins)add(csg,otherEncoder,dh.getListener(),"otherEncoder")
-			if(showRightPrintedParts)add(csg,sidePlateWithServo,dh.getListener(),"sidePlate")
-			if(esp.size()>1)if(showLeftPrintedParts)add(csg,esp.get(1),dh.getListener(),"encoderPlate")
-			if(showLeftPrintedParts)add(csg,baseEncoderCap,dh.getListener(),"baseEncoderCap")
+			if(showRightPrintedParts)add(csg,sidePlateWithServo,dh.getListener(),"sidePlate"+linkIndex)
+			if(esp.size()>1)if(showLeftPrintedParts)add(csg,esp.get(1),dh.getListener(),"encoderPlate"+linkIndex)
+			if(showLeftPrintedParts)add(csg,baseEncoderCap,dh.getListener(),"baseEncoderCap"+linkIndex)
 			
 		}else{
 			// load the end of limb
