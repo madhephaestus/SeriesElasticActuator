@@ -1,3 +1,4 @@
+import javafx.scene.paint.Color;
 
 def base =DeviceManager.getSpecificDevice( "HephaestusWorkCell",{
 	//If the device does not exist, prompt for the connection
@@ -19,16 +20,20 @@ def base =DeviceManager.getSpecificDevice( "HephaestusWorkCell",{
  * @return simulatable CAD objects
  */
 ArrayList<CSG> arrangeBed(MobileBase b ){
-	ArrayList<CSG> beds = [new Cube(250,250,5).toCSG()
+	CSG bedA = new Cube(250,250,5).toCSG()
 						.toXMin()
 						.toYMin()
-						.toZMax(),
-						new Cube(250,250,5).toCSG()
+						.toZMax().setColor(Color.WHITE)
+	CSG bedB = new Cube(250,250,5).toCSG()
 						.toXMax()
 						.movex(-5)
 						.toYMin()
 						.toZMax()
+						.setColor(Color.WHITE)					
+	ArrayList<CSG> beds = [bedA,
+						bedB
 	]
+	
 	
 	ArrayList<DHParameterKinematics> limbs = b.getAllDHChains();
 	double numLimbs = limbs.size();
@@ -75,15 +80,71 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 			//c.addExportFormat("svg")
 		}else{
 			//beds.add(c)
-			namedPart.put(c.getName(),c.toXMin().toXMax())
+			tmp=c.toYMin().toXMin()
+			tmp.setName(c.getName())
+			namedPart.put(c.getName(),tmp)
 			
 		}
 		
 	}
-	for(String c:namedPart.keySet())
-		beds.add(namedPart.get(c))
+	double delta=1.5
+	int numLinks =3
+	baseRight = namedPart.baseRight
+	baseLeft = namedPart.baseLeft
+					.movex(baseRight.getMaxX()+delta)
+	loadCellBlock= namedPart.loadCellBlock
+	encoderStandoff= namedPart.encoderStandoff
+	sidePlate0= namedPart.sidePlate0
+	baseCap= namedPart.baseCap
+	sidePlate1= namedPart.sidePlate1
+	lastLink= namedPart.lastLink
+	calibrationTip= namedPart.calibrationTip
+	//Washers
+	ArrayList<CSG> washers = []		
+	for(int j=0;j<numLinks;j++){
+		washers.add(namedPart.washer
+			.movey(namedPart.washer.getMaxY()*j+delta*j)
+			.movex(baseLeft.getMaxX()+delta
+			
+	}
+	washer=  CSG.unionAll(washers)
+	//Big Gears
+	ArrayList<CSG> gears = []	
+	for(int j=0;j<numLinks-1;j++){
+		gears.add(namedPart.drivenGear
+			.movey(namedPart.drivenGear.getMaxY()*j+delta*j)
+			.movex(bedB.getMinX()+delta))
+			
+	}
+	gears.add(namedPart.drivenGear
+			.movex(bedB.getMinX()+delta-))
+	drivenGear=  CSG.unionAll(gears)
+	servoGear= namedPart.servoGear
+	baseEncoderCap0= namedPart.baseEncoderCap0
 	
+	baseEncoderCap1= namedPart.baseEncoderCap1
+	
+	beds.add(baseRight)
+	beds.add(baseLeft)
+	beds.add(loadCellBlock)
+	beds.add(encoderStandoff)
+	beds.add(sidePlate0)
+	beds.add(baseCap)
+	beds.add(sidePlate1)
+	beds.add(lastLink)
+	beds.add(calibrationTip)
+	beds.add(washer)
+	beds.add(servoGear)
+	beds.add(baseEncoderCap0)
+	beds.add(drivenGear)
+	beds.add(baseEncoderCap1)
 	return beds
+}
+
+ThreadUtil.wait(100)
+while(MobileBaseCadManager.get( base).getProcesIndictor().getProgress()<1){
+	ThreadUtil.wait(1000)
+	println "Waiting for cad to get to 1:"+MobileBaseCadManager.get(base).getProcesIndictor().getProgress()
 }
 
 List<CSG> totalAssembly = arrangeBed(base) ;
@@ -98,4 +159,5 @@ if (!dir.exists())
 
 CadFileExporter.generateManufacturingParts(totalAssembly, dir);
 */
+
 return totalAssembly
