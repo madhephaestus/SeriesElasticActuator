@@ -184,40 +184,21 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 					.movey(bedA.getMaxY())
 					.movex(bedA.getMinX())
 
-		ArrayList<CSG> beda = [
-	]
+	def beda =[washer,baseRight,baseLeft,baseCap,sidePlate1,lastLink,baseEncoderCap0,baseEncoderCap1,otherBlock]
 
-		ArrayList<CSG> bedb = [
-	]
-	
-	beda.add(baseRight)
-	beda.add(baseLeft)
-	bedb.add(loadCellBlock)
-	bedb.add(encoderStandoff)
-	bedb.add(sidePlate0)
-	beda.add(baseCap)
-	beda.add(sidePlate1)
-	beda.add(lastLink)
-	//beds.add(calibrationTip)
-	beda.add(washer)
-	bedb.add(servoGear)
-	beda.add(baseEncoderCap0)
-	bedb.add(drivenGear)
-	beda.add(baseEncoderCap1)
-	beda.add(otherBlock)
-	//beds.addAll(beda)
-	//beds.addAll(bedb)
+	def bedb = [encoderStandoff,loadCellBlock,sidePlate0,servoGear,drivenGear]
+
 	println "Making bed A "
-	BowlerStudioController.addCsg(beda , null);
-	CSG A = CSG.unionAll(beda)
+	BowlerStudioController.setCsg(beda , null);
+	CSG A = CSG.unionAll(beda).toYMax()
 	A.setName("BedA")
 
 	println "Making bed B "
-	BowlerStudioController.addCsg(bedb , null);
-	CSG B = CSG.unionAll(bedb)
+	BowlerStudioController.setCsg(bedb , null);
+	CSG B = CSG.unionAll(bedb).toYMax()
 	B.setName("BedB")
-
-	return [A,B]
+	
+	return [beda,bedb,A,B,namedPart.values()]
 }
 
 ThreadUtil.wait(100)
