@@ -20,11 +20,12 @@ def base =DeviceManager.getSpecificDevice( "HephaestusWorkCell",{
  * @return simulatable CAD objects
  */
 ArrayList<CSG> arrangeBed(MobileBase b ){
-	CSG bedA = new Cube(250,250,5).toCSG()
+	double size =260
+	CSG bedA = new Cube(size,size,5).toCSG()
 						.toXMin()
 						.toYMin()
 						.toZMax().setColor(Color.WHITE)
-	CSG bedB = new Cube(250,250,5).toCSG()
+	CSG bedB = new Cube(size,size,5).toCSG()
 						.toXMax()
 						.movex(-5)
 						.toYMin()
@@ -84,7 +85,7 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 		}
 		
 	}
-	double delta=1.5
+	double delta=2
 	int numLinks =3
 	baseRight = namedPart.baseRight
 	baseLeft = namedPart.baseLeft
@@ -184,9 +185,9 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 					.movey(bedA.getMaxY())
 					.movex(bedA.getMinX())
 
-	def beda =[washer,baseRight,baseLeft,baseCap,sidePlate1,lastLink,baseEncoderCap0,baseEncoderCap1,otherBlock]
+	def beda =[washer,baseRight,baseLeft,baseCap,sidePlate1,lastLink,baseEncoderCap0,baseEncoderCap1,otherBlock]as ArrayList<CSG>
 
-	def bedb = [encoderStandoff,loadCellBlock,sidePlate0,servoGear,drivenGear]
+	def bedb = [encoderStandoff,loadCellBlock,sidePlate0,servoGear,drivenGear]as ArrayList<CSG>
 
 	println "Making bed A "
 	BowlerStudioController.setCsg(beda , null);
@@ -197,8 +198,10 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 	BowlerStudioController.setCsg(bedb , null);
 	CSG B = CSG.unionAll(bedb).toYMax()
 	B.setName("BedB")
-	
-	return [beda,bedb,A,B,namedPart.values()]
+	parts=[A,B]
+	parts.addAll(beda)
+	parts.addAll(bedb)
+	return parts
 }
 
 ThreadUtil.wait(100)
@@ -210,7 +213,7 @@ while(MobileBaseCadManager.get( base).getProcesIndictor().getProgress()<1){
 List<CSG> totalAssembly = arrangeBed(base) ;
 BowlerStudioController.setCsg(totalAssembly , null);
 
-/*
+
 File baseDirForFiles = com.neuronrobotics.nrconsole.util.FileSelectionFactory.GetDirectory(new File("/home/hephaestus/Desktop/armLinks/"))
 
 File dir = new File(baseDirForFiles.getAbsolutePath() + "/" + base.getScriptingName() );
@@ -218,6 +221,6 @@ if (!dir.exists())
 	dir.mkdirs();
 
 CadFileExporter.generateManufacturingParts(totalAssembly, dir);
-*/
+
 
 return totalAssembly
