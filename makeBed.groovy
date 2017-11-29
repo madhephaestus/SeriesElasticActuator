@@ -108,7 +108,7 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 			
 	}
 	gears.add(namedPart.drivenGear
-			.movex(bedB.getMinX()+delta+namedPart.drivenGear.getMaxX() ))
+			.movex(bedB.getMinX()+delta*2+namedPart.drivenGear.getMaxX() ))
 	drivenGear=  CSG.unionAll(gears)
 	//Small Gears
 	ArrayList<CSG> sgears = []	
