@@ -1,3 +1,5 @@
+@Grab(group='com.neuronrobotics', module='JavaCad', version='0.12.2')
+
 import com.neuronrobotics.bowlerstudio.creature.ICadGenerator;
 import com.neuronrobotics.bowlerstudio.creature.CreatureLab;
 import org.apache.commons.io.IOUtils;
@@ -100,7 +102,7 @@ ICadGenerator c= new ICadGenerator(){
 				.movex(-gearDistance)
 	CSG gearB = Vitamins.get( "vexGear",gearBParam.getStrValue());
 	CSG bolt = Vitamins.get( "capScrew",boltSizeParam.getStrValue());
-	CSG gearStandoff = new Cylinder(gearA.getMaxY(),motorBackSetDistance+washerThickness).toCSG()
+	CSG gearStandoff = new Cylinder(gearA.getMaxY(),gearA.getMaxY(),motorBackSetDistance+washerThickness,20).toCSG()
 						.toZMax()
 						.movex(-gearDistance)
 	CSG gearKeepaway = gearStandoff.toolOffset(1).getBoundingBox()
