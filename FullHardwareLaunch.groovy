@@ -276,7 +276,9 @@ public class HIDRotoryLink extends AbstractRotoryLink{
 			int val= getCurrentPosition();
 			if(lastPushedVal!=val){
 				//println "Fire Link Listner "+index+" value "+getCurrentPosition()
-				fireLinkListener(val);
+				try{
+					fireLinkListener(val);
+				}catch(Exception ex){}
 			}
 			lastPushedVal=val
 		})
