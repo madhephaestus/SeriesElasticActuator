@@ -434,13 +434,15 @@ def physics =DeviceManager.getSpecificDevice( "HephaestusPhysics",{
 })
 */
 
-/*
+
 ThreadUtil.wait(100)
 while(MobileBaseCadManager.get( base).getProcesIndictor().getProgress()<1){
 	ThreadUtil.wait(1000)
-	println "Waiting for cad to get to 1:"+MobileBaseCadManager.get(base).getProcesIndictor().getProgress()
+	println "Waiting for cad to get to 1, is currently= "+MobileBaseCadManager.get(base).getProcesIndictor().getProgress()
 	
-}*/
+}
+
+return null
 // command index 
 
 long sum
