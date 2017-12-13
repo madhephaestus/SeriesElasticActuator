@@ -206,10 +206,10 @@ ICadGenerator c= new ICadGenerator(){
 									.union(wrenchKeepaway)
 									.rotz(90)
 									)
-									.movez(-30)
-	CSG armScrews = screwWithNut.rotz(-45)
+									.movez(-50)
+	CSG armScrews = screwWithNut.rotz(-90)
 					.movey(-screwCenterLine+screwHeadKeepaway)
-					.union(screwWithNut.rotz(45)
+					.union(screwWithNut.rotz(90)
 						.movey(screwCenterLine-screwHeadKeepaway))
 					//.union(screwTotal
 					//		.union(new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() 
