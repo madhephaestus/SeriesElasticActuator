@@ -392,13 +392,19 @@ ICadGenerator c= new ICadGenerator(){
 		screwAcross=CSG.unionAll([
 			//screwAcross,// middle bolt
 			screwAcross.movez(topLevel/2-(keepAwayDistance/2+screwHeadKeepaway))// Frontmost bolt
-					 .movex(baseShape.getMaxX()-(keepAwayDistance/2+screwHeadKeepaway)-6),
+					 .movex(baseShape.getMaxX()-(keepAwayDistance/2+screwHeadKeepaway)-7-printerOffset.getMM()),
 			//screwAcross.movex(baseShape.getMinX()+(keepAwayDistance/2+screwHeadKeepaway)), Back most bolt
 			screwAcross.movez(topLevel/2-(keepAwayDistance/2+screwHeadKeepaway))
 						.movex(screwHeadKeepaway)			
 		])
 		CSG bottomScrews = screwTotal.rotx(180)
-						.union(tmpNut.toZMax().union(tmpNut).hull())
+						.union(tmpNut
+							.toZMax()
+							.movez(-10)
+							.union(tmpNut)
+							.hull()
+							.makeKeepaway(printerOffset.getMM())
+							)
 		// Originally calculated, fixed to make sure maunfactured parts mesh
 		//Bottom Bolt hole pattern x= 97.78700180053711 y = 77.5 inset = 9.75
 		//double inset = (keepAwayDistance/2+screwHeadKeepaway)
