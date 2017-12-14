@@ -209,7 +209,7 @@ while(MobileBaseCadManager.get( base).getProcesIndictor().getProgress()<1){
 	ThreadUtil.wait(1000)
 	println "Waiting for cad to get to 1, currently = "+MobileBaseCadManager.get(base).getProcesIndictor().getProgress()
 }
-File baseDirForFiles = com.neuronrobotics.nrconsole.util.FileSelectionFactory.GetDirectory(new File("/home/hephaestus/Desktop/armLinks/"))
+File baseDirForFiles = com.neuronrobotics.nrconsole.util.FileSelectionFactory.GetDirectory(new File(System.getProperty("user.home")))
 List<CSG> totalAssembly = arrangeBed(base) ;
 BowlerStudioController.setCsg(totalAssembly , null);
 
