@@ -206,10 +206,10 @@ ICadGenerator c= new ICadGenerator(){
 									.union(wrenchKeepaway)
 									.rotz(90)
 									)
-									.movez(-50)
-	CSG armScrews = screwWithNut.rotz(-90)
+									.movez(-58)
+	CSG armScrews = screwWithNut.rotz(-45)
 					.movey(-screwCenterLine+screwHeadKeepaway)
-					.union(screwWithNut.rotz(90)
+					.union(screwWithNut.rotz(45)
 						.movey(screwCenterLine-screwHeadKeepaway))
 					//.union(screwTotal
 					//		.union(new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() 
@@ -357,7 +357,7 @@ ICadGenerator c= new ICadGenerator(){
 						.cornerRadius(cornerRadius)
 						.toCSG()
 						.toZMin()
-						.difference([keepawayBottomY,keepawayBottomX])
+						.difference([keepawayBottomY])
 		/*
 		CSG sidePlate = new Cube( basexLength+(keepAwayDistance*2)+encoderKeepawayDistance,
 							1.0,
@@ -387,19 +387,14 @@ ICadGenerator c= new ICadGenerator(){
 		CSG screwAcross = screwTotal.rotx(90)
 						.movez(topLevel/2)
 
-		screwAcross=screwAcross.union(
-				screwAcross
-					.movez(topLevel/2-(keepAwayDistance/2+screwHeadKeepaway)+2)
-					.movex(baseShape.getMaxX()-(keepAwayDistance/2+screwHeadKeepaway)+3)
-			).union(
-				screwAcross
-					
-					.movex(baseShape.getMinX()+(keepAwayDistance/2+screwHeadKeepaway))
-			).union(
-				screwAcross
-					.movez(topLevel/2-(keepAwayDistance/2+screwHeadKeepaway))
-					.movex(screwHeadKeepaway)
-			)	
+		screwAcross=CSG.unionAll([
+			//screwAcross,// middle bolt
+			screwAcross.movez(topLevel/2-(keepAwayDistance/2+screwHeadKeepaway))// Frontmost bolt
+					 .movex(baseShape.getMaxX()-(keepAwayDistance/2+screwHeadKeepaway)-5),
+			//screwAcross.movex(baseShape.getMinX()+(keepAwayDistance/2+screwHeadKeepaway)), Back most bolt
+			screwAcross.movez(topLevel/2-(keepAwayDistance/2+screwHeadKeepaway))
+						.movex(screwHeadKeepaway)			
+		])
 		CSG bottomScrews = screwTotal.rotx(180)
 		// Originally calculated, fixed to make sure maunfactured parts mesh
 		//Bottom Bolt hole pattern x= 97.78700180053711 y = 77.5 inset = 9.75
