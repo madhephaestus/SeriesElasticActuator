@@ -147,7 +147,7 @@ ICadGenerator c= new ICadGenerator(){
      CSG encoder1 =   encoderSimple.union(loadCellCutoutLocal).movez(-encoderToEncoderDistance)
 	CSG screwHole = new Cylinder(screwDrillHole,screwDrillHole,screwLength,(int)8).toCSG() // a one line Cylinder
 					.toZMax()
-     CSG screwHoleKeepaway = new Cylinder(screwthreadKeepAway,screwthreadKeepAway,50+(washerThickness*4),(int)8).toCSG() // a one line Cylinder
+     CSG screwHoleKeepaway = new Cylinder(screwthreadKeepAway,screwthreadKeepAway,100+(washerThickness*4),(int)8).toCSG() // a one line Cylinder
      					.toZMin()
 	CSG screwHead= new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() // a one line Cylinder
 						.movez(screwHoleKeepaway.getMaxZ())
@@ -382,20 +382,23 @@ ICadGenerator c= new ICadGenerator(){
 		sidePlate=sidePlate.difference(strapSlots)	
 		*/							
 		CSG screws = screwSet
-					.movez(topLevel)
+					//.movez(topLevel)
 						
-		CSG screwAcross = screwTotal.rotx(90)
+		CSG screwAcross = screwTotal
+						.movez(-topLevel)
+						.rotx(90)
 						.movez(topLevel/2)
 
 		screwAcross=CSG.unionAll([
 			//screwAcross,// middle bolt
 			screwAcross.movez(topLevel/2-(keepAwayDistance/2+screwHeadKeepaway))// Frontmost bolt
-					 .movex(baseShape.getMaxX()-(keepAwayDistance/2+screwHeadKeepaway)-5),
+					 .movex(baseShape.getMaxX()-(keepAwayDistance/2+screwHeadKeepaway)-6),
 			//screwAcross.movex(baseShape.getMinX()+(keepAwayDistance/2+screwHeadKeepaway)), Back most bolt
 			screwAcross.movez(topLevel/2-(keepAwayDistance/2+screwHeadKeepaway))
 						.movex(screwHeadKeepaway)			
 		])
 		CSG bottomScrews = screwTotal.rotx(180)
+						.union(tmpNut.toZMax().union(tmpNut).hull())
 		// Originally calculated, fixed to make sure maunfactured parts mesh
 		//Bottom Bolt hole pattern x= 97.78700180053711 y = 77.5 inset = 9.75
 		//double inset = (keepAwayDistance/2+screwHeadKeepaway)
@@ -421,7 +424,8 @@ ICadGenerator c= new ICadGenerator(){
 							bottomScrews
 								.movey(-screwY/2)
 						)
-						.movex(baseShape.getMaxX() - inset)				
+						.movex(baseShape.getMaxX() - inset)
+						.movez(topLevel)				
 		baseShape = baseShape.difference([bottomScrewSet,screwAcross])	
 		CSG nucleoBoard = nucleo.get(0)
 		double baseBackSet = 	-baseShape.getMaxX()+keepAwayDistance+encoderKeepawayDistance
