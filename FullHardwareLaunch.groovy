@@ -338,18 +338,20 @@ public class PhysicicsDevice extends NonBowlerDevice{
 				continue
 			}
 			double [] zVect = new double [3];
-			double [][] rotation = chain.intChain.get(i).getRotationMatrix().getRotationMatrix()
-			println "Rotation of "+i+" "+  TransformNR.getMatrixString(new Matrix(rotation))
-			//if(i==0){
-			//	zVect[0]=0;
-			//	zVect[1]=0;
-			//	zVect[2]=1;
-			//}else{
+			
+			double [][] rotation=new double[3][3]
+			if(i==0){
+				zVect[0]=0;
+				zVect[1]=0;
+				zVect[2]=1;
+			}else{
+				rotation = chain.intChain.get(i-1).getRotationMatrix().getRotationMatrix()
 				//Get the rz vector from matrix
-				zVect[0]=rotation[0][1];
-				zVect[1]=rotation[1][1];
-				zVect[2]=rotation[2][1];
-			//}
+				zVect[0]=rotation[0][2];
+				zVect[1]=rotation[1][2];
+				zVect[2]=rotation[2][2];
+				
+			}
 			//Assume all rotational joints
 			//Set to zero if prismatic
 			if(chain.getLinks().get(i).getLinkType()==DhLinkType.ROTORY){
@@ -364,7 +366,7 @@ public class PhysicicsDevice extends NonBowlerDevice{
 			
 			//Figure out the current 
 			Matrix current = new TransformNR().getMatrixTransform();
-			for(int j=i;j<chain.getLinks().size();j++) {
+			for(int j=i;j<chain.getLinks().size() && j<=index;j++) {
 				double value=0;
 				if(chain.getLinks().get(j).getLinkType()==DhLinkType.ROTORY)
 					value=Math.toRadians(jointSpaceVector[j]);
@@ -382,6 +384,7 @@ public class PhysicicsDevice extends NonBowlerDevice{
 			
 			//Cross product of rVect and Z vect
 			double []xProd = chain.crossProduct(rVect, zVect);
+			println i+" R vector "+rVect+" "+TransformNR.getMatrixString(new Matrix(rotation))
 			
 			data[0][i]=xProd[0];
 			data[1][i]=xProd[1];
