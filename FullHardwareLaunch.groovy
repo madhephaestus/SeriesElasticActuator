@@ -366,7 +366,7 @@ public class PhysicicsDevice extends NonBowlerDevice{
 			
 			//Figure out the current 
 			Matrix current = new TransformNR().getMatrixTransform();
-			for(int j=i;j<chain.getLinks().size() && j<=index;j++) {
+			for(int j=0;j<chain.getLinks().size() && j<=index;j++) {
 				double value=0;
 				if(chain.getLinks().get(j).getLinkType()==DhLinkType.ROTORY)
 					value=Math.toRadians(jointSpaceVector[j]);
