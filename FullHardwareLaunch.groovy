@@ -126,6 +126,7 @@ public class HIDSimpleComsDevice extends NonBowlerDevice{
 				//println "Simulation"
 				for(int j=0;j<packet.downstream.length&&j<packet.upstream.length;j++){
 					packet.upstream[j]=packet.downstream[j];
+				Thread.sleep(2)
 			}
 				
 			}
@@ -328,25 +329,27 @@ public class PhysicicsDevice extends NonBowlerDevice{
 	 * @return a matrix representing the Jacobian for the current configuration
 	 */
 	public Matrix getJacobian(DHChain chain, double[] jointSpaceVector, int index){
-		double [][] data = new double[6][chain.getLinks().size()]; 
+		int size = chain.getLinks().size()
+		double [][] data = new double[6][size]; 
 		chain.getChain(jointSpaceVector);
-		for(int i=0;i<chain.getLinks().size();i++){
-			if(i>=index){
+		for(int i=0;i<size;i++){
+			if(i>index){
 				
 				continue
 			}
 			double [] zVect = new double [3];
-			
-			if(i==0){
-				zVect[0]=0;
-				zVect[1]=0;
-				zVect[2]=1;
-			}else{
+			double [][] rotation = chain.intChain.get(i).getRotationMatrix().getRotationMatrix()
+			println "Rotation of "+i+" "+  TransformNR.getMatrixString(new Matrix(rotation))
+			//if(i==0){
+			//	zVect[0]=0;
+			//	zVect[1]=0;
+			//	zVect[2]=1;
+			//}else{
 				//Get the rz vector from matrix
-				zVect[0]=chain.intChain.get(i-1).getRotationMatrix().getRotationMatrix()[0][2];
-				zVect[1]=chain.intChain.get(i-1).getRotationMatrix().getRotationMatrix()[1][2];
-				zVect[2]=chain.intChain.get(i-1).getRotationMatrix().getRotationMatrix()[2][2];
-			}
+				zVect[0]=rotation[0][1];
+				zVect[1]=rotation[1][1];
+				zVect[2]=rotation[2][1];
+			//}
 			//Assume all rotational joints
 			//Set to zero if prismatic
 			if(chain.getLinks().get(i).getLinkType()==DhLinkType.ROTORY){
@@ -395,7 +398,7 @@ public class PhysicicsDevice extends NonBowlerDevice{
 	
 	
 			count ++
-			if(count >100){
+			if(count >10){
 				count =0
 						//Get the DHChain object
 				DHChain chain = physicsSource.getChain()
