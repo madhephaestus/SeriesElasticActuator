@@ -320,6 +320,74 @@ public class HIDRotoryLink extends AbstractRotoryLink{
 }
 
 public class PhysicicsDevice extends NonBowlerDevice{
+
+		/**
+	 * Gets the Jacobian matrix.
+	 *
+	 * @param jointSpaceVector the joint space vector
+	 * @return a matrix representing the Jacobian for the current configuration
+	 */
+	public Matrix getJacobian(DHChain chain, double[] jointSpaceVector, int index){
+		double [][] data = new double[chain.getLinks().size()][6]; 
+		chain.getChain(jointSpaceVector);
+		for(int i=0;i<chain.getLinks().size();i++){
+			if(i>=index){
+				
+				continue
+			}
+			double [] zVect = new double [3];
+			
+			if(i==0){
+				zVect[0]=0;
+				zVect[1]=0;
+				zVect[2]=1;
+			}else{
+				//Get the rz vector from matrix
+				zVect[0]=chain.intChain.get(i-1).getRotationMatrix().getRotationMatrix()[0][2];
+				zVect[1]=chain.intChain.get(i-1).getRotationMatrix().getRotationMatrix()[1][2];
+				zVect[2]=chain.intChain.get(i-1).getRotationMatrix().getRotationMatrix()[2][2];
+			}
+			//Assume all rotational joints
+			//Set to zero if prismatic
+			if(chain.getLinks().get(i).getLinkType()==DhLinkType.ROTORY){
+				data[i][3]=zVect[0];
+				data[i][4]=zVect[1];
+				data[i][5]=zVect[2];
+			}else{
+				data[i][3]=0;
+				data[i][4]=0;
+				data[i][5]=0;
+			}
+			
+			//Figure out the current 
+			Matrix current = new TransformNR().getMatrixTransform();
+			for(int j=i;j<chain.getLinks().size();j++) {
+				double value=0;
+				if(chain.getLinks().get(j).getLinkType()==DhLinkType.ROTORY)
+					value=Math.toRadians(jointSpaceVector[j]);
+				else
+					value=jointSpaceVector[j];
+				Matrix step = chain.getLinks().get(j).DhStep(value);
+				//Log.info( "Current:\n"+current+"Step:\n"+step);
+				current = current.times(step);
+			}
+			double []rVect = new double [3];
+			TransformNR tmp = new TransformNR(current);
+			rVect[0]=tmp.getX();
+			rVect[1]=tmp.getY();
+			rVect[2]=tmp.getZ();
+			
+			//Cross product of rVect and Z vect
+			double []xProd = chain.crossProduct(rVect, zVect);
+			
+			data[i][0]=xProd[0];
+			data[i][1]=xProd[1];
+			data[i][2]=xProd[2];
+			
+		}
+		
+		return new Matrix(data);
+	}
 	HIDSimpleComsDevice hidEventEngine;
 	DHParameterKinematics physicsSource ;
 	int count = 0;
@@ -340,7 +408,19 @@ public class PhysicicsDevice extends NonBowlerDevice{
 				// get the position of all the joints in engineering units
 				double[] jointSpaceVector = physicsSource.getCurrentJointSpaceVector()
 				// compute the Jacobian using Jama matrix library
-				Matrix jacobian =  chain.getJacobian(jointSpaceVector);
+				Matrix jacobian = getJacobian(chain,jointSpaceVector,jointSpaceVector.length);
+				Matrix[] massMatrix =  new Matrix[jointSpaceVector.length]
+				Matrix[] incrementalJacobian =  new Matrix[jointSpaceVector.length]
+				double [] masses = new double [jointSpaceVector.length]
+				//TODO LoadMasses and mass Matrix here
+				
+				for (int i=0;i<jointSpaceVector.length;i++){
+					incrementalJacobian[i] = getJacobian(chain,jointSpaceVector,i+1);
+					
+					println "Increment "+i+" "+  TransformNR.getMatrixString(incrementalJacobian[i])
+				}
+								
+				/*
 				// convert to the 3x6 marray of doubles for display
 				double [][] data = jacobian.getArray();
 	
@@ -375,6 +455,7 @@ public class PhysicicsDevice extends NonBowlerDevice{
 					PreviousOmega= angularVelocityOfLink.get(0,i)
 				}
 				println corilousTerm
+				*/
 			}
 		}
 	public PhysicicsDevice(HIDSimpleComsDevice c,DHParameterKinematics  d){
@@ -426,13 +507,13 @@ def base =DeviceManager.getSpecificDevice( "HephaestusArm",{
 	println "Connecting new device robot arm "+m
 	return m
 })
-/*
+
 def physics =DeviceManager.getSpecificDevice( "HephaestusPhysics",{
 	PhysicicsDevice pd = new PhysicicsDevice(dev,base. getAllDHChains().get(0))
 	
 	return pd
 })
-*/
+
 
 
 ThreadUtil.wait(100)
