@@ -366,7 +366,7 @@ public class PhysicicsDevice extends NonBowlerDevice{
 			
 			//Figure out the current 
 			Matrix current = new TransformNR().getMatrixTransform();
-			for(int j=0;j<chain.getLinks().size() && j<=index;j++) {
+			for(int j=i;j<chain.getLinks().size() && j<=index;j++) {
 				double value=0;
 				if(chain.getLinks().get(j).getLinkType()==DhLinkType.ROTORY)
 					value=Math.toRadians(jointSpaceVector[j]);
@@ -374,7 +374,7 @@ public class PhysicicsDevice extends NonBowlerDevice{
 					value=jointSpaceVector[j];
 				Matrix step = chain.getLinks().get(j).DhStep(value);
 				//Log.info( "Current:\n"+current+"Step:\n"+step);
-				//println j+" step "+TransformNR.getMatrixString(step)
+				//println i+" Link "+j+" index "+index+" step "+TransformNR.getMatrixString(step)
 				current = current.times(step);
 			}
 			double []rVect = new double [3];
