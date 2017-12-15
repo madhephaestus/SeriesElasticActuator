@@ -374,6 +374,7 @@ public class PhysicicsDevice extends NonBowlerDevice{
 					value=jointSpaceVector[j];
 				Matrix step = chain.getLinks().get(j).DhStep(value);
 				//Log.info( "Current:\n"+current+"Step:\n"+step);
+				//println j+" step "+TransformNR.getMatrixString(step)
 				current = current.times(step);
 			}
 			double []rVect = new double [3];
@@ -384,7 +385,7 @@ public class PhysicicsDevice extends NonBowlerDevice{
 			
 			//Cross product of rVect and Z vect
 			double []xProd = chain.crossProduct(rVect, zVect);
-			println i+" R vector "+rVect+" "+TransformNR.getMatrixString(new Matrix(rotation))
+			//println i+" R vector "+rVect+" "+TransformNR.getMatrixString(new Matrix(rotation))
 			
 			data[0][i]=xProd[0];
 			data[1][i]=xProd[1];
