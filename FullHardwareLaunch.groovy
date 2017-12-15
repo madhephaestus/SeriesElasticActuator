@@ -123,7 +123,7 @@ public class HIDSimpleComsDevice extends NonBowlerDevice{
 					disconnect()
 				}
 			}else{
-				println "Simulation"
+				//println "Simulation"
 				for(int j=0;j<packet.downstream.length&&j<packet.upstream.length;j++){
 					packet.upstream[j]=packet.downstream[j];
 			}
@@ -328,7 +328,7 @@ public class PhysicicsDevice extends NonBowlerDevice{
 	 * @return a matrix representing the Jacobian for the current configuration
 	 */
 	public Matrix getJacobian(DHChain chain, double[] jointSpaceVector, int index){
-		double [][] data = new double[chain.getLinks().size()][6]; 
+		double [][] data = new double[6][chain.getLinks().size()]; 
 		chain.getChain(jointSpaceVector);
 		for(int i=0;i<chain.getLinks().size();i++){
 			if(i>=index){
@@ -350,13 +350,13 @@ public class PhysicicsDevice extends NonBowlerDevice{
 			//Assume all rotational joints
 			//Set to zero if prismatic
 			if(chain.getLinks().get(i).getLinkType()==DhLinkType.ROTORY){
-				data[i][3]=zVect[0];
-				data[i][4]=zVect[1];
-				data[i][5]=zVect[2];
+				data[3][i]=zVect[0];
+				data[4][i]=zVect[1];
+				data[5][i]=zVect[2];
 			}else{
-				data[i][3]=0;
-				data[i][4]=0;
-				data[i][5]=0;
+				data[3][i]=0;
+				data[4][i]=0;
+				data[5][i]=0;
 			}
 			
 			//Figure out the current 
@@ -380,16 +380,16 @@ public class PhysicicsDevice extends NonBowlerDevice{
 			//Cross product of rVect and Z vect
 			double []xProd = chain.crossProduct(rVect, zVect);
 			
-			data[i][0]=xProd[0];
-			data[i][1]=xProd[1];
-			data[i][2]=xProd[2];
+			data[0][i]=xProd[0];
+			data[1][i]=xProd[1];
+			data[2][i]=xProd[2];
 			
 		}
 		
 		return new Matrix(data);
 	}
-	HIDSimpleComsDevice hidEventEngine;
-	DHParameterKinematics physicsSource ;
+	def hidEventEngine;
+	def physicsSource ;
 	int count = 0;
 	Closure event = {
 	
@@ -408,17 +408,18 @@ public class PhysicicsDevice extends NonBowlerDevice{
 				// get the position of all the joints in engineering units
 				double[] jointSpaceVector = physicsSource.getCurrentJointSpaceVector()
 				// compute the Jacobian using Jama matrix library
-				Matrix jacobian = getJacobian(chain,jointSpaceVector,jointSpaceVector.length);
+				Matrix jacobian = getJacobian(chain,jointSpaceVector,jointSpaceVector.length-1);
 				Matrix[] massMatrix =  new Matrix[jointSpaceVector.length]
 				Matrix[] incrementalJacobian =  new Matrix[jointSpaceVector.length]
 				double [] masses = new double [jointSpaceVector.length]
 				//TODO LoadMasses and mass Matrix here
 				
 				for (int i=0;i<jointSpaceVector.length;i++){
-					incrementalJacobian[i] = getJacobian(chain,jointSpaceVector,i+1);
+					incrementalJacobian[i] = getJacobian(chain,jointSpaceVector,i);
 					
 					println "Increment "+i+" "+  TransformNR.getMatrixString(incrementalJacobian[i])
 				}
+				println "Total "+  TransformNR.getMatrixString(jacobian)
 								
 				/*
 				// convert to the 3x6 marray of doubles for display
@@ -458,7 +459,7 @@ public class PhysicicsDevice extends NonBowlerDevice{
 				*/
 			}
 		}
-	public PhysicicsDevice(HIDSimpleComsDevice c,DHParameterKinematics  d){
+	public PhysicicsDevice(def c,def  d){
 		hidEventEngine=c;
 		physicsSource=d;
 		hidEventEngine.addEvent(37,event)
