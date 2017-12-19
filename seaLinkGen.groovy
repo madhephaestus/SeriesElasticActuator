@@ -943,6 +943,22 @@ ICadGenerator c= new ICadGenerator(){
 			// Target point
 			handMountPart = handMount()
 			CSG tipCalibrationPart= tipCalibration()
+			File gripBaseFile = ScriptingEngine.fileFromGit(
+				"https://github.com/madhephaestus/SeriesElasticActuator.git",
+				"gripper/body.stl");
+			File gripLeftFile = ScriptingEngine.fileFromGit(
+				"https://github.com/madhephaestus/SeriesElasticActuator.git",
+				"gripper/left.stl");
+			// Load the .CSG from the disk and cache it in memory
+			File gripRightFile = ScriptingEngine.fileFromGit(
+				"https://github.com/madhephaestus/SeriesElasticActuator.git",
+				"gripper/right.stl");
+			// Load the .CSG from the disk and cache it in memory
+			CSG gripBase  = Vitamins.get(gripBaseFile);
+			CSG gripLeft  = Vitamins.get(gripLeftFile);
+			CSG gripRight  = Vitamins.get(gripRightFile);
+			
+			//tipCalibrationPart=gripBase
 			
 			double plateThickenss = (-handMountPart.getMinX()+handMountPart.getMaxX())
 			double platewidth  = (-handMountPart.getMinY()+handMountPart.getMaxY())
@@ -976,7 +992,7 @@ ICadGenerator c= new ICadGenerator(){
 										.intersect(handMountPart)
 										.hull()
 										.toolOffset(printerOffset.getMM()*2))
-								.difference(myArmScrews,springMoved.toolOffset(2)	)
+								.difference(myArmScrews.movex(-45),springMoved.toolOffset(2)	)
 			}catch(Exception ex){
 				BowlerStudio.printStackTrace(ex)
 			}				
