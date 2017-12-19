@@ -27,8 +27,8 @@
 	<type>hidsimple</type>
 	<index>0</index>
 	<scale>-0.087890625</scale>
-	<upperLimit>1024</upperLimit>
-	<lowerLimit>-1024</lowerLimit>
+	<upperLimit>1024.0</upperLimit>
+	<lowerLimit>-1024.0</lowerLimit>
 	<upperVelocity>1.0E8</upperVelocity>
 	<lowerVelocity>-1.0E8</lowerVelocity>
 	<staticOffset>0.0</staticOffset>
@@ -80,9 +80,9 @@
 	<deviceName>hidbowler</deviceName>
 	<type>hidsimple</type>
 	<index>1</index>
-	<scale>-0.087890625</scale>	
-	<upperLimit>1024</upperLimit>
-	<lowerLimit>-1024</lowerLimit>
+	<scale>-0.087890625</scale>
+	<upperLimit>1024.0</upperLimit>
+	<lowerLimit>-1024.0</lowerLimit>
 	<upperVelocity>1.0E8</upperVelocity>
 	<lowerVelocity>-1.0E8</lowerVelocity>
 	<staticOffset>0.0</staticOffset>
@@ -135,8 +135,8 @@
 	<type>hidsimple</type>
 	<index>2</index>
 	<scale>-0.087890625</scale>
-	<upperLimit>1024</upperLimit>
-	<lowerLimit>-1024</lowerLimit>
+	<upperLimit>1024.0</upperLimit>
+	<lowerLimit>-1024.0</lowerLimit>
 	<upperVelocity>1.0E8</upperVelocity>
 	<lowerVelocity>-1.0E8</lowerVelocity>
 	<staticOffset>0.0</staticOffset>
@@ -178,7 +178,7 @@
 	<DHParameters>
 		<Delta>0.0</Delta>
 		<Theta>90.0</Theta>
-		<Radius>200.0</Radius>
+		<Radius>169.28</Radius>
 		<Alpha>0.0</Alpha>
 	</DHParameters>
 
@@ -225,7 +225,7 @@
 	<roty>-0.0</roty>
 	<rotz>-0.0</rotz>
 </baseToZframe>
-	<mass>5</mass>
+	<mass>0.01</mass>
 	<centerOfMassFromCentroid>	<x>0.0</x>
 	<y>0.0</y>
 	<z>0.0</z>
@@ -246,4 +246,5 @@
 </vitamins>
 
 </mobilebase>
+
 </root>

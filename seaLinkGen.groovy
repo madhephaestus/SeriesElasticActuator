@@ -25,6 +25,7 @@ ICadGenerator c= new ICadGenerator(){
 	HashMap<String , HashMap<String,ArrayList<CSG>>> map =  new HashMap<>();
 	HashMap<String,ArrayList<CSG>> bodyMap =  new HashMap<>();
 	LengthParameter thickness 				= new LengthParameter("Material Thickness",11.88,[10,1])
+	LengthParameter ballCenter = new LengthParameter("ballCenter",30.72,[20,0.001])
 	LengthParameter printerOffset 			= new LengthParameter("printerOffset",0.5,[1.2,0])
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M5",Vitamins.listVitaminSizes("capScrew"))
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","R8-60355K505",Vitamins.listVitaminSizes("ballBearing"))
@@ -252,7 +253,9 @@ ICadGenerator c= new ICadGenerator(){
             .rotx(-90)
             //.movey(-drivenLinkWidth/2)
             .movez(1)
+            
      CSG standoffBLock=null
+     ArrayList<CSG> manipulationParts = []
 	/**
 	 * Gets the all dh chains.
 	 *
@@ -441,12 +444,21 @@ ICadGenerator c= new ICadGenerator(){
 		CSG boxCut = new Cube((workcellSize/2)+nucleoMountPlacement,workcellSize,thickness.getMM()*2).toCSG()
 					.toXMax()
 					.movex(workcellSize/2)
-
+		manipulationParts.clear()
+		manipulationParts.addAll((ArrayList<CSG>)ScriptingEngine
+					 .gitScriptRun(
+            "https://github.com/WPIRoboticsEngineering/RBELabCustomParts.git", // git location of the library
+            "3001TrackingObjects.groovy" , // file to load
+            null// no parameters (see next tutorial)
+            ).collect{
+            	it.movez(-ballCenter.getMM())
+            	.roty(90)            	
+			.transformed(tipatHome)
+            })
 		
-		CSG tipHole =new Cylinder(10,10,thickness.getMM()*3,(int)90).toCSG()
-					.movez(-thickness.getMM()*1.5)
-					.roty(90)
-					.transformed(tipatHome)
+		//CSG tipHole =new Cylinder(10,10,thickness.getMM()*3,(int)90).toCSG()
+		//			.movez(-thickness.getMM()*1.5)
+					
 		double footingWidth = boardY/4
 		CSG footing =new Cube(workcellSize,footingWidth,thickness.getMM()).toCSG()
 		
@@ -473,7 +485,7 @@ ICadGenerator c= new ICadGenerator(){
 						)
 						.difference(	bottomScrewSet.movex(baseBackSet))
 						.intersect(boxCut)
-						.difference(tipHole)
+						.difference(manipulationParts)
 						.difference(cameraParts)
 						.difference(etchParts)
 		
@@ -563,6 +575,9 @@ ICadGenerator c= new ICadGenerator(){
 		add(attachmentParts,basePlateUpper,null,"basePlateEtching_SVG")
 		add(attachmentParts,basePlateLower,null,"basePlateCut_SVG")
 		add(attachmentParts,baseCap,null,"baseCap")
+		add(attachmentParts,manipulationParts.get(0),null,"colorObject")
+		add(attachmentParts,manipulationParts.get(1),null,"coaster")
+		add(attachmentParts,manipulationParts.get(2),null,"calibrationObject")
 		return attachmentParts;
 	}
 	@Override 
@@ -958,7 +973,7 @@ ICadGenerator c= new ICadGenerator(){
 			CSG gripLeft  = Vitamins.get(gripLeftFile);
 			CSG gripRight  = Vitamins.get(gripRightFile);
 			
-			//tipCalibrationPart=gripBase
+			tipCalibrationPart=gripBase
 			
 			double plateThickenss = (-handMountPart.getMinX()+handMountPart.getMaxX())
 			double platewidth  = (-handMountPart.getMinY()+handMountPart.getMaxY())
@@ -1097,7 +1112,7 @@ ICadGenerator c= new ICadGenerator(){
 								.movey(-boltShortDistance/2)
 					)
 		// offset the claw mount so the tip is at the kinematic center
-		mountPlate=mountPlate.movex(-54.4)
+		mountPlate=mountPlate.movex(-54.4-ballCenter.getMM())
 		return mountPlate
 	}
 	private CSG springBlockPin(double thickness){
