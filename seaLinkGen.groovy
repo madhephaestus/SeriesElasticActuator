@@ -989,8 +989,8 @@ ICadGenerator c= new ICadGenerator(){
 			
 			CSG gripBase  = Vitamins.get(gripBaseFile)	
 							.movex(-56.75-ballRadius.getMM()-8+ballCenter.getMM())
-							.movez(-3)		
-							.movey(-3)	
+							.movez(-2.25)		
+							.movey(-3.4)	
 			//CSG gripLeft  = Vitamins.get(gripLeftFile)
 			//CSG gripRight  = Vitamins.get(gripRightFile)
 			
