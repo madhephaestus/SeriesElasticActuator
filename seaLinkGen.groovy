@@ -960,7 +960,8 @@ ICadGenerator c= new ICadGenerator(){
 			CSG tipCalibrationPart= tipCalibration()
 			File gripBaseFile = ScriptingEngine.fileFromGit(
 				"https://github.com/madhephaestus/SeriesElasticActuator.git",
-				"gripper/body.stl");
+				"gripper/all.stl");
+				/*
 			File gripLeftFile = ScriptingEngine.fileFromGit(
 				"https://github.com/madhephaestus/SeriesElasticActuator.git",
 				"gripper/left.stl");
@@ -968,12 +969,19 @@ ICadGenerator c= new ICadGenerator(){
 			File gripRightFile = ScriptingEngine.fileFromGit(
 				"https://github.com/madhephaestus/SeriesElasticActuator.git",
 				"gripper/right.stl");
+				*/
 			// Load the .CSG from the disk and cache it in memory
-			CSG gripBase  = Vitamins.get(gripBaseFile);
-			CSG gripLeft  = Vitamins.get(gripLeftFile);
-			CSG gripRight  = Vitamins.get(gripRightFile);
 			
-			tipCalibrationPart=gripBase
+			CSG gripBase  = Vitamins.get(gripBaseFile)	
+							.movex(-56.75)
+							.movez(-1.75)		
+							.movey(-1.75)	
+			//CSG gripLeft  = Vitamins.get(gripLeftFile)
+			//CSG gripRight  = Vitamins.get(gripRightFile)
+			
+			
+						//.union([gripLeft,gripRight])
+						
 			
 			double plateThickenss = (-handMountPart.getMinX()+handMountPart.getMaxX())
 			double platewidth  = (-handMountPart.getMinY()+handMountPart.getMaxY())
@@ -1027,8 +1035,11 @@ ICadGenerator c= new ICadGenerator(){
 					.toXMin()
 					.toZMin()
 			})
-			if(showRightPrintedParts)add(csg,tipCalibrationPart,dh.getListener(),"calibrationTip")
+			//if(showRightPrintedParts)add(csg,tipCalibrationPart,dh.getListener(),"calibrationTip")
 			if(showLeftPrintedParts)add(csg,handMountPart,dh.getListener(),"lastLink")
+			add(csg,gripBase,dh.getListener(),"gripBase")
+			//add(csg,gripLeft,dh.getListener(),"gripLeft")
+			//add(csg,gripRight,dh.getListener(),"gripRight")
 		}
 		
 		myGearB.setManufacturing({ toMfg ->
