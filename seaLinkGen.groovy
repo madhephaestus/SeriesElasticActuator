@@ -25,6 +25,7 @@ ICadGenerator c= new ICadGenerator(){
 	HashMap<String , HashMap<String,ArrayList<CSG>>> map =  new HashMap<>();
 	HashMap<String,ArrayList<CSG>> bodyMap =  new HashMap<>();
 	LengthParameter thickness 				= new LengthParameter("Material Thickness",11.88,[10,1])
+	LengthParameter ballRadius = new LengthParameter("ballRadius",(1.1*25.4)/2,[20,0.001])
 	LengthParameter ballCenter = new LengthParameter("ballCenter",30.72,[20,0.001])
 	LengthParameter printerOffset 			= new LengthParameter("printerOffset",0.5,[1.2,0])
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M5",Vitamins.listVitaminSizes("capScrew"))
@@ -256,6 +257,7 @@ ICadGenerator c= new ICadGenerator(){
             
      CSG standoffBLock=null
      ArrayList<CSG> manipulationParts = []
+     CSG manipulationBall=null
 	/**
 	 * Gets the all dh chains.
 	 *
@@ -445,12 +447,16 @@ ICadGenerator c= new ICadGenerator(){
 					.toXMax()
 					.movex(workcellSize/2)
 		manipulationParts.clear()
-		manipulationParts.addAll((ArrayList<CSG>)ScriptingEngine
+		def parts =(ArrayList<CSG>)ScriptingEngine
 					 .gitScriptRun(
             "https://github.com/WPIRoboticsEngineering/RBELabCustomParts.git", // git location of the library
             "3001TrackingObjects.groovy" , // file to load
             null// no parameters (see next tutorial)
-            ).collect{
+            ) 
+          manipulationBall=parts.get(0)
+		          		.movez(-ballCenter.getMM())
+		            		.roty(90) 
+		manipulationParts.addAll(parts.collect{
             	it.movez(-ballCenter.getMM())
             	.roty(90)            	
 			.transformed(tipatHome)
@@ -582,6 +588,15 @@ ICadGenerator c= new ICadGenerator(){
 	}
 	@Override 
 	public ArrayList<CSG> generateCad(DHParameterKinematics sourceLimb, int linkIndex) {
+		def parts =(ArrayList<CSG>)ScriptingEngine
+					 .gitScriptRun(
+            "https://github.com/WPIRoboticsEngineering/RBELabCustomParts.git", // git location of the library
+            "3001TrackingObjects.groovy" , // file to load
+            null// no parameters (see next tutorial)
+            ) 
+          manipulationBall=parts.get(0)
+		          		.movez(-ballCenter.getMM())
+		            		.roty(90) 
 		//return new ArrayList<CSG>()
 		//Creating the horn
 		ArrayList<DHLink> dhLinks=sourceLimb.getChain().getLinks();
@@ -973,9 +988,9 @@ ICadGenerator c= new ICadGenerator(){
 			// Load the .CSG from the disk and cache it in memory
 			
 			CSG gripBase  = Vitamins.get(gripBaseFile)	
-							.movex(-56.75)
-							.movez(-1.75)		
-							.movey(-1.75)	
+							.movex(-56.75-ballRadius.getMM()-8+ballCenter.getMM())
+							.movez(-3)		
+							.movey(-3)	
 			//CSG gripLeft  = Vitamins.get(gripLeftFile)
 			//CSG gripRight  = Vitamins.get(gripRightFile)
 			
@@ -1038,6 +1053,7 @@ ICadGenerator c= new ICadGenerator(){
 			//if(showRightPrintedParts)add(csg,tipCalibrationPart,dh.getListener(),"calibrationTip")
 			if(showLeftPrintedParts)add(csg,handMountPart,dh.getListener(),"lastLink")
 			add(csg,gripBase,dh.getListener(),"gripBase")
+			add(csg,manipulationBall,dh.getListener(),"gripBall")
 			//add(csg,gripLeft,dh.getListener(),"gripLeft")
 			//add(csg,gripRight,dh.getListener(),"gripRight")
 		}
@@ -1123,7 +1139,7 @@ ICadGenerator c= new ICadGenerator(){
 								.movey(-boltShortDistance/2)
 					)
 		// offset the claw mount so the tip is at the kinematic center
-		mountPlate=mountPlate.movex(-54.4-ballCenter.getMM())
+		mountPlate=mountPlate.movex(-54.4-ballRadius.getMM()-8)
 		return mountPlate
 	}
 	private CSG springBlockPin(double thickness){
