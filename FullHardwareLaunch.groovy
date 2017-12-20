@@ -361,7 +361,7 @@ public class PhysicicsDevice extends NonBowlerDevice{
 				zVect[2]=1;
 			}else if(i==0){
 				rotation = chain.chain.get(index).getRotationMatrix().getRotationMatrix()
-				println "Link "+index+" "+TransformNR.getMatrixString(new Matrix(rotation))
+				//println "Link "+index+" "+TransformNR.getMatrixString(new Matrix(rotation))
 				//Get the rz vector from matrix
 				zVect[0]=rotation[2][2];
 				zVect[1]=rotation[2][1];
@@ -433,7 +433,7 @@ public class PhysicicsDevice extends NonBowlerDevice{
 			
 			//Cross product of rVect and Z vect
 			double []xProd = crossProduct(rVect, zVect);
-			println i+" Oi vector "+rComponent + " On = " +tipOffset+" R vector "+rVect//+" \t\t Zvect "+zVect+" \t\tcrossProd "+xProd
+			//println i+" Oi vector "+rComponent + " On = " +tipOffset+" R vector "+rVect//+" \t\t Zvect "+zVect+" \t\tcrossProd "+xProd
 			
 			
 			
