@@ -986,13 +986,13 @@ ICadGenerator c= new ICadGenerator(){
 				"gripper/right.stl");
 				*/
 			// Load the .CSG from the disk and cache it in memory
-			double boltPlateThickness = 6.3
+			double boltPlateThickness = 6
 			CSG cup =new Cylinder(ballRadius.getMM()+2,15).toCSG() // a one line Cylinder
 			CSG box = cup.getBoundingBox()
 					.movez(7)
 			CSG bolt =new Cylinder(4.3/2,70).toCSG() // a one line Cylinder		
-			bolt = bolt.union (bolt.movex(-11.75))
-					.movex(-ballRadius.getMM()-9)
+			bolt = bolt.union (bolt.movex(-12))
+					.movex(-ballRadius.getMM()-8.75)
 			
 			mounStrip = new Cube(	40,// X dimention
 						13.2,// Y dimention
@@ -1004,7 +1004,7 @@ ICadGenerator c= new ICadGenerator(){
 			cup = cup.intersect(box)
 					.union(mounStrip )
 					.difference(manipulationBall.makeKeepaway(1))
-					.union(bolt)
+					.difference(bolt)
 			
 			CSG gripBase  = Vitamins.get(gripBaseFile)	
 							.movex(-56.75-ballRadius.getMM()-8+ballCenter.getMM())
@@ -1071,7 +1071,7 @@ ICadGenerator c= new ICadGenerator(){
 			})
 			//if(showRightPrintedParts)add(csg,tipCalibrationPart,dh.getListener(),"calibrationTip")
 			if(showLeftPrintedParts)add(csg,handMountPart,dh.getListener(),"lastLink")
-			add(csg,gripBase,dh.getListener(),"gripBase")
+			//add(csg,gripBase,dh.getListener(),"gripBase")
 			//add(csg,manipulationBall,dh.getListener(),"gripBall")
 			add(csg,cup,dh.getListener(),"cup")
 			add(csg,cup.mirrorz(),dh.getListener(),"cupr")
