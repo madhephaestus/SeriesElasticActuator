@@ -990,9 +990,9 @@ ICadGenerator c= new ICadGenerator(){
 			CSG cup =new Cylinder(ballRadius.getMM()+2,15).toCSG() // a one line Cylinder
 			CSG box = cup.getBoundingBox()
 					.movez(7)
-			CSG bolt =new Cylinder(1.5,70).toCSG() // a one line Cylinder		
-			bolt = bolt.union (bolt.movex(-11.13))
-					.movex(-ballRadius.getMM()-10)
+			CSG bolt =new Cylinder(4.3/2,70).toCSG() // a one line Cylinder		
+			bolt = bolt.union (bolt.movex(-11.75))
+					.movex(-ballRadius.getMM()-9)
 			
 			mounStrip = new Cube(	40,// X dimention
 						13.2,// Y dimention
