@@ -1060,12 +1060,11 @@ ICadGenerator c= new ICadGenerator(){
 			tipCalibrationPart.setColor(javafx.scene.paint.Color.PINK);
 			handMountPart.setColor(javafx.scene.paint.Color.WHITE);
 			
-			tipCalibrationPart.setManufacturing({ toMfg ->
+			handMountPart.setManufacturing({ toMfg ->
 				return toMfg
 					.rotx(90)
-					.roty(90)
-					.toZMin()
 					.toXMin()
+					.toZMin()
 			})
 			cupr=cup.mirrorz()
 			cup.setManufacturing({ toMfg ->
