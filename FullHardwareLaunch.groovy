@@ -321,7 +321,22 @@ public class HIDRotoryLink extends AbstractRotoryLink{
 }
 
 public class PhysicicsDevice extends NonBowlerDevice{
-
+	/**
+	 * Cross product.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the double[]
+	 */
+	private double [] crossProduct(double[] a, double[] b){
+		double [] xProd = new double [3];
+		
+		xProd[0]=a[1]*b[2]-a[2]*b[1];
+		xProd[1]=a[2]*b[0]-a[0]*b[2];
+		xProd[2]=a[0]*b[1]-a[1]*b[0];
+		
+		return xProd;
+	}
 		/**
 	 * Gets the Jacobian matrix.
 	 *
@@ -339,17 +354,17 @@ public class PhysicicsDevice extends NonBowlerDevice{
 			}
 			double [] zVect = new double [3];
 			
-			double [][] rotation=new double[3][3]
+			double [][] rotation=chain.intChain.get(i).getRotationMatrix().getRotationMatrix()
 			if(i==0){
 				zVect[0]=0;
 				zVect[1]=0;
 				zVect[2]=1;
 			}else{
-				rotation = chain.intChain.get(i-1).getRotationMatrix().getRotationMatrix()
+				//rotation = chain.intChain.get(i-1).getRotationMatrix().getRotationMatrix()
 				//Get the rz vector from matrix
-				zVect[0]=rotation[0][2];
-				zVect[1]=rotation[1][2];
-				zVect[2]=rotation[2][2];
+				zVect[0]=rotation[0][0];
+				zVect[1]=rotation[1][0];
+				zVect[2]=rotation[2][0];
 				
 			}
 			//Assume all rotational joints
@@ -363,10 +378,24 @@ public class PhysicicsDevice extends NonBowlerDevice{
 				data[4][i]=0;
 				data[5][i]=0;
 			}
+			Matrix startingPoint = new TransformNR().getMatrixTransform();
+			if(i>0){
+				for(int j=0;j<i && j<=index;j++) {
+					double value=0;
+					if(chain.getLinks().get(j).getLinkType()==DhLinkType.ROTORY)
+						value=Math.toRadians(jointSpaceVector[j]);
+					else
+						value=jointSpaceVector[j];
+					Matrix step = chain.getLinks().get(j).DhStep(value);
+					//Log.info( "Current:\n"+current+"Step:\n"+step);
+					//println i+" Link "+j+" index "+index+" step "+TransformNR.getMatrixString(step)
+					startingPoint = startingPoint.times(step);
+				}
+			}
 			
 			//Figure out the current 
 			Matrix current = new TransformNR().getMatrixTransform();
-			for(int j=i;j<chain.getLinks().size() && j<=index;j++) {
+			for(int j=0;j<chain.getLinks().size() && j<=index;j++) {
 				double value=0;
 				if(chain.getLinks().get(j).getLinkType()==DhLinkType.ROTORY)
 					value=Math.toRadians(jointSpaceVector[j]);
@@ -378,21 +407,32 @@ public class PhysicicsDevice extends NonBowlerDevice{
 				current = current.times(step);
 			}
 			double []rVect = new double [3];
-			TransformNR tmp = new TransformNR(current);
-			rVect[0]=tmp.getX();
-			rVect[1]=tmp.getY();
-			rVect[2]=tmp.getZ();
+			double []tipOffset = new double [3];
+			double []rComponent = new double [3];
+			TransformNR intermediate = new TransformNR(current)//.times(myInvertedStarting);
+			tipOffset[0]=intermediate.getX();
+			tipOffset[1]=intermediate.getY();
+			tipOffset[2]=intermediate.getZ();
+			
+			TransformNR tmp = new TransformNR(startingPoint)//.times(myInvertedStarting);
+			rComponent[0]=tmp.getX();
+			rComponent[1]=tmp.getY();
+			rComponent[2]=tmp.getZ();
+			for(int x=0;x<3;x++)
+				rVect[x]=tipOffset[x]-rComponent[x]
 			
 			//Cross product of rVect and Z vect
-			double []xProd = chain.crossProduct(rVect, zVect);
-			println i+" R vector "+rVect+" "+TransformNR.getMatrixString(new Matrix(rotation))
+			double []xProd = crossProduct(rVect, zVect);
+			println i+" Oi vector "+rComponent + " On = " +tipOffset+" R vector "+rVect//+" \t\t Zvect "+zVect+" \t\tcrossProd "+xProd
+			
+			//println myInvertedStarting
 			
 			data[0][i]=xProd[0];
 			data[1][i]=xProd[1];
 			data[2][i]=xProd[2];
 			
 		}
-		
+		println "\n\n"
 		return new Matrix(data);
 	}
 	def hidEventEngine;
