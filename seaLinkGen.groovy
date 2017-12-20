@@ -574,8 +574,11 @@ ICadGenerator c= new ICadGenerator(){
 		//if(showRightPrintedParts)attachmentParts.add(basePlate)
 		//if(showLeftPrintedParts)attachmentParts.add(baseCap)
 		cameraParts.forEach{
+			it.addExportFormat("svg")
 			add(attachmentParts,it,null,"cameraStand_SVG")
 		}
+		basePlateUpper.addExportFormat("svg")
+		basePlateLower.addExportFormat("svg")
 		add(attachmentParts,baseShapeA,null,"baseLeft")
 		add(attachmentParts,baseShapeB,null,"baseRight")
 		add(attachmentParts,basePlateUpper,null,"basePlateEtching_SVG")
@@ -1064,10 +1067,14 @@ ICadGenerator c= new ICadGenerator(){
 					.toZMin()
 					.toXMin()
 			})
-			handMountPart.setManufacturing({ toMfg ->
+			cupr=cup.mirrorz()
+			cup.setManufacturing({ toMfg ->
 				return toMfg
-					.rotx(90)
-					.toXMin()
+					.rotx(180)
+					.toZMin()
+			})
+			cupr.setManufacturing({ toMfg ->
+				return toMfg
 					.toZMin()
 			})
 			//if(showRightPrintedParts)add(csg,tipCalibrationPart,dh.getListener(),"calibrationTip")
@@ -1075,7 +1082,7 @@ ICadGenerator c= new ICadGenerator(){
 			//add(csg,gripBase,dh.getListener(),"gripBase")
 			//add(csg,manipulationBall,dh.getListener(),"gripBall")
 			add(csg,cup,dh.getListener(),"cup")
-			add(csg,cup.mirrorz(),dh.getListener(),"cupr")
+			add(csg,cupr,dh.getListener(),"cupr")
 			//add(csg,gripLeft,dh.getListener(),"gripLeft")
 			//add(csg,gripRight,dh.getListener(),"gripRight")
 		}
