@@ -1010,10 +1010,10 @@ ICadGenerator c= new ICadGenerator(){
 					.difference(manipulationBall.makeKeepaway(1))
 					.difference(bolt)
 			
-			CSG gripBase  = Vitamins.get(gripBaseFile)	
-							.movex(-56.75-ballRadius.getMM()-8+ballCenter.getMM())
-							.movez(-2.25)		
-							.movey(-3.4)	
+			//CSG gripBase  = Vitamins.get(gripBaseFile)	
+			//				.movex(-56.75-ballRadius.getMM()-8+ballCenter.getMM())
+			//				.movez(-2.25)		
+			//				.movey(-3.4)	
 			//CSG gripLeft  = Vitamins.get(gripLeftFile)
 			//CSG gripRight  = Vitamins.get(gripRightFile)
 			
