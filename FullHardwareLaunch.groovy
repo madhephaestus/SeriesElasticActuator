@@ -354,18 +354,28 @@ public class PhysicicsDevice extends NonBowlerDevice{
 			}
 			double [] zVect = new double [3];
 			
-			double [][] rotation=chain.intChain.get(i).getRotationMatrix().getRotationMatrix()
-			if(i==0){
+			double [][] rotation=new double[3][3]//chain.intChain.get(i).getRotationMatrix().getRotationMatrix()
+			if(i==0 && index ==0 ){
 				zVect[0]=0;
 				zVect[1]=0;
 				zVect[2]=1;
-			}else{
-				//rotation = chain.intChain.get(i-1).getRotationMatrix().getRotationMatrix()
+			}else if(i==0){
+				rotation = chain.chain.get(index).getRotationMatrix().getRotationMatrix()
+				println "Link "+index+" "+TransformNR.getMatrixString(new Matrix(rotation))
 				//Get the rz vector from matrix
-				zVect[0]=rotation[0][0];
-				zVect[1]=rotation[1][0];
+				zVect[0]=rotation[2][2];
+				zVect[1]=rotation[2][1];
 				zVect[2]=rotation[2][0];
-				
+			}else{
+				if(i<=index){
+					zVect[0]=-1;
+					zVect[1]=0;
+					zVect[2]=0;
+				}else{
+					zVect[0]=0;
+					zVect[1]=0;
+					zVect[2]=0;
+				}
 			}
 			//Assume all rotational joints
 			//Set to zero if prismatic
@@ -425,7 +435,7 @@ public class PhysicicsDevice extends NonBowlerDevice{
 			double []xProd = crossProduct(rVect, zVect);
 			println i+" Oi vector "+rComponent + " On = " +tipOffset+" R vector "+rVect//+" \t\t Zvect "+zVect+" \t\tcrossProd "+xProd
 			
-			//println myInvertedStarting
+			
 			
 			data[0][i]=xProd[0];
 			data[1][i]=xProd[1];
