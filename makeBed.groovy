@@ -87,6 +87,8 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 	}
 	double delta=2
 	int numLinks =3
+	
+	
 	baseRight = namedPart.baseRight
 	baseLeft = namedPart.baseLeft
 					.movex(baseRight.getMaxX()+delta)
@@ -184,8 +186,13 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 					.toXMin()
 					.movey(bedA.getMaxY())
 					.movex(bedA.getMinX())
-
-	def beda =[washer,baseRight,baseLeft,baseCap,sidePlate1,lastLink,baseEncoderCap0,baseEncoderCap1,otherBlock]as ArrayList<CSG>
+	cup = namedPart.cupr
+			.toXMax()
+			.movex(bedA.getMaxX())
+			.movey(sidePlate1.getMaxY()-15)
+			.toZMin()
+	def otherCup = cup.toYMin().movey(cup.getMaxY()+1)
+	def beda =[washer,baseRight,baseLeft,baseCap,sidePlate1,lastLink,baseEncoderCap0,baseEncoderCap1,otherBlock,cup,otherCup]as ArrayList<CSG>
 
 	def bedb = [encoderStandoff,loadCellBlock,sidePlate0,servoGear,drivenGear]as ArrayList<CSG>
 
@@ -198,7 +205,8 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 	BowlerStudioController.setCsg(bedb , null);
 	CSG B = CSG.unionAll(bedb).toYMax()
 	B.setName("BedB")
-	parts=[A,B]
+	parts=[]
+	parts.add(A);parts.add(B);
 	parts.addAll(beda)
 	parts.addAll(bedb)
 	return parts
@@ -212,7 +220,7 @@ while(MobileBaseCadManager.get( base).getProcesIndictor().getProgress()<1){
 File baseDirForFiles = com.neuronrobotics.nrconsole.util.FileSelectionFactory.GetDirectory(new File(System.getProperty("user.home")))
 List<CSG> totalAssembly = arrangeBed(base) ;
 BowlerStudioController.setCsg(totalAssembly , null);
-
+//return null
 File dir = new File(baseDirForFiles.getAbsolutePath() + "/" + base.getScriptingName() );
 if (!dir.exists())
 	dir.mkdirs();
