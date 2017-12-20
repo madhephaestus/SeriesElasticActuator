@@ -385,7 +385,7 @@ public class PhysicicsDevice extends NonBowlerDevice{
 			
 			//Cross product of rVect and Z vect
 			double []xProd = chain.crossProduct(rVect, zVect);
-			//println i+" R vector "+rVect+" "+TransformNR.getMatrixString(new Matrix(rotation))
+			println i+" R vector "+rVect+" "+TransformNR.getMatrixString(new Matrix(rotation))
 			
 			data[0][i]=xProd[0];
 			data[1][i]=xProd[1];
@@ -428,42 +428,6 @@ public class PhysicicsDevice extends NonBowlerDevice{
 				}
 				println "Total "+  TransformNR.getMatrixString(jacobian)
 								
-				/*
-				// convert to the 3x6 marray of doubles for display
-				double [][] data = jacobian.getArray();
-	
-			     ArrayList<TransformNR> intChainLocal = chain.intChain
-				ArrayList<TransformNR> stateChainLocal = chain.chain
-			     double PreviousOmega = 0
-			     double [] corilousTerm =[0,0,0]
-				for (int i=0;i<jointSpaceVector.length;i++){
-					TransformNR previousTransform = i==0?new TransformNR():intChainLocal.get(i-1)
-					
-					TransformNR previousTransformTranspose = new TransformNR(previousTransform.getMatrixTransform().transpose() );
-					
-					RotationNR  perviousRot = previousTransform.getRotation()
-					double [][] rotationMatrix = perviousRot.getRotationMatrix() 
-					
-					TransformNR rotationBetweenZeroAndI = stateChainLocal.get(i)
-					TransformNR rotationBetweenZeroAndITranspose = new TransformNR(0,0,0,new TransformNR(rotationBetweenZeroAndI .getMatrixTransform().transpose()).getRotation() )
-					
-					
-					double [][] zVector = [rotationMatrix[2]]				
-					Matrix zMatrix = new Matrix(zVector)
-					Matrix bRotationToAllignFrames = rotationBetweenZeroAndITranspose.getMatrixTransform().times(zMatrix)
-					
-					double [][] perviousTerm = [[0,0,0]]
-					if(i>0){
-						perviousTerm[i-1]=PreviousOmega
-					}
-					Matrix angularVelocityOfLink = rotationBetweenZeroAndITranspose.times(new Matrix(perviousTerm))
-												.add(bRotationToAllignFrames)
-					
-					corilousTerm[i]=angularVelocityOfLink.get(0,i)
-					PreviousOmega= angularVelocityOfLink.get(0,i)
-				}
-				println corilousTerm
-				*/
 			}
 		}
 	public PhysicicsDevice(def c,def  d){
@@ -516,7 +480,7 @@ def base =DeviceManager.getSpecificDevice( "HephaestusArm",{
 	return m
 })
 
-return null
+//return null
 
 def physics =DeviceManager.getSpecificDevice( "HephaestusPhysics",{
 	PhysicicsDevice pd = new PhysicicsDevice(dev,base. getAllDHChains().get(0))
@@ -527,9 +491,9 @@ def physics =DeviceManager.getSpecificDevice( "HephaestusPhysics",{
 
 
 ThreadUtil.wait(100)
-while(MobileBaseCadManager.get( base).getProcesIndictor().getProgress()<1){
+while(MobileBaseCadManager.get( base).getProcesIndictor().get()<1){
 	ThreadUtil.wait(1000)
-	println "Waiting for cad to get to 1, is currently= "+MobileBaseCadManager.get(base).getProcesIndictor().getProgress()
+	println "Waiting for cad to get to 1, is currently= "+MobileBaseCadManager.get(base).getProcesIndictor().get()
 	
 }
 
