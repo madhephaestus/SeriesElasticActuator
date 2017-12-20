@@ -990,6 +990,7 @@ ICadGenerator c= new ICadGenerator(){
 			CSG cup =new Cylinder(ballRadius.getMM()+2,15).toCSG() // a one line Cylinder
 			CSG box = cup.getBoundingBox()
 					.movez(7)
+					.movex(2.5)
 			CSG bolt =new Cylinder(4.3/2,70).toCSG() // a one line Cylinder		
 			bolt = bolt.union (bolt.movex(-12))
 					.movex(-ballRadius.getMM()-8.75)
