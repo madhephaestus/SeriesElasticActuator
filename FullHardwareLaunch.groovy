@@ -396,10 +396,10 @@ public class PhysicicsDevice extends NonBowlerDevice{
 				data[4][i]=0;
 				data[5][i]=0;
 			}
+			double []rVect = new double [3];
 			
 			
-			
-			Matrix startingPoint = new TransformNR().getMatrixTransform();
+			Matrix rComponentmx = new TransformNR().getMatrixTransform();
 			if(i>0){
 				for(int j=0;j<i && j<=index;j++) {
 					double value=0;
@@ -410,13 +410,13 @@ public class PhysicicsDevice extends NonBowlerDevice{
 					Matrix step = chain.getLinks().get(j).DhStep(value);
 					//Log.info( "Current:\n"+current+"Step:\n"+step);
 					//println i+" Link "+j+" index "+index+" step "+TransformNR.getMatrixString(step)
-					startingPoint = startingPoint.times(step);
+					rComponentmx = rComponentmx.times(step);
 				}
 			}
 			
 			//Figure out the current 
-			Matrix current = new TransformNR().getMatrixTransform();
-			for(int j=0;j<chain.getLinks().size() && j<=index;j++) {
+			Matrix tipOffsetmx = new TransformNR().getMatrixTransform();
+			for(int j=0;j<size && j<=index;j++) {
 				double value=0;
 				if(chain.getLinks().get(j).getLinkType()==DhLinkType.ROTORY)
 					value=Math.toRadians(jointSpaceVector[j]);
@@ -425,27 +425,45 @@ public class PhysicicsDevice extends NonBowlerDevice{
 				Matrix step = chain.getLinks().get(j).DhStep(value);
 				//Log.info( "Current:\n"+current+"Step:\n"+step);
 				//println i+" Link "+j+" index "+index+" step "+TransformNR.getMatrixString(step)
-				current = current.times(step);
+				tipOffsetmx = tipOffsetmx.times(step);
 			}
-			double []rVect = new double [3];
+			
 			double []tipOffset = new double [3];
 			double []rComponent = new double [3];
-			TransformNR intermediate = new TransformNR(current)//.times(myInvertedStarting);
-			tipOffset[0]=intermediate.getX();
-			tipOffset[1]=intermediate.getY();
-			tipOffset[2]=intermediate.getZ();
+			TransformNR tipOffsetnr = new TransformNR(tipOffsetmx)//.times(myInvertedStarting);
+			tipOffset[0]=tipOffsetnr.getX();
+			tipOffset[1]=tipOffsetnr.getY();
+			tipOffset[2]=tipOffsetnr.getZ();
 			
-			TransformNR tmp = new TransformNR(startingPoint)//.times(myInvertedStarting);
-			rComponent[0]=tmp.getX();
-			rComponent[1]=tmp.getY();
-			rComponent[2]=tmp.getZ();
+			TransformNR rComponentnr = new TransformNR(rComponentmx)//.times(myInvertedStarting);
+			rComponent[0]=rComponentnr.getX();
+			rComponent[1]=rComponentnr.getY();
+			rComponent[2]=rComponentnr.getZ();
 			for(int x=0;x<3;x++)
-				rVect[x]=-tipOffset[x]+rComponent[x]
-			
+				rVect[x]=-(tipOffset[x]-rComponent[x])
+				
+			/*
+			Matrix current = new TransformNR().getMatrixTransform();
+			for(int j=index;j>=i;j--) {
+				double value=0;
+				if(chain.getLinks().get(j).getLinkType()==DhLinkType.ROTORY)
+					value=Math.toRadians(jointSpaceVector[j]);
+				else
+					value=jointSpaceVector[j];
+				Matrix step = new TransformNR(chain.getLinks().get(j).DhStep(value)).inverse().getMatrixTransform();
+				//Log.info( "Current:\n"+current+"Step:\n"+step);
+				//println i+" Link "+j+" index "+index+" step "+TransformNR.getMatrixString(step)
+				current = current.times(step);
+			}
+			TransformNR intermediate = new TransformNR(current)//.times(myInvertedStarting);
+			rVect[0]=intermediate.getX();
+			rVect[1]=intermediate.getY();
+			rVect[2]=intermediate.getZ();	
+			*/
 			//Cross product of rVect and Z vect
 			double []xProd = crossProduct(rVect, zVect);
-			println i+" Oi vector "+rComponent + " On = " +tipOffset+" R vector "+rVect +" ZVector "+zVect//+" \t\t Zvect "+zVect+" \t\tcrossProd "+xProd
-			println TransformNR.getMatrixString(new Matrix(rotation))
+			println i+" R vector "+rVect //+" \t\t Zvect "+zVect+" \t\tcrossProd "+xProd
+			println TransformNR.getMatrixString(tipOffsetmx)
 			
 			
 			data[0][i]=xProd[0];
