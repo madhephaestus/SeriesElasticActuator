@@ -352,30 +352,38 @@ public class PhysicicsDevice extends NonBowlerDevice{
 				
 				continue
 			}
+			Matrix rotationComponent = new TransformNR().getMatrixTransform();
+			for(int j=i;j<size && j<=index;j++) {
+				double value=0;
+				if(chain.getLinks().get(j).getLinkType()==DhLinkType.ROTORY)
+					value=Math.toRadians(jointSpaceVector[j]);
+				else
+					value=jointSpaceVector[j];
+				Matrix step = chain.getLinks().get(j).DhStep(value);
+				//Log.info( "Current:\n"+current+"Step:\n"+step);
+				//println i+" Link "+j+" index "+index+" step "+TransformNR.getMatrixString(step)
+				rotationComponent = rotationComponent.times(step);
+			}
 			double [] zVect = new double [3];
-			
-			double [][] rotation=new double[3][3]//chain.intChain.get(i).getRotationMatrix().getRotationMatrix()
+			double [] zVectEnd = new double [3];
+			double [][] rotation=new TransformNR(rotationComponent).getRotationMatrix().getRotationMatrix()
+			zVectEnd[0]=rotation[2][2];
+			zVectEnd[1]=rotation[2][1];
+			zVectEnd[2]=rotation[2][0];
 			if(i==0 && index ==0 ){
 				zVect[0]=0;
 				zVect[1]=0;
 				zVect[2]=1;
-			}else if(i==0){
-				rotation = chain.chain.get(index).getRotationMatrix().getRotationMatrix()
+			}else if(i<=index){
 				//println "Link "+index+" "+TransformNR.getMatrixString(new Matrix(rotation))
 				//Get the rz vector from matrix
-				zVect[0]=rotation[2][2];
-				zVect[1]=rotation[2][1];
-				zVect[2]=rotation[2][0];
+				zVect[0]=zVectEnd[0];
+				zVect[1]=zVectEnd[1];
+				zVect[2]=zVectEnd[2];
 			}else{
-				if(i<=index){
-					zVect[0]=-1;
-					zVect[1]=0;
-					zVect[2]=0;
-				}else{
-					zVect[0]=0;
-					zVect[1]=0;
-					zVect[2]=0;
-				}
+				zVect[0]=0;
+				zVect[1]=0;
+				zVect[2]=0;
 			}
 			//Assume all rotational joints
 			//Set to zero if prismatic
@@ -388,6 +396,9 @@ public class PhysicicsDevice extends NonBowlerDevice{
 				data[4][i]=0;
 				data[5][i]=0;
 			}
+			
+			
+			
 			Matrix startingPoint = new TransformNR().getMatrixTransform();
 			if(i>0){
 				for(int j=0;j<i && j<=index;j++) {
@@ -429,12 +440,12 @@ public class PhysicicsDevice extends NonBowlerDevice{
 			rComponent[1]=tmp.getY();
 			rComponent[2]=tmp.getZ();
 			for(int x=0;x<3;x++)
-				rVect[x]=tipOffset[x]-rComponent[x]
+				rVect[x]=-tipOffset[x]+rComponent[x]
 			
 			//Cross product of rVect and Z vect
 			double []xProd = crossProduct(rVect, zVect);
-			//println i+" Oi vector "+rComponent + " On = " +tipOffset+" R vector "+rVect//+" \t\t Zvect "+zVect+" \t\tcrossProd "+xProd
-			
+			println i+" Oi vector "+rComponent + " On = " +tipOffset+" R vector "+rVect +" ZVector "+zVect//+" \t\t Zvect "+zVect+" \t\tcrossProd "+xProd
+			println TransformNR.getMatrixString(new Matrix(rotation))
 			
 			
 			data[0][i]=xProd[0];
