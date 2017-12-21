@@ -400,8 +400,8 @@ public class PhysicicsDevice extends NonBowlerDevice{
 			
 			
 			Matrix rComponentmx = new TransformNR().getMatrixTransform();
-			if(i>0){
-				for(int j=0;j<i && j<=index;j++) {
+			//if(i>0){
+				for(int j=0;j<i ;j++) {
 					double value=0;
 					if(chain.getLinks().get(j).getLinkType()==DhLinkType.ROTORY)
 						value=Math.toRadians(jointSpaceVector[j]);
@@ -412,7 +412,7 @@ public class PhysicicsDevice extends NonBowlerDevice{
 					//println i+" Link "+j+" index "+index+" step "+TransformNR.getMatrixString(step)
 					rComponentmx = rComponentmx.times(step);
 				}
-			}
+			//}
 			
 			//Figure out the current 
 			Matrix tipOffsetmx = new TransformNR().getMatrixTransform();
@@ -440,7 +440,7 @@ public class PhysicicsDevice extends NonBowlerDevice{
 			rComponent[1]=rComponentnr.getY();
 			rComponent[2]=rComponentnr.getZ();
 			for(int x=0;x<3;x++)
-				rVect[x]=-(tipOffset[x]-rComponent[x])
+				rVect[x]=(tipOffset[x]-rComponent[x])
 				
 			/*
 			Matrix current = new TransformNR().getMatrixTransform();
@@ -461,9 +461,9 @@ public class PhysicicsDevice extends NonBowlerDevice{
 			rVect[2]=intermediate.getZ();	
 			*/
 			//Cross product of rVect and Z vect
-			double []xProd = crossProduct(rVect, zVect);
+			double []xProd = crossProduct( zVect,rVect);
 			println i+" R vector "+rVect //+" \t\t Zvect "+zVect+" \t\tcrossProd "+xProd
-			println TransformNR.getMatrixString(tipOffsetmx)
+			//println TransformNR.getMatrixString(tipOffsetmx)
 			
 			
 			data[0][i]=xProd[0];
