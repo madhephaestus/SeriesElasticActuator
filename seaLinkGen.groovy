@@ -1074,7 +1074,7 @@ ICadGenerator c= new ICadGenerator(){
 										.toolOffset(printerOffset.getMM()*2))
 								.difference(myArmScrews.movex(-45),springMoved.toolOffset(2)	)
 			}catch(Exception ex){
-				BowlerStudio.printStackTrace(ex)
+				//BowlerStudio.printStackTrace(ex)
 			}				
 			tipCalibrationPart.setColor(javafx.scene.paint.Color.PINK);
 			handMountPart.setColor(javafx.scene.paint.Color.WHITE);
@@ -1512,7 +1512,7 @@ ICadGenerator c= new ICadGenerator(){
 		if(dh!=null)
 			object.setManipulator(dh);
 		csg.add(object);
-		BowlerStudioController.addCsg(object);
+		//BowlerStudioController.addCsg(object);
 		if(version[0]>0 || version[1]>=11){
 			println "Name API found"
 			object.setName(name)
