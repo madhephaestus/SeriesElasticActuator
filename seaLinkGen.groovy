@@ -1503,7 +1503,7 @@ ICadGenerator c= new ICadGenerator(){
 		//return [bottomNotches]
 		return [camerMount,bracketA,bracketB,bottomBolts].collect{
 			it.addExportFormat("svg")
-			return it.prepMfg()
+			return it
 		}
 		
 	}
@@ -1519,5 +1519,5 @@ ICadGenerator c= new ICadGenerator(){
 		}
 	}
 }
-return c. getCameraMount()//[c.springBlock(c.drivenLinkThickness), c.springBlockPin(c.gearBMeasurments.height).movey(60)]
+return c//[c.springBlock(c.drivenLinkThickness), c.springBlockPin(c.gearBMeasurments.height).movey(60)]
 
