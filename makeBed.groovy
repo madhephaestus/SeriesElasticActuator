@@ -74,12 +74,14 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 	}
 	HashMap<String,CSG> namedPart = []
 	for(CSG c:totalAssembly){
-		tmp=c.toYMin().toXMin()
-		tmp.setName(c.getName())
-		namedPart.put(c.getName(),tmp)
+		tmp=c
 		if(c.getName().contains("SVG")){
 			tmp.addExportFormat("svg")
+		}else{
+			tmp=c.toYMin().toXMin()
 		}
+		tmp.setName(c.getName())
+		namedPart.put(c.getName(),tmp)
 		
 	}
 	double delta=2
@@ -211,9 +213,9 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 }
 
 ThreadUtil.wait(100)
-while(MobileBaseCadManager.get( base).getProcesIndictor().getProgress()<1){
+while(MobileBaseCadManager.get( base).getProcesIndictor().get()<1){
 	ThreadUtil.wait(1000)
-	println "Waiting for cad to get to 1, currently = "+MobileBaseCadManager.get(base).getProcesIndictor().getProgress()
+	println "Waiting for cad to get to 1, currently = "+MobileBaseCadManager.get(base).getProcesIndictor().get()
 }
 File baseDirForFiles = com.neuronrobotics.nrconsole.util.FileSelectionFactory.GetDirectory(new File(System.getProperty("user.home")))
 List<CSG> totalAssembly = arrangeBed(base) ;

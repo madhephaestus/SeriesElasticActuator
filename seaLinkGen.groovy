@@ -1,5 +1,3 @@
-@Grab(group='com.neuronrobotics', module='JavaCad', version='0.12.2')
-
 import com.neuronrobotics.bowlerstudio.creature.ICadGenerator;
 import com.neuronrobotics.bowlerstudio.creature.CreatureLab;
 import org.apache.commons.io.IOUtils;
@@ -468,18 +466,27 @@ ICadGenerator c= new ICadGenerator(){
 		double footingWidth = boardY/4
 		CSG footing =new Cube(workcellSize,footingWidth,thickness.getMM()).toCSG()
 		
-		double etchWith = 0.1
-		CSG etchX =new Cube((workcellSize/2)-2,etchWith,thickness.getMM()).toCSG()
-					.toXMin()
-		CSG etchY =new Cube(etchWith,footingWidth-2,thickness.getMM()).toCSG()
-		def etchParts = [etchX,etchY]
+		double etchWith = 0.5
+		etchX = (workcellSize/2)-2
+		//CSG etchX =new Cube((workcellSize/2)-2,etchWith,thickness.getMM()).toCSG()
+		//			.toXMin()
+		//CSG etchY =new Cube(etchWith,footingWidth-2,thickness.getMM()).toCSG()
+		def etchParts = []
 		double gridDimention =25
-		for(double i=-150;i<151;i+=gridDimention){
-			etchParts.add(etchX.movey(i))
+		
+		CSG etch =new Cube(gridDimention-etchWith,gridDimention-etchWith,thickness.getMM()).toCSG()
+					.difference(new Cube(10,10,thickness.getMM()).toCSG())
+
+		etch=etch
+					.toXMin()
+					.toYMin()
+		int x =0
+		for(double i=-150;i<151;i+=gridDimention*2){
+			for(double j=0;j<etchX;j+=gridDimention){
+				etchParts.add(etch.movex(j).movey(i+(x++%2==0?gridDimention:0)))
+			}
 		}
-		for(double i=0;i<etchX.getMaxX();i+=gridDimention){
-			etchParts.add(etchY.movex(i))
-		}
+		
 		def cameraParts = getCameraMount()
 		CSG basePlate = footing
 						.toZMax()
@@ -495,8 +502,8 @@ ICadGenerator c= new ICadGenerator(){
 						.difference(cameraParts)
 						.difference(etchParts)
 		
-		basePlateUpper=basePlate
-						/*
+		basePlateUpper=basePlate.intersect(footing)
+		basePlateLower=basePlate.difference(footing)	/*
 		CSG sidePlateA=sidePlate
 				.difference(screwAcross)
 				.difference(screwAcross.movez(sidePlateclearenceHeight))
@@ -535,15 +542,25 @@ ICadGenerator c= new ICadGenerator(){
 						.rotx(-90)
 						.toZMin()
 			})
+		
 		basePlateUpper.setManufacturing({ toMfg ->
 				p= toMfg
 						.toXMin()
 						.toYMin()
 						.toZMin()
 				p.addExportFormat("svg")
+				//Transform t=new Transform()
 				return p
 			})
-		
+		basePlateLower.setManufacturing({ toMfg ->
+				p= toMfg
+						.toXMin()
+						.toYMin()
+						.toZMin()
+				p.addExportFormat("svg")
+				//Transform t=new Transform()
+				return p
+			})
 		
 		/*
 		sidePlateA.setManufacturing({ toMfg ->
@@ -580,11 +597,11 @@ ICadGenerator c= new ICadGenerator(){
 			add(attachmentParts,it,null,"cameraStand_SVG")
 		}
 		basePlateUpper.addExportFormat("svg")
-		//basePlateLower.addExportFormat("svg")
+		basePlateLower.addExportFormat("svg")
 		add(attachmentParts,baseShapeA,null,"baseLeft")
 		add(attachmentParts,baseShapeB,null,"baseRight")
 		add(attachmentParts,basePlateUpper,null,"basePlateEtching_SVG")
-		//add(attachmentParts,basePlateLower,null,"basePlateCut_SVG")
+		add(attachmentParts,basePlateLower,null,"basePlateCut_SVG")
 		add(attachmentParts,baseCap,null,"baseCap")
 		add(attachmentParts,manipulationParts.get(0),null,"colorObject")
 		add(attachmentParts,manipulationParts.get(1),null,"coaster")
