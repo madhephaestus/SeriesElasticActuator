@@ -213,7 +213,7 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 ThreadUtil.wait(100)
 while(MobileBaseCadManager.get( base).getProcesIndictor().getProgress()<1){
 	ThreadUtil.wait(1000)
-	println "Waiting for cad to get to 1, currently = "+MobileBaseCadManager.get(base).getProcesIndictor().get()
+	println "Waiting for cad to get to 1, currently = "+MobileBaseCadManager.get(base).getProcesIndictor().getProgress()
 }
 File baseDirForFiles = com.neuronrobotics.nrconsole.util.FileSelectionFactory.GetDirectory(new File(System.getProperty("user.home")))
 List<CSG> totalAssembly = arrangeBed(base) ;
