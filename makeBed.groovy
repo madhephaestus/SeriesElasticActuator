@@ -74,14 +74,11 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 	}
 	HashMap<String,CSG> namedPart = []
 	for(CSG c:totalAssembly){
+		tmp=c.toYMin().toXMin()
+		tmp.setName(c.getName())
+		namedPart.put(c.getName(),tmp)
 		if(c.getName().contains("SVG")){
-			//c.addExportFormat("svg")
-		}else{
-			//beds.add(c)
-			tmp=c.toYMin().toXMin()
-			tmp.setName(c.getName())
-			namedPart.put(c.getName(),tmp)
-			
+			tmp.addExportFormat("svg")
 		}
 		
 	}
@@ -198,22 +195,23 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 
 	println "Making bed A "
 	BowlerStudioController.setCsg(beda , null);
-	CSG A = CSG.unionAll(beda).toYMax()
-	A.setName("BedA")
+	//CSG A = CSG.unionAll(beda).toYMax()
+	//A.setName("BedA")
 
 	println "Making bed B "
 	BowlerStudioController.setCsg(bedb , null);
-	CSG B = CSG.unionAll(bedb).toYMax()
-	B.setName("BedB")
+	//CSG B = CSG.unionAll(bedb).toYMax()
+	//B.setName("BedB")
 	parts=[]
-	parts.add(A);parts.add(B);
+	
 	parts.addAll(beda)
 	parts.addAll(bedb)
+	//parts.add(A);parts.add(B);
 	return parts
 }
 
 ThreadUtil.wait(100)
-while(MobileBaseCadManager.get( base).getProcesIndictor().get()<1){
+while(MobileBaseCadManager.get( base).getProcesIndictor().getProgress()<1){
 	ThreadUtil.wait(1000)
 	println "Waiting for cad to get to 1, currently = "+MobileBaseCadManager.get(base).getProcesIndictor().get()
 }

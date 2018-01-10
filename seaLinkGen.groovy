@@ -495,8 +495,7 @@ ICadGenerator c= new ICadGenerator(){
 						.difference(cameraParts)
 						.difference(etchParts)
 		
-		basePlateUpper=basePlate.intersect(footing)
-		basePlateLower=basePlate.difference(footing)
+		basePlateUpper=basePlate
 						/*
 		CSG sidePlateA=sidePlate
 				.difference(screwAcross)
@@ -537,17 +536,15 @@ ICadGenerator c= new ICadGenerator(){
 						.toZMin()
 			})
 		basePlateUpper.setManufacturing({ toMfg ->
-				return toMfg
+				p= toMfg
 						.toXMin()
 						.toYMin()
 						.toZMin()
+				p.addExportFormat("svg")
+				return p
 			})
-		basePlateLower.setManufacturing({ toMfg ->
-			return toMfg
-					.toXMin()
-					.toYMin()
-					.toZMin()
-		})
+		
+		
 		/*
 		sidePlateA.setManufacturing({ toMfg ->
 				return toMfg
@@ -573,16 +570,21 @@ ICadGenerator c= new ICadGenerator(){
 		//if(showRightPrintedParts)attachmentParts.add(baseShapeB)
 		//if(showRightPrintedParts)attachmentParts.add(basePlate)
 		//if(showLeftPrintedParts)attachmentParts.add(baseCap)
+		for (int i=0;i<cameraParts.size();i++){
+			CSG p = cameraParts.get(i)
+			p.addExportFormat("svg")
+			
+		}
 		cameraParts.forEach{
 			it.addExportFormat("svg")
 			add(attachmentParts,it,null,"cameraStand_SVG")
 		}
 		basePlateUpper.addExportFormat("svg")
-		basePlateLower.addExportFormat("svg")
+		//basePlateLower.addExportFormat("svg")
 		add(attachmentParts,baseShapeA,null,"baseLeft")
 		add(attachmentParts,baseShapeB,null,"baseRight")
 		add(attachmentParts,basePlateUpper,null,"basePlateEtching_SVG")
-		add(attachmentParts,basePlateLower,null,"basePlateCut_SVG")
+		//add(attachmentParts,basePlateLower,null,"basePlateCut_SVG")
 		add(attachmentParts,baseCap,null,"baseCap")
 		add(attachmentParts,manipulationParts.get(0),null,"colorObject")
 		add(attachmentParts,manipulationParts.get(1),null,"coaster")
@@ -1431,29 +1433,37 @@ ICadGenerator c= new ICadGenerator(){
 		camerMount.setManufacturing({ toMfg ->
 				TransformNR step = cameraLocationNR.inverse()
 				Transform move = TransformFactory.nrToCSG(step)
-				return toMfg
+				p= toMfg
 						.transformed(move)
 						.toXMin()
 						.toYMin()
 						.toZMin()
+				p.addExportFormat("svg")
+				return p
 		})
 		bracketA.setManufacturing({ toMfg ->
-				return toMfg
+				p= toMfg
 						.rotx(90)
 						.toXMin()
 						.toYMin()
 						.toZMin()
+				p.addExportFormat("svg")
+				return p
 		})
 		bracketB.setManufacturing({ toMfg ->
-				return toMfg
+				p= toMfg
 						.rotx(90)
 						.toXMin()
 						.toYMin()
 						.toZMin()
+						
+				p.addExportFormat("svg")
+				return p
 		})
 		bottomBolts.setManufacturing({ toMfg ->
 				return null
 		})
+		
 		//return [bottomNotches]
 		return [camerMount,bracketA,bracketB,bottomBolts]
 	}
