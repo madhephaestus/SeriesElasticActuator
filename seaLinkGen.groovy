@@ -1366,17 +1366,26 @@ ICadGenerator c= new ICadGenerator(){
 	private ArrayList<CSG> getCameraMount(){
 		//cameraLocationCSG
 		
-		double cameraMountSize = 45+5+thickness.getMM()
+		double cameraMountSize = 85+5+thickness.getMM()
 		Log.enableSystemPrint(true)
 		println "Camera at "+cameraLocationNR
 		double cameraBolt = (workcellSize-cameraMountSize)/2
+		/*
 		CSG camera = (CSG) ScriptingEngine
 					 .gitScriptRun(
 			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
 			            "camera.groovy" , // file to load
 			            null// create a keepaway version
 			            )
-		camera = camera.union(camera.rotz(90))
+		*/
+		CSG cameraBase = new Cube(6.5,52,thickness.getMM()).toCSG()
+			.toZMax()   
+			.movex(9+35/2)
+		CSG camera = new Cylinder(35/2,35/2,	  thickness.getMM()    ,(int)30).toCSG()   
+		.toZMax()
+		.union(cameraBase)
+		
+		camera = camera
 			            .transformed(cameraLocationCSG)
 		CSG camerMount = new Cube(	cameraMountSize+5,
 								cameraMountSize+5,
@@ -1384,12 +1393,13 @@ ICadGenerator c= new ICadGenerator(){
 								.toZMax()
 								.transformed(cameraLocationCSG)
 								.difference(camera)
-		CSG camerMountLug = new Cube(	cameraMountSize,
+		CSG camerMountLug = new Cube(	45+5+thickness.getMM(),
 								thickness.getMM(),
-								30).toCSG()
+								45).toCSG()
 								.toYMax()
 								.movey(cameraMountSize/2)
 								.toZMin()
+								.movex(10)
 		CSG notch = new Cube(	thickness.getMM()).toCSG()
 								.toZMax()
 								.toYMax()		
@@ -1400,15 +1410,16 @@ ICadGenerator c= new ICadGenerator(){
 						.rotz(180)
 						.toXMax()
 						.movex(workcellSize/2)
+						.movex(-20)
 		CSG midLug = camerMountLug
 						.rotz(180)
 						.toXMin()
 						.movex(camerMount.getMaxX()+20)
 						.movez(cameraBolt)
 		CSG notches =  notch
-					.movex(10)
+					.movex(15)
 					.union(	notch
-							.movex(-10)	)
+							.movex(-15)	)
 		CSG bottomNotches = notches
 						.rotx(180)
 						.movex(cameraBolt)	
@@ -1420,14 +1431,16 @@ ICadGenerator c= new ICadGenerator(){
 		//boltSizeParam
 		CSG boltCutout = new Cube(boltMeasurments.outerDiameter,
 							thickness.getMM(),
-							30-thickness.getMM()).toCSG()
+							45-thickness.getMM()).toCSG()
 							.toZMin()
 							.union(new Cylinder(boltMeasurments.outerDiameter/2,
 											boltMeasurments.outerDiameter/2,
 											thickness.getMM(),(int)30).toCSG()
-											.toZMax(),
+											.toZMax()
+											,
 											nut
 							)
+							.movez(-5)
 								
 		boltCutout=boltCutout.movey(	-(cameraMountSize-thickness.getMM())/2				)
 				.union(boltCutout.movey(	(cameraMountSize-thickness.getMM())/2				))
@@ -1440,13 +1453,15 @@ ICadGenerator c= new ICadGenerator(){
 						baseLug
 						.union(midLug)
 						.hull()
-						,bottomNotches,topNotches)
+						,bottomNotches)
 					.difference(bottomBolts,topBolts)
-		
+					.difference(camerMount.hull())
+					.union(topNotches)
 		CSG bracketB = bracketA
 						.toYMax()
 						.movey(cameraMountSize/2)
 		camerMount=camerMount.difference(topBolts,bracketA,bracketB)
+		double cameraOffset = cameraMountSize+22
 		camerMount.setManufacturing({ toMfg ->
 				TransformNR step = cameraLocationNR.inverse()
 				Transform move = TransformFactory.nrToCSG(step)
@@ -1455,15 +1470,18 @@ ICadGenerator c= new ICadGenerator(){
 						.toXMin()
 						.toYMin()
 						.toZMin()
+						.movex(-cameraOffset*1)
 				p.addExportFormat("svg")
 				return p
 		})
+		
 		bracketA.setManufacturing({ toMfg ->
 				p= toMfg
 						.rotx(90)
 						.toXMin()
 						.toYMin()
 						.toZMin()
+						.movex(-cameraOffset*2)
 				p.addExportFormat("svg")
 				return p
 		})
@@ -1473,7 +1491,8 @@ ICadGenerator c= new ICadGenerator(){
 						.toXMin()
 						.toYMin()
 						.toZMin()
-						
+						.movex(-cameraOffset*3-10)
+						.movey(-35)
 				p.addExportFormat("svg")
 				return p
 		})
@@ -1482,7 +1501,11 @@ ICadGenerator c= new ICadGenerator(){
 		})
 		
 		//return [bottomNotches]
-		return [camerMount,bracketA,bracketB,bottomBolts]
+		return [camerMount,bracketA,bracketB,bottomBolts].collect{
+			it.addExportFormat("svg")
+			return it.prepMfg()
+		}
+		
 	}
 
 	private add(ArrayList<CSG> csg ,CSG object, Affine dh , String name){
@@ -1496,5 +1519,5 @@ ICadGenerator c= new ICadGenerator(){
 		}
 	}
 }
-return c//[c.springBlock(c.drivenLinkThickness), c.springBlockPin(c.gearBMeasurments.height).movey(60)]
+return c. getCameraMount()//[c.springBlock(c.drivenLinkThickness), c.springBlockPin(c.gearBMeasurments.height).movey(60)]
 

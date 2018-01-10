@@ -73,17 +73,23 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 		}
 	}
 	HashMap<String,CSG> namedPart = []
+	svgParts=[]
 	for(CSG c:totalAssembly){
 		tmp=c
 		if(c.getName().contains("SVG")){
 			tmp.addExportFormat("svg")
+			svgParts.add(tmp)
 		}else{
 			tmp=c.toYMin().toXMin()
+			tmp.setName(c.getName())
+			namedPart.put(c.getName(),tmp)
 		}
-		tmp.setName(c.getName())
-		namedPart.put(c.getName(),tmp)
+		
+		
 		
 	}
+	
+	return svgParts
 	double delta=2
 	int numLinks =3
 	
