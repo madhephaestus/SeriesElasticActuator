@@ -466,7 +466,7 @@ ICadGenerator c= new ICadGenerator(){
 		double footingWidth = boardY/4
 		CSG footing =new Cube(workcellSize,footingWidth,thickness.getMM()).toCSG()
 		
-		double etchWith = 0.5
+		double etchWith =5
 		etchX = (workcellSize/2)-2
 		//CSG etchX =new Cube((workcellSize/2)-2,etchWith,thickness.getMM()).toCSG()
 		//			.toXMin()
