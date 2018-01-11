@@ -716,6 +716,7 @@ ICadGenerator c= new ICadGenerator(){
 						.rotx(180)
 						.movez(hornOffset)
 						.movex(-gearDistance)
+						.toolOffset(-printerOffset.getMM())
 			servoReference=servoReference
 				.toZMax()
 				.movez(servoNub-centerLinkToBearingTop)			
@@ -729,10 +730,10 @@ ICadGenerator c= new ICadGenerator(){
 						)
 						.movez(washerThickness)	
 			horn=horn.movez(gearPlacementVSMotor)
-			for(int i=0;i<4;i++){
+			for(int i=0;i<((myGearA.getMaxZ()/hornOffset)+1);i++){
 				myGearA=myGearA
 					.difference(horn
-								.movez(hornOffset*i)
+								.movez((hornOffset-printerOffset.getMM())*i)
 								)
 			}
 			// special recess for measured difference
