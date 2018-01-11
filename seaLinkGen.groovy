@@ -716,7 +716,7 @@ ICadGenerator c= new ICadGenerator(){
 						.rotx(180)
 						.movez(hornOffset)
 						.movex(-gearDistance)
-						.toolOffset(-printerOffset.getMM())
+						//.toolOffset(-printerOffset.getMM()) //this offset applied in the servo horn dimentions JSON
 			servoReference=servoReference
 				.toZMax()
 				.movez(servoNub-centerLinkToBearingTop)			
