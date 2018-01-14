@@ -1,5 +1,5 @@
 double holeDiam = 3.2
-double standoff =10
+double standoff =8
 LengthParameter thickness 				= new LengthParameter("Material Thickness",11.88,[10,1])
 CSG boltHole =new Cylinder(holeDiam/2,holeDiam/2,thickness.getMM()*4,(int)30).toCSG()
 			.toXMin()
@@ -9,35 +9,37 @@ double standoffThickness = 2
 CSG standoffShaft =new Cylinder((holeDiam/2)+standoffThickness,(holeDiam/2)+standoffThickness,standoff,(int)30).toCSG()
 			.toXMin()
 			.toYMin()
+
+
 CSG standoffs = CSG.unionAll([
 			standoffShaft
-				.movey(9.0-standoffThickness)
-				.movex(26.3-standoffThickness),
+				.movey(2.54-standoffThickness)
+				.movex(2.54-standoffThickness),
 			standoffShaft
-				.movey(57.4-standoffThickness)
-				.movex(27.7-standoffThickness),
+				.movey(118.68-standoffThickness)
+				.movex(2.54-standoffThickness),
 			standoffShaft
-				.movey(56.6-standoffThickness)
-				.movex(103.0-standoffThickness),
+				.movey(2.54-standoffThickness)
+				.movex(139.84-standoffThickness),
 			standoffShaft
-				.movey(10.7-standoffThickness)
-				.movex(103.0-standoffThickness)
+				.movey(118.68-standoffThickness)
+				.movex(139.84-standoffThickness)
 			])					
 CSG bolts = CSG.unionAll([
 			boltHole
-				.movey(9.0)
-				.movex(26.3),
+				.movey(2.54)
+				.movex(2.54),
 			boltHole
-				.movey(57.4)
-				.movex(27.7),
+				.movey(118.68)
+				.movex(2.54),
 			boltHole
-				.movey(56.6)
-				.movex(103.0),
+				.movey(2.54)
+				.movex(139.84),
 			boltHole
-				.movey(10.7)
-				.movex(103.0)
+				.movey(118.68)
+				.movex(139.84)
 			])
-CSG board = new Cube(133.5,70,1.6).toCSG()
+CSG board = new Cube(146.05,124.89,1.6).toCSG()
 			.toXMin()
 			.toYMin()
 			.movez(standoff)
