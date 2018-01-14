@@ -436,12 +436,13 @@ ICadGenerator c= new ICadGenerator(){
 						.movex(baseShape.getMaxX() - inset)
 						.movez(topLevel)				
 		baseShape = baseShape.difference([bottomScrewSet,screwAcross])	
-		CSG nucleoBoard = nucleo.get(0)
+		double boardKeepaway =50
+		CSG nucleoBoard = nucleo.get(0).movey(-boardKeepaway)
 		double baseBackSet = 	-baseShape.getMaxX()+keepAwayDistance+encoderKeepawayDistance
 		double spacing = 75
 
 		double nucleoMountPlacement = spacing+baseBackSet+nucleoBoard.getMaxX()
-		CSG boxCut = new Cube((workcellSize/2)+nucleoMountPlacement,workcellSize,thickness.getMM()*2).toCSG()
+		CSG boxCut = new Cube((workcellSize/2)+nucleoMountPlacement+boardKeepaway,workcellSize,thickness.getMM()*2).toCSG()
 					.toXMax()
 					.movex(workcellSize/2)
 		manipulationParts.clear()
