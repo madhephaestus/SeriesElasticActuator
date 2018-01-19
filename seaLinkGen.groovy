@@ -991,16 +991,6 @@ ICadGenerator c= new ICadGenerator(){
 			if(esp.size()>1)if(showLeftPrintedParts)add(csg,esp.get(1),dh.getListener(),"encoderPlate"+linkIndex)
 			if(showLeftPrintedParts)add(csg,baseEncoderCap,dh.getListener(),"baseEncoderCap"+linkIndex)
 			
-		}else if(linkIndex==2){
-			// add link here
-			def parts = ScriptingEngine
-	                    .gitScriptRun(
-                                "https://github.com/osh1996/SeriesElasticActuator.git", // git location of the library
-	                              "MiraLink.groovy" , // file to load
-	                              [dh,linkIndex]// no parameters (see next tutorial)
-                        )
-                for(CSG DummyStandInForLink:parts)
-				add(csg,DummyStandInForLink,dh.getListener(),"dummyLink")
 		}else{
 			// load the end of limb
 			// Target point
