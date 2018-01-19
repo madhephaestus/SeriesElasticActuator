@@ -10,7 +10,6 @@ import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import eu.mihosoft.vrl.v3d.Transform;
 import javafx.scene.transform.Affine;
 
-
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 ICadGenerator c= new ICadGenerator(){
@@ -701,7 +700,7 @@ ICadGenerator c= new ICadGenerator(){
 											.rotz(-Math.toDegrees(dh.getTheta()))
 											,dh)
 					   .movex(springBlockPartRaw.getMaxX())
-		if(linkIndex<dhLinks.size()-1){
+		if(linkIndex<dhLinks.size()-1 && linkIndex!=2 ){
 			HashMap<String, Object> shaftmap = Vitamins.getConfiguration(nextLink.getShaftType(),nextLink.getShaftSize())
 			HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(nextLink.getElectroMechanicalType(),nextLink.getElectroMechanicalSize())
 			//println conf.getShaftType() +" "+conf.getShaftSize()+" "+shaftmap
@@ -992,6 +991,16 @@ ICadGenerator c= new ICadGenerator(){
 			if(esp.size()>1)if(showLeftPrintedParts)add(csg,esp.get(1),dh.getListener(),"encoderPlate"+linkIndex)
 			if(showLeftPrintedParts)add(csg,baseEncoderCap,dh.getListener(),"baseEncoderCap"+linkIndex)
 			
+		}else if(linkIndex==2){
+			// add link here
+			def parts = ScriptingEngine
+	                    .gitScriptRun(
+                                "https://github.com/osh1996/SeriesElasticActuator.git", // git location of the library
+	                              "MiraLink.groovy" , // file to load
+	                              [dh,linkIndex]// no parameters (see next tutorial)
+                        )
+                for(CSG DummyStandInForLink:parts)
+				add(csg,DummyStandInForLink,dh.getListener(),"dummyLink")
 		}else{
 			// load the end of limb
 			// Target point
