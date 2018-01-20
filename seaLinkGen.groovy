@@ -10,6 +10,7 @@ import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import eu.mihosoft.vrl.v3d.Transform;
 import javafx.scene.transform.Affine;
 
+
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 ICadGenerator c= new ICadGenerator(){
@@ -700,7 +701,7 @@ ICadGenerator c= new ICadGenerator(){
 											.rotz(-Math.toDegrees(dh.getTheta()))
 											,dh)
 					   .movex(springBlockPartRaw.getMaxX())
-		if(linkIndex<dhLinks.size()-1 && linkIndex!=2 ){
+		if(linkIndex<dhLinks.size()-1){
 			HashMap<String, Object> shaftmap = Vitamins.getConfiguration(nextLink.getShaftType(),nextLink.getShaftSize())
 			HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(nextLink.getElectroMechanicalType(),nextLink.getElectroMechanicalSize())
 			//println conf.getShaftType() +" "+conf.getShaftSize()+" "+shaftmap
@@ -1521,4 +1522,3 @@ ICadGenerator c= new ICadGenerator(){
 	}
 }
 return c//[c.springBlock(c.drivenLinkThickness), c.springBlockPin(c.gearBMeasurments.height).movey(60)]
-
