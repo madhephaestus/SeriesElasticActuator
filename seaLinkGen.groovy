@@ -1417,7 +1417,7 @@ ICadGenerator c= new ICadGenerator(){
 						.rotz(180)
 						.toXMin()
 						.movex(camerMount.getMaxX()+20)
-						.movez(cameraBolt)
+						.movez(cameraBolt+thickness.getMM())
 		CSG notches =  notch
 					.movex(15)
 					.union(	notch
