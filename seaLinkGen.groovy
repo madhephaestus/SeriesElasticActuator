@@ -1442,7 +1442,7 @@ ICadGenerator c= new ICadGenerator(){
 											,
 											nut
 							)
-							.movez(-5)
+							.movez(-thickness.getMM()/2)
 								
 		boltCutout=boltCutout.movey(	-(cameraMountSize-thickness.getMM())/2				)
 				.union(boltCutout.movey(	(cameraMountSize-thickness.getMM())/2				))
