@@ -315,7 +315,7 @@ ICadGenerator c= new ICadGenerator(){
 		double baseyLength = servoCentering*2
 		double keepAwayDistance =10
 		CSG gearHole = gearKeepaway
-					.movez(topLevel)
+					.movez(topLevel+washerThickness)
 		servoReference=servoReference
 					.movez(servoPlane)
 					.movex(-gearDistance)
