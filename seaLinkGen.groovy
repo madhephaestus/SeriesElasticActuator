@@ -731,7 +731,7 @@ ICadGenerator c= new ICadGenerator(){
 							
 						)
 						.movez(washerThickness)	
-			horn=horn.movez(gearPlacementVSMotor)
+			horn=horn.movez(gearPlacementVSMotor+washerThickness)
 			for(int i=0;i<((myGearA.getMaxZ()/hornOffset)+1);i++){
 				myGearA=myGearA
 					.difference(horn
