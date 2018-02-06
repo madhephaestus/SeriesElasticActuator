@@ -14,6 +14,7 @@ import javafx.scene.transform.Affine;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 ICadGenerator c= new ICadGenerator(){
+	int linkResolution = 6
 	double boardX = 1219.2
 	double boardY = 914.4
 	boolean showVitamins =false
@@ -830,7 +831,7 @@ ICadGenerator c= new ICadGenerator(){
 					controlOne, // Control point one
 					controlTwo, // Control point two
 					end ,// Endpoint
-					10
+					linkResolution
 					)
 			print "\r\nUnioning link..."
 			long start = System.currentTimeMillis()
