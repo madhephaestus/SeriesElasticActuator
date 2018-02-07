@@ -208,18 +208,27 @@ ICadGenerator c= new ICadGenerator(){
 									.rotz(90)
 									)
 									.movez(-58)
+	double thirdPinStandoff =37								
 	CSG armScrews = screwWithNut.rotz(-45)
 					.movey(-screwCenterLine+screwHeadKeepaway)
 					.union(screwWithNut.rotz(45)
 						.movey(screwCenterLine-screwHeadKeepaway))
-					//.union(screwTotal
-					//		.union(new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() 
-					//				.movez(27-drivenLinkThickness)
-					//		)
-					//		.movez(centerLinkToBearingTop-encoderBearingHeight)
-					///		.movex(-thirdarmBoltBackSetDistance)
-					//		.roty(90)
-					//		)
+					.union(screwTotal
+							.union(new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() 
+									.movez(thirdPinStandoff-drivenLinkThickness)
+							)
+							.movez(centerLinkToBearingTop-encoderBearingHeight)
+							.movex(-thirdarmBoltBackSetDistance)
+							.roty(90)
+							)
+					.union(screwTotal
+							.movez((-centerLinkToBearingTop-encoderBearingHeight)*2)
+							.union(new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() 
+									.movez(thirdPinStandoff-drivenLinkThickness+centerLinkToBearingTop-encoderBearingHeight)
+							)
+							.movex(-thirdarmBoltBackSetDistance+22)
+							.roty(90)
+							)
 					.roty(-90)
 					//.movex(legLength+encoderCapRodRadius/2)
 					.movez(centerLinkToBearingTop-screwHeadKeepaway*1.5)
@@ -682,10 +691,15 @@ ICadGenerator c= new ICadGenerator(){
 		CSG loadCellBolts = moveDHValues(LoadCellScrews
 							.rotz(-Math.toDegrees(dh.getTheta()))
 								,dh)	
+		CSG myArmScrews = moveDHValues(armScrews
+						.rotz(-Math.toDegrees(dh.getTheta()))
+						,dh)
+   						.movex(springBlockPartRaw.getMaxX())
 		CSG myGearB = moveDHValues(tmpMyGear
 								.difference(loadBearingPin)
 								,dh)
 					.difference(loadCellBolts)
+					.difference(myArmScrews)
 					.setColor(javafx.scene.paint.Color.LIGHTGREEN);
 		CSG myPin = moveDHValues(loadBearingPin,dh)
 		
@@ -698,10 +712,7 @@ ICadGenerator c= new ICadGenerator(){
 							.setColor(javafx.scene.paint.Color.BROWN);
 							
 		CSG handMountPart=null;
-		CSG myArmScrews = moveDHValues(armScrews
-											.rotz(-Math.toDegrees(dh.getTheta()))
-											,dh)
-					   .movex(springBlockPartRaw.getMaxX())
+		
 		if(linkIndex<dhLinks.size()-1){
 			HashMap<String, Object> shaftmap = Vitamins.getConfiguration(nextLink.getShaftType(),nextLink.getShaftSize())
 			HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(nextLink.getElectroMechanicalType(),nextLink.getElectroMechanicalSize())
@@ -816,10 +827,21 @@ ICadGenerator c= new ICadGenerator(){
 					.toZMax()
 					.movez(centerLinkToBearingTop+encoderBearingHeight)
 				)	
-			CSG supportRib = ribs.get(ribs.size()-2)
+			CSG bounding = ribs.get(ribs.size()-2).getBoundingBox()
+			/*
+CSG supportRib = ribs.get(ribs.size()-2)
+							//.intersect(bounding.movex(-5))
+							//.intersect(bounding.movex(5))
 							.movez(encoderBearingHeight -cornerRadius*2)
 							//.union(ribs.get(ribs.size()-2))
-							.union(ribs.get(ribs.size()-1))
+							.union(ribs.get(ribs.size()-1)
+							*/
+			CSG upperRib = ribs.get(ribs.size()-2)
+						.movez(encoderBearingHeight -cornerRadius*2)
+						//.movex(-2)
+						.movey(12)
+			CSG supportRib = ribs.get(ribs.size()-1)
+							.union(upperRib)
 							.toZMin()
 							.movez(centerLinkToBearingTop-encoderBearingHeight+ cornerRadius*2)
 							.union(mountLug)
@@ -859,19 +881,26 @@ ICadGenerator c= new ICadGenerator(){
 											.rotz(-Math.toDegrees(dh.getTheta()))
 											,dh)	
 			CSG otherEncoder = linkEncoder.rotx(180)			
-			if(linkIndex==0){
-				sidePlateWithServo =sidePlateWithServo
-					.union(
-						bracketBezier
-							.toZMin()
-							.movez(sidePlateWithServo.getMinZ())							
-						)
-					.union([supportRib
-							.mirrorz()
-							.movex(5)
-							]
-							)
-				sidePlateWithServo =sidePlateWithServo			
+			//if(linkIndex==0){
+				CSG rightSIdeSupport =bracketBezier
+									.toZMin()
+									.movez(sidePlateWithServo.getMinZ())	
+									.union([supportRib
+											.mirrorz()
+											.movex(5)
+											]
+											)
+									.difference(sidePlateWithServo.hull())
+									.minkowskiDifference(
+										springBlockPart.hull(),// the part we want to fit into a cutout
+										6.0// the offset distance to fit
+										)
+									.minkowskiDifference(
+										myGearB.hull(),// the part we want to fit into a cutout
+										6.0// the offset distance to fit
+										)
+				sidePlateWithServo =sidePlateWithServo	
+					.union(rightSIdeSupport)		
 					.difference(linkEncoder)
 					//.difference(baseEncoderCap)	
 					.difference([springBlockPart,
@@ -880,7 +909,7 @@ ICadGenerator c= new ICadGenerator(){
 					.difference(springMoved)
 					//.difference(bottomCut)
 					.difference(linkSection)
-			}
+			//}
 			linkSection = 	linkSection				
 				.difference(myspringBlockPart
 						.intersect(linkSection)
