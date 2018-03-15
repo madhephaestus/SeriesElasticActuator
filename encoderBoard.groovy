@@ -4,7 +4,7 @@ import eu.mihosoft.vrl.v3d.parametrics.*;
 CSG makeEncoder(){
 	LengthParameter printerOffset 		= new LengthParameter("printerOffset",0.5,[1.2,0])
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","608zz",Vitamins.listVitaminSizes("ballBearing"))
-	
+	LengthParameter encoderBoltKeepaway 		= new LengthParameter("encoderBoltKeepaway",printerOffset.getMM(),[1.2,0])
 	HashMap<String, Object>  bearingData = Vitamins.getConfiguration("ballBearing",bearingSizeParam.getStrValue())
 	
 	
@@ -84,8 +84,8 @@ CSG makeEncoder(){
 	CSG bolt =new Cylinder(mountHoleRadius,mountHoleRadius,16,(int)30).toCSG() // a one line Cylinder
 							//.movez(-2)
 							.union(
-								new Cylinder(	mountHoleRadius+printerOffset.getMM(),
-											mountHoleRadius+printerOffset.getMM(),
+								new Cylinder(	mountHoleRadius+encoderBoltKeepaway.getMM(),
+											mountHoleRadius+encoderBoltKeepaway.getMM(),
 											PCBsurfaceTobearing,(int)30).toCSG() 
 											.movez(-PCBsurfaceTobearing)
 								)
