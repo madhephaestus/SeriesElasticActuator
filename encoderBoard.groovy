@@ -125,9 +125,13 @@ CSG makeEncoder(){
 				bearingCutterSlot,
 				//boardCad.minkowski(new Cube(2,2,0.01).toCSG().toZMax()),
 				//boardCad,
-				chipCkearence]	)
-				.setParameter(printerOffset)
-				.setRegenerate({makeEncoder()})
+				]	)
+	if(encoderBoltKeepaway.getMM()>0){
+		board=			board.union(chipCkearence)	
+	}
+	
+	board.setParameter(printerOffset)
+		.setRegenerate({makeEncoder()})
 			
 	double shadowy = -chipToShortside-cornerOffset-3
 	CSG cordCutOut = new Cube(	6,// X dimention
