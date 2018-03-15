@@ -82,7 +82,7 @@ CSG makeEncoder(){
 	chipCkearence=chipCkearence.union([servoHeader,hdmiHeader,loadHeader])
 	
 	CSG bolt =new Cylinder(mountHoleRadius,mountHoleRadius,16,(int)30).toCSG() // a one line Cylinder
-							.movez(-5)
+							//.movez(-2)
 							.union(
 								new Cylinder(	mountHoleRadius+printerOffset.getMM(),
 											mountHoleRadius+printerOffset.getMM(),
