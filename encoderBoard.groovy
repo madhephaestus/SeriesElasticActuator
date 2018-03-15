@@ -3,7 +3,7 @@ import eu.mihosoft.vrl.v3d.parametrics.*;
 
 CSG makeEncoder(){
 	LengthParameter printerOffset 		= new LengthParameter("printerOffset",0.5,[1.2,0])
-	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","608zz",Vitamins.listVitaminSizes("ballBearing"))
+	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","R8-60355K505",Vitamins.listVitaminSizes("ballBearing"))
 	LengthParameter encoderBoltKeepaway 		= new LengthParameter("encoderBoltKeepaway",printerOffset.getMM(),[1.2,0])
 	HashMap<String, Object>  bearingData = Vitamins.getConfiguration("ballBearing",bearingSizeParam.getStrValue())
 	
