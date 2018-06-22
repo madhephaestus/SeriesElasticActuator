@@ -5,7 +5,7 @@ double nubOffset = 1.9
 double nubWidth = barWidth+(nubOffset*2)
 double holeRad = 9.5/2.0-printerOffset.getMM()*2
 double holeOffsetEdgeToEdge = 16.5-printerOffset.getMM()*2
-
+double loadCellStandoff = 2
 CSG  loadHole =new Cylinder(holeRad,holeRad,nubWidth*2,(int)20).toCSG() // a one line Cylinder
 				.movez(-nubWidth)
 loadHole=loadHole
@@ -18,12 +18,12 @@ loadHole=loadHole
 
 
 double barLength = 80
-CSG bar = new Cube(barLength+2,barWidth+nubOffset+printerOffset.getMM(),barWidth+printerOffset.getMM()).toCSG()
+CSG bar = new Cube(barLength+2,barWidth+nubOffset+printerOffset.getMM()+loadCellStandoff,barWidth+printerOffset.getMM()).toCSG()
 			.movey(printerOffset.getMM()/2-nubOffset/2)
-CSG backKeepaway = new Cube(barLength/2+1,barWidth+nubOffset+printerOffset.getMM(),barWidth+printerOffset.getMM()).toCSG()
+CSG backKeepaway = new Cube(barLength/2+1,barWidth+nubOffset+printerOffset.getMM()+loadCellStandoff,barWidth+printerOffset.getMM()).toCSG()
 			.movey((nubOffset))	
 			.toXMax()			
-CSG nub = new Cube(30,nubWidth,nubWidth)
+CSG nub = new Cube(30,nubWidth+loadCellStandoff,nubWidth)
 					.toCSG()
 					//.movey(nubOffset)
 				
@@ -50,7 +50,6 @@ CSG bolts= endBolt.union(baseBolt)
 			//.movez(bar.getMaxZ())
 			
 bar=bar.union(bolts.movex(-barLength/2))
-		.movey(barWidth/2-nubOffset)
-		//.movez(barWidth/2)
+		.movey(barWidth/2-nubOffset+loadCellStandoff)
 
 return bar

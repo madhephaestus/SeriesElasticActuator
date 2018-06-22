@@ -242,7 +242,7 @@ ICadGenerator c= new ICadGenerator(){
 					.union(gearScrew
 						.movey(screwCenterLine-screwHeadKeepaway))
 					.movex(loadCellBoltCenter)
-					.movez(-distanceToTopOfGear)		
+					.movez(-distanceToTopOfGear+2)		
 									
 	CSG loadBearingPinBearing =new Cylinder(	brassBearingRadius,
 										brassBearingRadius,
