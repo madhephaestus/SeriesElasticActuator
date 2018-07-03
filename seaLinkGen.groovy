@@ -485,8 +485,7 @@ ICadGenerator c= new ICadGenerator(){
 		def etchParts = []
 		double gridDimention =25
 		
-		CSG etch =new Cube(gridDimention-etchWith,gridDimention-etchWith,thickness.getMM()).toCSG()
-					.difference(new Cube(10,10,thickness.getMM()).toCSG())
+		CSG etch =new Cube(10,10,thickness.getMM()).toCSG()
 
 		etch=etch
 					.toXMin()
