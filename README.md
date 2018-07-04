@@ -24,13 +24,15 @@ The BOM and printable files are here: https://github.com/madhephaestus/SeriesEla
 The 3d printed parts should be printed at 60% infill. The SVG should be cut from 6.1mm wood (roughly !/4 inch). Assembly instruction document is here:
 https://github.com/madhephaestus/SeriesElasticActuator/blob/master/assembly/RBE3001_Robot_Assembling_Guide.pdf
 Its missing the intermediate step assemblies, with the load cell, make sure you have a dowel pin in the middle of the link, and rout the load cell wires up through the washer along the shaft. 
-## OTS electronics Alternate build
-Fo a full OTS build, you can replace the Axis Encoder Board (custom board) with One of these:
+## Off The Shelf ( OTS ) electronics Alternate build
+For a full OTS build, you can replace the Axis Encoder Board (custom board) with One of these:
 https://www.digikey.com/product-detail/en/ams/AS5055A-QF_EK_AB/AS5055A-DK-AB-ND/4764625
 and one of these: 
 https://www.sparkfun.com/products/13879
 
-and the Motherboard can replaced with hand wiring a breadboard using the wiring information in this file:
+You will need to modify the FW to use the I2c load cell. If you choose not to use the load cell, you will still need the device installed for the mechanical system to work. 
+
+The Motherboard can replaced with hand wiring a breadboard using the wiring information in this file:
 https://github.com/WPIRoboticsEngineering/RBE3001_nucleo_firmware/blob/master/src/main.h
 
 # Firmware
