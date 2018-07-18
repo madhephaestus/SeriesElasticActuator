@@ -711,21 +711,22 @@ ICadGenerator c= new ICadGenerator(){
 		CSG handMountPart=null;
 		
 		if(linkIndex<dhLinks.size()-1){
-			HashMap<String, Object> shaftmap = Vitamins.getConfiguration(nextLink.getShaftType(),nextLink.getShaftSize())
-			HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(nextLink.getElectroMechanicalType(),nextLink.getElectroMechanicalSize())
+			//HashMap<String, Object> shaftmap = Vitamins.getConfiguration(nextLink.getShaftType(),nextLink.getShaftSize())
+			//HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(nextLink.getElectroMechanicalType(),nextLink.getElectroMechanicalSize())
 			//println conf.getShaftType() +" "+conf.getShaftSize()+" "+shaftmap
-			double hornOffset = 	shaftmap.get("hornThickness")	
-			double servoNub = servoMeasurments.tipOfShaftToBottomOfFlange - servoMeasurments.bottomOfFlangeToTopOfBody
-		
 			CSG servoReference=   Vitamins.get(nextLink.getElectroMechanicalType(),nextLink.getElectroMechanicalSize())
 			.rotz(180)
-			
-			double servoTop = servoReference.getMaxZ()-servoNub
-							
 			CSG horn = Vitamins.get(nextLink.getShaftType(),nextLink.getShaftSize())	
 						.rotx(180)
 						.movez(hornOffset)
-						.movex(-gearDistance)
+			double hornOffset = 	horn.getMaxZ()*2
+			double servoNub = servoMeasurments.tipOfShaftToBottomOfFlange - servoMeasurments.bottomOfFlangeToTopOfBody
+		
+			
+			
+			double servoTop = servoReference.getMaxZ()-servoNub
+							
+			horn=horn	.movex(-gearDistance)
 						//.toolOffset(-printerOffset.getMM()) //this offset applied in the servo horn dimentions JSON
 			servoReference=servoReference
 				.toZMax()
@@ -1310,26 +1311,24 @@ CSG supportRib = ribs.get(ribs.size()-2)
 		encoderCapCache = bottomBlock
 		return encoderCapCache
 	}	
-	private ArrayList<CSG> getServoCap(LinkConfiguration conf ){
+	private def getServoCap(LinkConfiguration conf ){
 		if(sidePlateLocal.get(conf.getXml())!=null)
 			return sidePlateLocal.get(conf.getXml()).collect{
 				it.clone()
 			}
-		double SidePlateThickness = encoderBearingHeight 
-		HashMap<String, Object> shaftmap = Vitamins.getConfiguration(conf.getShaftType(),conf.getShaftSize())
-		HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
-		double totalFlangLen = (servoMeasurments.flangeLongDimention-servoMeasurments.servoThickDimentionThickness)/2
-		double shaftToShortSideFlandgeEdge = servoMeasurments.shaftToShortSideDistance+totalFlangLen
-		double hornOffset = 	shaftmap.get("hornThickness")	
-		double servoNub = servoMeasurments.tipOfShaftToBottomOfFlange - servoMeasurments.bottomOfFlangeToTopOfBody
-		// creating the servo
 		CSG servoReference=   Vitamins.get(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
-			//.transformed(new Transform().rotZ(180))
-			.toZMax()
-			.movez(servoNub-centerLinkToBearingTop)			
+
+		double SidePlateThickness = encoderBearingHeight 
+		double totalFlangLen = servoReference.getTotalX()
+		double shaftToShortSideFlandgeEdge = servoReference.getMaxX()
+		double hornOffset = 	0	
+		double servoNub = 0
+		// creating the servo
+		 servoReference=  servoReference
+			.movez(-centerLinkToBearingTop-SidePlateThickness)			
 			.movey(-gearDistance)
 			.rotz(90)
-			.movez(-motorBackSetDistance)
+			//.movez(-motorBackSetDistance/2)
 		CSG gearHole = gearKeepaway
 					.movez(servoNub-centerLinkToBearingTop)	
 		double servoTop = servoReference.getMaxZ()-servoNub
@@ -1345,8 +1344,8 @@ CSG supportRib = ribs.get(ribs.size()-2)
 		
 		CSG center  =new Cylinder(bearingHolder,bearingHolder,SidePlateThickness,(int)30).toCSG()
 		
-		CSG baseShape = new Cube(servoMeasurments.flangeLongDimention+encoderCapRodRadius,
-							servoMeasurments.servoThinDimentionThickness+encoderCapRodRadius,
+		CSG baseShape = new Cube(servoReference.getTotalX()+encoderCapRodRadius,
+							servoReference.getTotalY()+encoderCapRodRadius,
 							SidePlateThickness)
 						
 						.toCSG()
@@ -1359,8 +1358,8 @@ CSG supportRib = ribs.get(ribs.size()-2)
 						.movez(encoderBearingHeight-encoderToEncoderDistance)
 						.difference(encoderKeepaway)
 						.difference(screwSet.movez(-encoderToEncoderDistance-encoderBearingHeight))
-						.difference([servoReference,gearHole.movez(-2)])
-						.difference(servoReference.movez(-2))
+						.difference([servoReference.movez(-2),gearHole.movez(2)])
+						.difference(servoReference)
 		double plateThickness = (-bottomBlock.getMinZ()+bottomBlock.getMaxZ())
 		CSG boundingBox = new Cube(   (-bottomBlock.getMinX()+bottomBlock.getMaxX()),
 								(-bottomBlock.getMinY()+bottomBlock.getMaxY()),
@@ -1376,7 +1375,7 @@ CSG supportRib = ribs.get(ribs.size()-2)
 		CSG lowerbottomBlock=bottomBlock.difference(boundingBox)
 		CSG upperbottomBlock = bottomBlock.intersect(boundingBox)						
 		sidePlateLocal.put(conf.getXml(),[bottomBlock]) 
-		return sidePlateLocal.get(conf.getXml())
+		return [sidePlateLocal.get(conf.getXml()),servoReference]
 	}
 	private CSG reverseDHValues(CSG incoming,DHLink dh ){
 		println "Reversing "+dh
@@ -1548,4 +1547,22 @@ CSG supportRib = ribs.get(ribs.size()-2)
 		}
 	}
 }
-return c//[c.springBlock(c.drivenLinkThickness), c.springBlockPin(c.gearBMeasurments.height).movey(60)]
+//return c//[c.springBlock(c.drivenLinkThickness), c.springBlockPin(c.gearBMeasurments.height).movey(60)]
+
+arm=DeviceManager.getSpecificDevice( "HephaestusWorkCell",{
+			//If the device does not exist, prompt for the connection
+			
+			MobileBase m = MobileBaseLoader.fromGit(
+				"https://github.com/madhephaestus/SeriesElasticActuator.git",
+				"seaArm.xml"
+				)
+			if(m==null)
+				throw new RuntimeException("Arm failed to assemble itself")
+			println "Connecting new device robot arm "+m
+			return m
+		}).getAppendages().get(0)
+int linkIndex=2
+LinkConfiguration conf = arm.getLinkConfiguration(linkIndex);
+	
+return c.getServoCap(conf)
+
