@@ -726,8 +726,10 @@ ICadGenerator c= new ICadGenerator(){
 
 			myGearA = getGearWithSpline( nextLink );
 			if(linkIndex==0){
-				CSG baseServo =servoReference.clone()
-							.rotz(90)
+				CSG baseServo = Vitamins.get(nextLink.getElectroMechanicalType(),nextLink.getElectroMechanicalSize())
+							.rotz(180)
+							.movez(-centerLinkToBearingTop-encoderBearingHeight)		
+							.movex(-gearDistance)
 				CSG secondLinkServo =servoReference.clone()
 				CSG baseForceSenseEncoder = encoder1
 										
