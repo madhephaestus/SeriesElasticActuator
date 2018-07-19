@@ -17,7 +17,7 @@ ICadGenerator c= new ICadGenerator(){
 	int linkResolution = 6
 	double boardX = 1219.2
 	double boardY = 914.4
-	boolean showVitamins =false
+	boolean showVitamins =true
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
 	int[] version = com.neuronrobotics.javacad.JavaCadBuildInfo.getBuildInfo();
@@ -716,44 +716,14 @@ ICadGenerator c= new ICadGenerator(){
 			//println conf.getShaftType() +" "+conf.getShaftSize()+" "+shaftmap
 			CSG servoReference=   Vitamins.get(nextLink.getElectroMechanicalType(),nextLink.getElectroMechanicalSize())
 			.rotz(180)
-			CSG horn = Vitamins.get(nextLink.getShaftType(),nextLink.getShaftSize())	
-						.rotx(180)
-						.movez(hornOffset)
-			double hornOffset = 	horn.getMaxZ()*2
-			double servoNub = servoMeasurments.tipOfShaftToBottomOfFlange - servoMeasurments.bottomOfFlangeToTopOfBody
-		
-			
-			
-			double servoTop = servoReference.getMaxZ()-servoNub
-							
-			horn=horn	.movex(-gearDistance)
-						//.toolOffset(-printerOffset.getMM()) //this offset applied in the servo horn dimentions JSON
+			double servoTop = servoReference.getMaxZ()
 			servoReference=servoReference
-				.toZMax()
-				.movez(servoNub-centerLinkToBearingTop)			
+				.movez(-centerLinkToBearingTop-encoderBearingHeight)		
 				.movex(-gearDistance)
 				//.rotz(90+Math.toDegrees(dh.getTheta()))
 			double gearPlacementVSMotor = -(motorBackSetDistance+washerThickness)
-			CSG myGearA = gearA.clone()
-						.union(gearStandoff
-							//.movez(gearPlacementVSMotor)
-							
-						)
-						.movez(washerThickness)	
-			horn=horn.movez(gearPlacementVSMotor+washerThickness)
-			for(int i=0;i<((myGearA.getMaxZ()/hornOffset)+1);i++){
-				myGearA=myGearA
-					.difference(horn
-								.movez((hornOffset-printerOffset.getMM())*i)
-								)
-			}
-			// special recess for measured difference
-			//myGearA=myGearA
-			//		.difference(horn.movez(-2.0))
-			myGearA = myGearA
-						//.rotz(-90)
-						.movez(-centerLinkToBearingTop)	
-						.setColor(javafx.scene.paint.Color.BLUE);
+
+			myGearA = getGearWithSpline( nextLink );
 			if(linkIndex==0){
 				CSG baseServo =servoReference.clone()
 				CSG secondLinkServo =servoReference.clone()
@@ -1015,6 +985,7 @@ CSG supportRib = ribs.get(ribs.size()-2)
 			if(showRightPrintedParts)add(csg,myGearA,dh.getListener(),"servoGear")
 			if(showVitamins)add(csg,thirdPlusLinkServo,dh.getListener(),"servo")
 			if(showVitamins)add(csg,linkEncoder,dh.getListener(),"encoder")
+			if(showVitamins)add(csg,horn,dh.getListener(),"horn")
 			if(showVitamins)add(csg,otherEncoder,dh.getListener(),"otherEncoder")
 			if(showRightPrintedParts)add(csg,sidePlateWithServo,dh.getListener(),"sidePlate"+linkIndex)
 			if(esp.size()>1)if(showLeftPrintedParts)add(csg,esp.get(1),dh.getListener(),"encoderPlate"+linkIndex)
@@ -1311,6 +1282,40 @@ CSG supportRib = ribs.get(ribs.size()-2)
 		encoderCapCache = bottomBlock
 		return encoderCapCache
 	}	
+	
+	private def getGearWithSpline(LinkConfiguration nextLink ){
+		def type =nextLink.getShaftType()
+		println "Gear with shaft "+type
+		CSG horn = Vitamins.get(nextLink.getShaftType(),nextLink.getShaftSize())	
+					.rotx(180)
+					.toZMin()
+		double hornOffset = 	horn.getTotalZ()
+						
+		horn=horn.movex(-gearDistance)
+
+		double gearPlacementVSMotor = -(motorBackSetDistance+washerThickness)
+		CSG myGearA = gearA.clone()
+					.union(gearStandoff)
+					.movez(washerThickness)	
+		horn=horn.movez(gearPlacementVSMotor+washerThickness)
+		def numHorns =(myGearA.getTotalZ()-horn.getTotalZ())
+		
+		for(double i=0;i<numHorns;i+=horn.getTotalZ()){
+			myGearA=myGearA
+				.difference(horn
+							.movez(i)
+							)
+			println "Moving horn  = "+i			
+		}
+		// special recess for measured difference
+		//myGearA=myGearA
+		//		.difference(horn.movez(-2.0))
+		myGearA = myGearA
+					//.rotz(-90)
+					.movez(-centerLinkToBearingTop)	
+					.setColor(javafx.scene.paint.Color.BLUE);
+		return [myGearA,horn]
+	}
 	private def getServoCap(LinkConfiguration conf ){
 		if(sidePlateLocal.get(conf.getXml())!=null)
 			return sidePlateLocal.get(conf.getXml()).collect{
@@ -1375,7 +1380,7 @@ CSG supportRib = ribs.get(ribs.size()-2)
 		CSG lowerbottomBlock=bottomBlock.difference(boundingBox)
 		CSG upperbottomBlock = bottomBlock.intersect(boundingBox)						
 		sidePlateLocal.put(conf.getXml(),[bottomBlock]) 
-		return [sidePlateLocal.get(conf.getXml()),servoReference]
+		return sidePlateLocal.get(conf.getXml())
 	}
 	private CSG reverseDHValues(CSG incoming,DHLink dh ){
 		println "Reversing "+dh
@@ -1563,6 +1568,7 @@ arm=DeviceManager.getSpecificDevice( "HephaestusWorkCell",{
 		}).getAppendages().get(0)
 int linkIndex=2
 LinkConfiguration conf = arm.getLinkConfiguration(linkIndex);
-	
+return c.getGearWithSpline(conf)
+return c.generateCad(arm,  linkIndex)
 return c.getServoCap(conf)
 
