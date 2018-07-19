@@ -985,7 +985,7 @@ CSG supportRib = ribs.get(ribs.size()-2)
 			if(showRightPrintedParts)add(csg,myGearA,dh.getListener(),"servoGear")
 			if(showVitamins)add(csg,thirdPlusLinkServo,dh.getListener(),"servo")
 			if(showVitamins)add(csg,linkEncoder,dh.getListener(),"encoder")
-			if(showVitamins)add(csg,horn,dh.getListener(),"horn")
+			//if(showVitamins)add(csg,horn,dh.getListener(),"horn")
 			if(showVitamins)add(csg,otherEncoder,dh.getListener(),"otherEncoder")
 			if(showRightPrintedParts)add(csg,sidePlateWithServo,dh.getListener(),"sidePlate"+linkIndex)
 			if(esp.size()>1)if(showLeftPrintedParts)add(csg,esp.get(1),dh.getListener(),"encoderPlate"+linkIndex)
@@ -1304,7 +1304,7 @@ CSG supportRib = ribs.get(ribs.size()-2)
 			horn=horn.union(horn
 							.movez(i))
 			
-			println "Moving horn  = "+i			
+			//println "Moving horn  = "+i			
 		}
 		myGearA=myGearA
 				.difference(horn)
