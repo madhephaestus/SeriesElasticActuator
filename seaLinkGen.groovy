@@ -1560,7 +1560,7 @@ CSG supportRib = ribs.get(ribs.size()-2)
 }
 return c//[c.springBlock(c.drivenLinkThickness), c.springBlockPin(c.gearBMeasurments.height).movey(60)]
 
-arm=DeviceManager.getSpecificDevice( "HephaestusWorkCell",{
+base=DeviceManager.getSpecificDevice( "HephaestusWorkCell",{
 			//If the device does not exist, prompt for the connection
 			
 			MobileBase m = MobileBaseLoader.fromGit(
@@ -1571,9 +1571,11 @@ arm=DeviceManager.getSpecificDevice( "HephaestusWorkCell",{
 				throw new RuntimeException("Arm failed to assemble itself")
 			println "Connecting new device robot arm "+m
 			return m
-		}).getAppendages().get(0)
+		})
+def arm = base.getAppendages().get(0)
 int linkIndex=2
 LinkConfiguration conf = arm.getLinkConfiguration(linkIndex);
+return c.generateBody(base)
 return c.getGearWithSpline(conf)
 return c.generateCad(arm,  linkIndex)
 return c.getServoCap(conf)
