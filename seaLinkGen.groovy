@@ -306,12 +306,12 @@ ICadGenerator c= new ICadGenerator(){
 		
 		LengthParameter tailLength		= new LengthParameter("Cable Cut Out Length",maxz,[500,0.01])
 		tailLength.setMM(maxz)
-		CSG servoReference=   Vitamins.get(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
-								.rotz(180+Math.toDegrees(dh.getTheta()))
-								.movez(-motorBackSetDistance)
+		//CSG servoReference=   Vitamins.get(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
+		//						.rotz(180+Math.toDegrees(dh.getTheta()))
+		//						.movez(-motorBackSetDistance)
 		
 		double servoNub = servoMeasurments.tipOfShaftToBottomOfFlange - servoMeasurments.bottomOfFlangeToTopOfBody
-		double servoTop = servoReference.getMaxZ()-servoNub
+		//double servoTop = servoReference.getMaxZ()-servoNub
 		double topLevel = maxz -(springHeight/2)-linkMaterialThickness +encoderBearingHeight-(washerThickness*2)
 		double servoPlane = topLevel - servoMeasurments.bottomOfFlangeToTopOfBody
 		double servoEncoderPlane = topLevel - encoderBearingHeight
@@ -325,9 +325,15 @@ ICadGenerator c= new ICadGenerator(){
 		double keepAwayDistance =10
 		CSG gearHole = gearKeepaway
 					.movez(topLevel+washerThickness)
-		servoReference=servoReference
-					.movez(servoPlane)
-					.movex(-gearDistance)
+		//servoReference=servoReference
+		//			.movez(servoPlane)
+		//			.movex(-gearDistance)
+
+		CSG baseServo = Vitamins.get(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
+				.rotz(180)
+				.movez(maxz-centerLinkToBearingTop-encoderBearingHeight)		
+				.movex(-gearDistance)
+				
 		CSG encoderBaseKeepaway = (CSG) ScriptingEngine
 					 .gitScriptRun(
 			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
@@ -523,7 +529,7 @@ ICadGenerator c= new ICadGenerator(){
 				.toYMin()
 				.movey(-servoCentering-keepAwayDistance)
 				.movex(baseBackSet)
-				.difference([encoderBaseKeepaway,servoReference,screws,gearHole])
+				.difference([encoderBaseKeepaway,baseServo,screws,gearHole])
 
 				
 		CSG baseCap = getEncoderCap()
