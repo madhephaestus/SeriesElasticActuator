@@ -715,7 +715,9 @@ ICadGenerator c= new ICadGenerator(){
 			//HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(nextLink.getElectroMechanicalType(),nextLink.getElectroMechanicalSize())
 			//println conf.getShaftType() +" "+conf.getShaftSize()+" "+shaftmap
 			CSG servoReference=   Vitamins.get(nextLink.getElectroMechanicalType(),nextLink.getElectroMechanicalSize())
-			.rotz(180)
+			.rotz(90)
+			if (linkIndex==0)
+				servoReference=servoReference.rotz(90)
 			double servoTop = servoReference.getMaxZ()
 			servoReference=servoReference
 				.movez(-centerLinkToBearingTop-encoderBearingHeight)		
