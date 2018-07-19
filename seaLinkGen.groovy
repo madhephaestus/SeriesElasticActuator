@@ -1298,15 +1298,16 @@ CSG supportRib = ribs.get(ribs.size()-2)
 					.union(gearStandoff)
 					.movez(washerThickness)	
 		horn=horn.movez(gearPlacementVSMotor+washerThickness)
-		def numHorns =(myGearA.getTotalZ()-horn.getTotalZ())
+		def numHorns =(myGearA.getTotalZ()-horn.getTotalZ())*3
 		
-		for(double i=0;i<numHorns;i+=horn.getTotalZ()){
-			myGearA=myGearA
-				.difference(horn
-							.movez(i)
-							)
+		for(double i=0;i<numHorns;i+=horn.getTotalZ()/3){
+			horn=horn.union(horn
+							.movez(i))
+			
 			println "Moving horn  = "+i			
 		}
+		myGearA=myGearA
+				.difference(horn)
 		// special recess for measured difference
 		//myGearA=myGearA
 		//		.difference(horn.movez(-2.0))
@@ -1314,7 +1315,8 @@ CSG supportRib = ribs.get(ribs.size()-2)
 					//.rotz(-90)
 					.movez(-centerLinkToBearingTop)	
 					.setColor(javafx.scene.paint.Color.BLUE);
-		return [myGearA,horn]
+		return myGearA					
+		//return [myGearA,horn.movez(-centerLinkToBearingTop)	]
 	}
 	private def getServoCap(LinkConfiguration conf ){
 		if(sidePlateLocal.get(conf.getXml())!=null)
@@ -1552,7 +1554,7 @@ CSG supportRib = ribs.get(ribs.size()-2)
 		}
 	}
 }
-//return c//[c.springBlock(c.drivenLinkThickness), c.springBlockPin(c.gearBMeasurments.height).movey(60)]
+return c//[c.springBlock(c.drivenLinkThickness), c.springBlockPin(c.gearBMeasurments.height).movey(60)]
 
 arm=DeviceManager.getSpecificDevice( "HephaestusWorkCell",{
 			//If the device does not exist, prompt for the connection
