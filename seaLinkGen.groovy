@@ -14,9 +14,10 @@ import javafx.scene.transform.Affine;
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
 ICadGenerator c= new ICadGenerator(){
+	double centerOfRobotToBackEdgeOfBoard = 222.357	
 	int linkResolution = 6
-	double boardX = 1219.2
-	double boardY = 914.4
+	double boardX = 530*2
+	double boardY = 330*2
 	boolean showVitamins =false
 	boolean showRightPrintedParts = true
 	boolean showLeftPrintedParts = true
@@ -43,7 +44,7 @@ ICadGenerator c= new ICadGenerator(){
 	HashMap<String, Object>  gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
 	HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
 	
-	double workcellSize = 530
+	double workcellSize = 700
 	double cameraLocation =(workcellSize-20)/2
 	TransformNR cameraLocationNR = new TransformNR(cameraLocation+20,0,cameraLocation+20,new RotationNR(0,-180,-35))
 	Transform cameraLocationCSG =TransformFactory.nrToCSG(cameraLocationNR)
@@ -431,26 +432,33 @@ ICadGenerator c= new ICadGenerator(){
 		//double screwY = baseShape.toYMin().getMaxY()-(inset*2)
 		double inset =  9.75
 		double screwX = 97.78700180053711
-		double screwY = 77.5					
-		println "Bottom Bolt hole pattern x= "+screwX+" y = "+screwY+" inset = "+inset
+		double screwY = 77.5	
+		
+		double distanceFromCenterToBolt = 	baseShape.getMaxX() - inset		
+		println "Bottom Bolt hole pattern x total= "+screwX+
+		" y total= "+screwY+
+		" inset from edge= "+inset+
+		" Center to forward Robot Bolts=" +(distanceFromCenterToBolt/2)+
+		" center distance to calibration hole ="+tipatHome.getX()
+		
 		CSG bottomScrewSet =bottomScrews
 					.movex(-screwX)
 					.movey(screwY/2)
 					.union(
-							bottomScrews
-								.movex(-screwX)
-								.movey(-screwY/2)
-						)
-						.union(
-							bottomScrews
-								.movey(screwY/2)
-						)
-						.union(
-							bottomScrews
-								.movey(-screwY/2)
-						)
-						.movex(baseShape.getMaxX() - inset)
-						.movez(topLevel)				
+						bottomScrews
+							.movex(-screwX)
+							.movey(-screwY/2)
+					)
+					.union(
+						bottomScrews
+							.movey(screwY/2)
+					)
+					.union(
+						bottomScrews
+							.movey(-screwY/2)
+					)
+					.movex(distanceFromCenterToBolt)
+					.movez(topLevel)				
 		baseShape = baseShape.difference([bottomScrewSet,screwAcross])	
 		double boardKeepaway =50
 		CSG nucleoBoard = nucleo.get(0).movey(-boardKeepaway)
@@ -481,8 +489,22 @@ ICadGenerator c= new ICadGenerator(){
 		//			.movez(-thickness.getMM()*1.5)
 					
 		double footingWidth = 330
+		double insetForMakerbeam =15
 		CSG footing =new Cube(workcellSize,footingWidth,thickness.getMM()).toCSG()
-		
+					.toXMin()
+					.movex(-centerOfRobotToBackEdgeOfBoard)
+		CSG hole =  new Cylinder(1.5, // Radius at the bottom
+                      		1.5, // Radius at the top
+                      		thickness.getMM()*4, // Height
+                      		(int)30 //resolution
+                      		).toCSG()//convert to CSG to display 
+                      		.movez(thickness.getMM()*-2)
+         	def holeset =  hole.movey(  footingWidth/2-insetForMakerbeam)
+         				.union(hole.movey(  -footingWidth/2+insetForMakerbeam))  
+         	def allSideHoles=holeset
+         	for(int i= -workcellSize+insetForMakerbeam;i< workcellSize-insetForMakerbeam;i+=   workcellSize/6){
+         		 //allSideHoles= allSideHoles.union(	holeset.movex(i))	
+         	}
 		double etchWith =0.5
 		etchX = (workcellSize/2)-2
 		//CSG etchX =new Cube((workcellSize/2)-2,etchWith,thickness.getMM()).toCSG()
@@ -497,11 +519,13 @@ ICadGenerator c= new ICadGenerator(){
 		int x =0
 		for(double i=-150;i<151;i+=gridDimention*2){
 			for(double j=0;j<etchX;j+=gridDimention){
-				etchParts.add(etch.movex(j).movey(i+(x++%2==0?gridDimention:0)))
+				etchParts.add(etch
+						.movex(j)
+						.movey(i))
 			}
 		}
 		
-		def cameraParts = getCameraMount()
+		//def cameraParts = getCameraMount()
 		CSG basePlate = footing
 						.toZMax()
 						.difference(nucleoBoard
@@ -513,8 +537,9 @@ ICadGenerator c= new ICadGenerator(){
 						.difference(	bottomScrewSet.movex(baseBackSet))
 						.intersect(boxCut)
 						.difference(manipulationParts)
-						.difference(cameraParts)
+						//.difference(cameraParts)
 						.difference(etchParts)
+						//.union(allSideHoles)
 		
 		basePlateUpper=basePlate.intersect(footing)
 		basePlateLower=basePlate.difference(footing)	/*
@@ -601,15 +626,15 @@ ICadGenerator c= new ICadGenerator(){
 		//if(showRightPrintedParts)attachmentParts.add(baseShapeB)
 		//if(showRightPrintedParts)attachmentParts.add(basePlate)
 		//if(showLeftPrintedParts)attachmentParts.add(baseCap)
-		for (int i=0;i<cameraParts.size();i++){
-			CSG p = cameraParts.get(i)
-			p.addExportFormat("svg")
+//		for (int i=0;i<cameraParts.size();i++){
+//			CSG p = cameraParts.get(i)
+//			p.addExportFormat("svg")
 			
-		}
-		cameraParts.forEach{
-			it.addExportFormat("svg")
-			add(attachmentParts,it,null,"cameraStand_SVG")
-		}
+//		}
+		//cameraParts.forEach{
+		//	it.addExportFormat("svg")
+		//	add(attachmentParts,it,null,"cameraStand_SVG")
+		//}
 		basePlateUpper.addExportFormat("svg")
 		basePlateLower.addExportFormat("svg")
 		add(attachmentParts,baseShapeA,null,"baseLeft")
