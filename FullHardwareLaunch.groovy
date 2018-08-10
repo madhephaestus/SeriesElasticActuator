@@ -298,7 +298,7 @@ public class PhysicicsDevice extends NonBowlerDevice{
 def dev = DeviceManager.getSpecificDevice( "hidbowler",{
 	//If the device does not exist, prompt for the connection
 	
-	HIDSimpleComsDevice d = new HIDSimpleComsDevice(0x3742,0x7)
+	HIDSimpleComsDevice d = new HIDSimpleComsDevice(0x3742,0x8)
 	d.connect(); // Connect to it.
 	LinkFactory.addLinkProvider("hidsimple",{LinkConfiguration conf->
 				println "Loading link "

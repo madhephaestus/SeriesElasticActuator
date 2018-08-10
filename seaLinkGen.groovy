@@ -43,7 +43,7 @@ ICadGenerator c= new ICadGenerator(){
 	HashMap<String, Object>  gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
 	HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
 	
-	double workcellSize = 760
+	double workcellSize = 530
 	double cameraLocation =(workcellSize-20)/2
 	TransformNR cameraLocationNR = new TransformNR(cameraLocation+20,0,cameraLocation+20,new RotationNR(0,-180,-35))
 	Transform cameraLocationCSG =TransformFactory.nrToCSG(cameraLocationNR)
@@ -480,7 +480,7 @@ ICadGenerator c= new ICadGenerator(){
 		//CSG tipHole =new Cylinder(10,10,thickness.getMM()*3,(int)90).toCSG()
 		//			.movez(-thickness.getMM()*1.5)
 					
-		double footingWidth = boardY/4
+		double footingWidth = 330
 		CSG footing =new Cube(workcellSize,footingWidth,thickness.getMM()).toCSG()
 		
 		double etchWith =0.5
