@@ -514,6 +514,8 @@ ICadGenerator c= new ICadGenerator(){
 		double gridDimention =25
 		
 		CSG etch =new Cube(10,10,thickness.getMM()).toCSG()
+					.toXMin()
+					.toYMin()
 
 		etch=etch
 		int x =0
