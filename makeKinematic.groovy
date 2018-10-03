@@ -56,7 +56,7 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 		String name = csg.getName();
 		try {
 
-			csg = csg.prepForManufacturing();
+			
 			
 			if (csg != null) {
 				csg.setName(name)
@@ -83,7 +83,7 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 		
 	}
 	
-	return svgParts
+	return totalAssembly
 	double delta=2
 	int numLinks =3
 	
