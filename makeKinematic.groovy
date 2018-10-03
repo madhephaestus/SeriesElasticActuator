@@ -1,6 +1,6 @@
 import javafx.scene.paint.Color;
 
-def base =DeviceManager.getSpecificDevice( "HephaestusWorkCell",{
+def base =args!=null?args:DeviceManager.getSpecificDevice( "HephaestusWorkCell",{
 	//If the device does not exist, prompt for the connection
 	
 	MobileBase m = BowlerStudio.loadMobileBaseFromGit(
