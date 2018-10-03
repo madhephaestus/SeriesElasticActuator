@@ -20,19 +20,6 @@ def base =DeviceManager.getSpecificDevice( "HephaestusWorkCell",{
  * @return simulatable CAD objects
  */
 ArrayList<CSG> arrangeBed(MobileBase b ){
-	double size =260
-	CSG bedA = new Cube(size,size,5).toCSG()
-						.toXMin()
-						.toYMin()
-						.toZMax().setColor(Color.WHITE)
-	CSG bedB = new Cube(size,size,5).toCSG()
-						.toXMax()
-						.movex(-5)
-						.toYMin()
-						.toZMax()
-						.setColor(Color.WHITE)					
-
-	
 	ArrayList<DHParameterKinematics> limbs = b.getAllDHChains();
 	double numLimbs = limbs.size();
 	int i;
@@ -41,16 +28,14 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
 	double offset = 0;
 	for (i = 0; i < limbs.size(); i += 1) {
 		DHParameterKinematics l = limbs.get(i);
-		ArrayList<CSG> parts = MobileBaseCadManager.get(b).getDHtoCadMap().get(l);
-    ArrayList<LinkConfiguration> links = l.getLinkConfigurations();
-     for (LinkConfiguration lc:links) {
-   	 ArrayList<CSG> cadForThisLink = MobileBaseCadManager.get(b).getLinktoCadMap().get(lc);
-   	     CSG linUnified = CSG.unionAll(cadForThisLink);
-    totalAssembly.add(linUnified);
-     }
+	     ArrayList<LinkConfiguration> links = l.getLinkConfigurations();
+	     for (LinkConfiguration lc:links) {
+	   	 	ArrayList<CSG> cadForThisLink = MobileBaseCadManager.get(b).getLinktoCadMap().get(lc);
+	   	     CSG linUnified = CSG.unionAll(cadForThisLink);
+	    		totalAssembly.add(linUnified);
+	     }
 
 	}
-	int link = 0;
 	// now we genrate the base pieces
 	totalAssembly.add(CSG.unionAll(MobileBaseCadManager.get(b).getBasetoCadMap().get(b)));
 	return totalAssembly
