@@ -45,9 +45,10 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
     ArrayList<LinkConfiguration> links = l.getLinkConfigurations();
      for (LinkConfiguration lc:links) {
    	 ArrayList<CSG> cadForThisLink = MobileBaseCadManager.get(b).getLinktoCadMap().get(lc);
-     }
-    CSG linUnified = CSG.unionAll(cadForThisLink);
+   	     CSG linUnified = CSG.unionAll(cadForThisLink);
     totalAssembly.add(linUnified);
+     }
+
 	}
 	int link = 0;
 	// now we genrate the base pieces
