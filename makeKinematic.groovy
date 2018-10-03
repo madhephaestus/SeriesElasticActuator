@@ -47,19 +47,7 @@ ArrayList<CSG> arrangeBed(MobileBase b ){
    	 ArrayList<CSG> cadForThisLink = MobileBaseCadManager.get(b).getLinktoCadMap().get(lc);
      }
     CSG linUnified = CSG.unionAll(cadForThisLink);
-		for (int j = 0; j < parts.size(); j++) {
-			CSG csg = parts.get(j);
-			String name = csg.getName();
-			try {
-				CSG tmp = csg.prepForManufacturing();
-				tmp.setName(name)
-				if (csg != null) {
-					totalAssembly.add(tmp);
-				}
-			} catch (Exception ex) {
-				BowlerStudio.printStackTrace(ex, getCadScript());
-			}
-		}
+    totalAssembly.add(linUnified);
 	}
 	int link = 0;
 	// now we genrate the base pieces
