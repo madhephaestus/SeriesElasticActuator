@@ -1,5 +1,7 @@
 @GrabResolver(name='sonatype', root='https://oss.sonatype.org/content/repositories/releases/')
-@Grab(group='com.neuronrobotics', module='SimplePacketComsJava', version='0.1.0')
+@Grab(group='com.neuronrobotics', module='SimplePacketComsJava', version='0.10.1')
+@Grab(group='com.neuronrobotics', module='SimplePacketComsJava-HID', version='0.10.0')
+@Grab(group='org.hid4java', module='hid4java', version='0.5.0')
 
 import edu.wpi.SimplePacketComs.device.hephaestus.HephaestusArm;
 import Jama.Matrix;
