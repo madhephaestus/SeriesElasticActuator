@@ -321,7 +321,7 @@ def base =DeviceManager.getSpecificDevice( "HephaestusArm",{
 	return m
 })
 
-return null
+return base
 
 def physics =DeviceManager.getSpecificDevice( "HephaestusPhysics",{
 	PhysicicsDevice pd = new PhysicicsDevice(dev,base. getAllDHChains().get(0))
