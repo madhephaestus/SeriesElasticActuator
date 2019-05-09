@@ -770,7 +770,8 @@ ICadGenerator c= new ICadGenerator(){
 				
 				previousEncoder = baseEncoder
 				previousServo = baseServo
-				CSG baseMyGearA = myGearA.clone()
+				
+				CSG baseMyGearA = getGearWithSpline( conf )
 								.setColor(javafx.scene.paint.Color.BLUE);
 				baseMyGearA.setManufacturing({ toMfg ->
 					return toMfg
