@@ -89,14 +89,12 @@ public class PhysicicsDevice extends NonBowlerDevice{
 	def hidEventEngine;
 	def physicsSource ;
 	int count = 0;
-	Closure event = {
+	Runnable run={
 	
 	
 			count ++
 			if(count >10){
 				count =0
-						//Get the DHChain object
-				DHChain chain = physicsSource.getChain()
 				// Setup of variables done, next perfoem one compute cycle
 				
 				//get the current FK pose to update the data used by the jacobian computation
@@ -106,36 +104,37 @@ public class PhysicicsDevice extends NonBowlerDevice{
 				// get the position of all the joints in engineering units
 				double[] jointSpaceVector = physicsSource.getCurrentJointSpaceVector()
 				// compute the Jacobian using Jama matrix library
-				Matrix jacobian = physicsSource.getJacobian(chain,jointSpaceVector,jointSpaceVector.length-1);
+				Matrix jacobian = physicsSource.getJacobian();
 				Matrix[] massMatrix =  new Matrix[jointSpaceVector.length]
 				Matrix[] incrementalJacobian =  new Matrix[jointSpaceVector.length]
 				double [] masses = new double [jointSpaceVector.length]
 				//TODO LoadMasses and mass Matrix here
 				
 				for (int i=0;i<jointSpaceVector.length;i++){
-					incrementalJacobian[i] = getJacobian(chain,jointSpaceVector,i);
+					incrementalJacobian[i] = physicsSource.getJacobian(jointSpaceVector,i);
 					
-					println "Increment "+i+" "+  TransformNR.getMatrixString(incrementalJacobian[i])
+					//println "Increment "+i+" "+  TransformNR.getMatrixString(incrementalJacobian[i])
 				}
-				println "Total "+  TransformNR.getMatrixString(jacobian)
+				//println "Total "+  TransformNR.getMatrixString(jacobian)
 								
 			}
 		}
 	public PhysicicsDevice(def c,def  d){
 		hidEventEngine=c;
 		physicsSource=d;
-		hidEventEngine.addEvent(37,event)
+		hidEventEngine.arm.addEvent(37,run)
 		
 	}
 	@Override
 	public  void disconnectDeviceImp(){		
 		println "Physics Termination signel shutdown"
-		hidEventEngine.removeEvent(37,event)
+		hidEventEngine.arm.removeEvent(37,run)
 	}
 	
 	@Override
 	public  boolean connectDeviceImp(){
 		println "Physics Startup signel "
+		return true
 	}
 	public  ArrayList<String>  getNamespacesImp(){
 		// no namespaces on dummy
@@ -171,7 +170,7 @@ def base =DeviceManager.getSpecificDevice( "HephaestusArm",{
 	return m
 })
 
-return base
+//return base
 
 def physics =DeviceManager.getSpecificDevice( "HephaestusPhysics",{
 	PhysicicsDevice pd = new PhysicicsDevice(dev,base.getAllDHChains().get(0))
