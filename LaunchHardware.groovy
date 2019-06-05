@@ -40,7 +40,7 @@ public class HephaestusArm extends HIDSimplePacketComs{
 	public void addPollingPacketEvent(Runnable event) {
 		addEvent(pollingPacket.idOfCommand, event);
 	}
-	public void setValuesevent(int index,float position, float velocity, float force){
+	public void setValues(int index,float position, float velocity, float force){
 		pollingPacket.getDownstream()[(index*3)+0] = position;
 		pollingPacket.getDownstream()[(index*3)+1] = velocity;
 		pollingPacket.getDownstream()[(index*3)+2] = force;
@@ -114,7 +114,7 @@ public class HIDRotoryLink extends AbstractRotoryLink{
 		c.addEvent(37,{
 			int val= getCurrentPosition();
 			if(lastPushedVal!=val){
-				//println "Fire Link Listner "+index+" value "+getCurrentPosition()
+				println "Fire Link Listner "+index+" value "+getCurrentPosition()
 				fireLinkListener(val);
 			}
 			lastPushedVal=val
@@ -151,7 +151,7 @@ public class HIDRotoryLink extends AbstractRotoryLink{
 	 */
 	@Override
 	public double getCurrentPosition() {
-		return device.getValues(index)[0];
+		return device.getPosition(index);
 	}
 
 }
@@ -176,17 +176,18 @@ def dev = DeviceManager.getSpecificDevice( "hidbowler",{
 def base =DeviceManager.getSpecificDevice( "HephaestusArm",{
 	//If the device does not exist, prompt for the connection
 	
-	MobileBase m = BowlerStudio.loadMobileBaseFromGit(
+	MobileBase m = MobileBaseLoader.fromGit(
 		"https://github.com/madhephaestus/SeriesElasticActuator.git",
 		"HIDarm.xml"
 		)
+	MobileBaseCadManager.get(m).setConfigurationViewerMode(true) 
 	if(m==null)
 		throw new RuntimeException("Arm failed to assemble itself")
 	println "Connecting new device robot arm "+m
 	return m
 })
 
-return base;
+//return base;
 /*
 ThreadUtil.wait(100)
 while(MobileBaseCadManager.get( base).getProcesIndictor().getProgress()<1){
