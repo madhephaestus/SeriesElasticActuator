@@ -187,7 +187,7 @@ def base =DeviceManager.getSpecificDevice( "HephaestusArm",{
 	return m
 })
 
-//return base;
+return base;
 /*
 ThreadUtil.wait(100)
 while(MobileBaseCadManager.get( base).getProcesIndictor().getProgress()<1){
