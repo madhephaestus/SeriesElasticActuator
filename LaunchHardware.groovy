@@ -14,7 +14,7 @@ import edu.wpi.SimplePacketComs.device.gameController.*;
 import edu.wpi.SimplePacketComs.device.*
 
 public class HephaestusArm extends HIDSimplePacketComs{
-	PacketType pollingPacket = new FloatPacketType(37,64);
+	PacketType pollingPacket = new FloatPacketType(1,64);
 	PacketType pidPacket = new FloatPacketType(65,64);
 	PacketType PDVelPacket = new FloatPacketType(48,64);
 	PacketType SetVelocity = new FloatPacketType(42,64);
@@ -111,7 +111,7 @@ public class HIDRotoryLink extends AbstractRotoryLink{
 		device=c
 		if(device ==null)
 			throw new RuntimeException("Device can not be null")
-		c.addEvent(37,{
+		c.addEvent(1,{
 			int val= getCurrentPosition();
 			if(lastPushedVal!=val){
 				println "Fire Link Listner "+index+" value "+getCurrentPosition()
