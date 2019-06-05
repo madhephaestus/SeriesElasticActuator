@@ -18,6 +18,13 @@ public class HephaestusArm extends HIDSimplePacketComs{
 	PacketType pidPacket = new FloatPacketType(65,64);
 	PacketType PDVelPacket = new FloatPacketType(48,64);
 	PacketType SetVelocity = new FloatPacketType(42,64);
+	String name="hidbowler"
+	String getName(){
+		return name;
+	}
+	void setName(String n){
+		name =n
+	}
 	public HephaestusArm(int vidIn, int pidIn) {
 		super(vidIn, pidIn);
 		pidPacket.oneShotMode();
@@ -86,6 +93,7 @@ public class HephaestusArm extends HIDSimplePacketComs{
 			pollingPacket.getDownstream()[i]=set[i];
 		}
 	}
+	
 }
 public class HIDRotoryLink extends AbstractRotoryLink{
 	def device;
@@ -154,6 +162,9 @@ def dev = DeviceManager.getSpecificDevice( "hidbowler",{
 	
 	def d = new HephaestusArm(0x3742,0x7)
 	d.connect(); // Connect to it.
+	if(d.isVirtual()){
+		println "\n\n\nDevice is in virtual mode!\n\n\n"
+	}
 	LinkFactory.addLinkProvider("hidsimple",{LinkConfiguration conf->
 				println "Loading link "
 				return new HIDRotoryLink(d,conf)
