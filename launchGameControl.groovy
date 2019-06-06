@@ -35,7 +35,8 @@ IJInputEventListener listener = new IJInputEventListener() {
 		
 
 		try{
-			float vel = (Math.pow((double)2.0,value*gain))-1;
+			//float vel = (Math.pow((double)2.0,value*gain))-1;
+			float vel = value*gain;
 			if (Math.abs(vel)<0.001) vel=0.0;
 			System.out.println("v is value= "+value);
 			if(comp.getName().equals("X Axis")){
@@ -53,6 +54,21 @@ IJInputEventListener listener = new IJInputEventListener() {
 				zvelocity = vel;
 				//tilt.getChannel().setCachedValue(val);
 			}
+			current.translateX(xvelocity);
+	current.translateY(yvelocity);
+	current.translateZ(zvelocity);	
+	if (current.getX()>250) current.setX(250);
+	if (current.getY()>100) current.setY(100);
+	if (current.getZ()>100) current.setZ(320);
+	if (current.getX()<95) current.setX(95);
+	if (current.getY()<-100) current.setY(-100);
+	if (current.getZ()<0) current.setZ(0);
+	try {
+	limb.setDesiredTaskSpaceTransform(current,  0.001);
+	
+	} catch(Exception e){
+		
+	}
 		}catch(Exception e){
 			e.printStackTrace(System.out)
 		}
@@ -65,21 +81,7 @@ g.clearListeners()
 g.addListeners(listener);
 // wait while the application is not stopped
 while(!Thread.interrupted()){
-	current.translateX(xvelocity);
-	current.translateY(yvelocity);
-	current.translateZ(zvelocity);	
-	if (current.getX()>250) current.setX(250);
-	if (current.getY()>100) current.setY(100);
-	if (current.getZ()>100) current.setZ(320);
-	if (current.getX()<95) current.setX(95);
-	if (current.getY()<-100) current.setY(-100);
-	if (current.getZ()<0) current.setZ(0);
-	try {
-	//limb.setDesiredTaskSpaceTransform(current,  0.001);
 	
-	} catch(Exception e){
-		
-	}
 	ThreadUtil.wait(10);
 	//dyio.flush(0)
 }
