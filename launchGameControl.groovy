@@ -11,8 +11,8 @@ def base =ScriptingEngine.gitScriptRun(	"https://github.com/madhephaestus/Series
 									null);
 def dev = DeviceManager.getSpecificDevice( "hidbowler",{return null})	
 
-dev.setPIDGains(0,0.0001, 0, 0)
-dev.setPIDGains(1,0.005, 0, 0)
+dev.setPIDGains(0,0.0005, 0, 0)
+dev.setPIDGains(1,0.001, 0, 0)
 dev.setPIDGains(2,0.001, 0, 0)
 dev.pushPIDGains()
 								
@@ -35,7 +35,7 @@ TransformNR current = limb.getCurrentPoseTarget();
 float xvelocity = 0.0;
 float yvelocity = 0.0;
 float zvelocity = 0.0;
-float gain = -0.5;
+float gain = -1.0;
 
 IJInputEventListener listener = new IJInputEventListener() {
 	@Override public void onEvent(Component comp, Event event1,float value, String eventString) {
@@ -44,22 +44,31 @@ IJInputEventListener listener = new IJInputEventListener() {
 		try{
 			//float vel = (Math.pow((double)2.0,value*gain))-1;
 			float vel = value*gain;
-			if (Math.abs(vel)<0.01) vel=0.0;
+			if (Math.abs(vel)<0.001) vel=0.0;
 			//System.out.println("v is value= "+value);
-			yvelocity=0
-			xvelocity=0
-			zvelocity=0
 			if(comp.getName().equals("X Axis")){
+				yvelocity=0
+				xvelocity=0
+				zvelocity=0
 				//System.out.println(comp.getName()+" is value= "+vel);
 				yvelocity = vel;
+				
 			} 
 			if(comp.getName().equals("Y Axis")){
+				yvelocity=0
+				xvelocity=0
+				zvelocity=0
 				//System.out.println(comp.getName()+" is value= "+vel);
 				xvelocity = vel;
+				
 			}
 			if(comp.getName().equals("Z Rotation")){
-				System.out.println(comp.getName()+" is value= "+vel);
+				yvelocity=0
+				xvelocity=0
+				zvelocity=0
+				//System.out.println(comp.getName()+" is value= "+vel);
 				zvelocity = vel;
+				
 			}
 			println current
 		}catch(Exception e){
