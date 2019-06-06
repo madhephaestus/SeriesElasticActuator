@@ -15,7 +15,7 @@ import edu.wpi.SimplePacketComs.device.*
 
 public class HephaestusArm extends HIDSimplePacketComs{
 	PacketType pollingPacket = new FloatPacketType(1,64);
-	PacketType pidPacket = new FloatPacketType(65,64);
+	PacketType pidPacket = new FloatPacketType(2,64);
 	PacketType PDVelPacket = new FloatPacketType(48,64);
 	PacketType SetVelocity = new FloatPacketType(42,64);
 	String name="hidbowler"

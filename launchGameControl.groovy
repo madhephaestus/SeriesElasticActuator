@@ -9,6 +9,13 @@ import net.java.games.input.ControllerEnvironment;
 def base =ScriptingEngine.gitScriptRun(	"https://github.com/madhephaestus/SeriesElasticActuator.git", 
 								"LaunchHardware.groovy", 
 									null);
+def dev = DeviceManager.getSpecificDevice( "hidbowler",{return null})	
+
+dev.setPIDGains(0,0.0001, 0, 0)
+dev.setPIDGains(1,0.005, 0, 0)
+dev.setPIDGains(2,0.001, 0, 0)
+dev.pushPIDGains()
+								
 DHParameterKinematics limb = base.getAllDHChains().get(0)
 
 def g  = DeviceManager.getSpecificDevice( "gamepad",{
@@ -28,7 +35,7 @@ TransformNR current = limb.getCurrentPoseTarget();
 float xvelocity = 0.0;
 float yvelocity = 0.0;
 float zvelocity = 0.0;
-float gain = 0.2;
+float gain = -0.5;
 
 IJInputEventListener listener = new IJInputEventListener() {
 	@Override public void onEvent(Component comp, Event event1,float value, String eventString) {
@@ -37,38 +44,24 @@ IJInputEventListener listener = new IJInputEventListener() {
 		try{
 			//float vel = (Math.pow((double)2.0,value*gain))-1;
 			float vel = value*gain;
-			if (Math.abs(vel)<0.001) vel=0.0;
-			System.out.println("v is value= "+value);
+			if (Math.abs(vel)<0.01) vel=0.0;
+			//System.out.println("v is value= "+value);
+			yvelocity=0
+			xvelocity=0
+			zvelocity=0
 			if(comp.getName().equals("X Axis")){
-				System.out.println(comp.getName()+" is value= "+vel);
+				//System.out.println(comp.getName()+" is value= "+vel);
 				yvelocity = vel;
-				//pan.getChannel().setCachedValue(val);
 			} 
 			if(comp.getName().equals("Y Axis")){
-				System.out.println(comp.getName()+" is value= "+vel);
+				//System.out.println(comp.getName()+" is value= "+vel);
 				xvelocity = vel;
-				//tilt.getChannel().setCachedValue(val);
 			}
 			if(comp.getName().equals("Z Rotation")){
 				System.out.println(comp.getName()+" is value= "+vel);
 				zvelocity = vel;
-				//tilt.getChannel().setCachedValue(val);
 			}
-			current.translateX(xvelocity);
-	current.translateY(yvelocity);
-	current.translateZ(zvelocity);	
-	if (current.getX()>250) current.setX(250);
-	if (current.getY()>100) current.setY(100);
-	if (current.getZ()>100) current.setZ(320);
-	if (current.getX()<95) current.setX(95);
-	if (current.getY()<-100) current.setY(-100);
-	if (current.getZ()<0) current.setZ(0);
-	try {
-	limb.setDesiredTaskSpaceTransform(current,  0.001);
-	
-	} catch(Exception e){
-		
-	}
+			println current
 		}catch(Exception e){
 			e.printStackTrace(System.out)
 		}
@@ -81,8 +74,23 @@ g.clearListeners()
 g.addListeners(listener);
 // wait while the application is not stopped
 while(!Thread.interrupted()){
-	
-	ThreadUtil.wait(10);
+		try {
+			current.translateX(xvelocity);
+			current.translateY(yvelocity);
+			current.translateZ(zvelocity);	
+			if (current.getX()>250) current.setX(250);
+			if (current.getY()>100) current.setY(100);
+			if (current.getZ()>320) current.setZ(320);
+			if (current.getX()<95) current.setX(95);
+			if (current.getY()<-100) current.setY(-100);
+			if (current.getZ()<20) current.setZ(20);
+			
+		
+			limb.setDesiredTaskSpaceTransform(current,  0.001);
+		} catch(Exception e){
+			BowlerStudio.printStackTrace(e)
+		}
+	ThreadUtil.wait(20);
 	//dyio.flush(0)
 }
 //remove listener and exit
