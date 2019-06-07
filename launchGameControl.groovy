@@ -85,8 +85,8 @@ while(!Thread.interrupted()){
 			current.translateZ(zvelocity);	
 			if(!limb.checkTaskSpaceTransform(current))current.translateZ(-zvelocity);
 			if (current.getX()>250) current.setX(250);
-			if (current.getY()>100) current.setY(100);
-			if (current.getZ()>320) current.setZ(320);
+			if (current.getY()>150) current.setY(150);
+			if (current.getZ()>420) current.setZ(420);
 			if (current.getX()<95) current.setX(95);
 			if (current.getY()<-150) current.setY(-150);
 			if (current.getZ()<20) current.setZ(20);
