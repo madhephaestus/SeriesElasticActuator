@@ -47,25 +47,19 @@ IJInputEventListener listener = new IJInputEventListener() {
 			if (Math.abs(vel)<0.001) vel=0.0;
 			//System.out.println("v is value= "+value);
 			if(comp.getName().equals("X Axis")){
-				yvelocity=0
-				xvelocity=0
-				zvelocity=0
+				
 				//System.out.println(comp.getName()+" is value= "+vel);
 				yvelocity = vel;
 				
 			} 
 			if(comp.getName().equals("Y Axis")){
-				yvelocity=0
-				xvelocity=0
-				zvelocity=0
+			
 				//System.out.println(comp.getName()+" is value= "+vel);
 				xvelocity = vel;
 				
 			}
 			if(comp.getName().equals("Z Rotation")){
-				yvelocity=0
-				xvelocity=0
-				zvelocity=0
+			
 				//System.out.println(comp.getName()+" is value= "+vel);
 				zvelocity = vel;
 				
@@ -85,8 +79,11 @@ g.addListeners(listener);
 while(!Thread.interrupted()){
 		try {
 			current.translateX(xvelocity);
+			if(!limb.checkTaskSpaceTransform(current))current.translateX(-xvelocity);
 			current.translateY(yvelocity);
+			if(!limb.checkTaskSpaceTransform(current))current.translateY(-yvelocity);
 			current.translateZ(zvelocity);	
+			if(!limb.checkTaskSpaceTransform(current))current.translateZ(-zvelocity);
 			if (current.getX()>250) current.setX(250);
 			if (current.getY()>100) current.setY(100);
 			if (current.getZ()>320) current.setZ(320);
