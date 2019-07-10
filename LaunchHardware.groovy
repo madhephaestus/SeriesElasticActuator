@@ -49,7 +49,7 @@ public class HephaestusArm extends HIDSimplePacketComs{
 		pollingPacket.getDownstream()[(index*3)+2] = force;
 		//println "Setting Downstream "+downstream
 	}
-	public void setGripperPosition(byte position){
+	public void setGripperPosition(float position){
 		gripperPacket.getDownstream()[0] = position;
 		gripperPacket.oneShotMode();
 	}
