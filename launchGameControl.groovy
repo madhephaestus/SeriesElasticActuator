@@ -64,7 +64,12 @@ IJInputEventListener listener = new IJInputEventListener() {
 				zvelocity = vel;
 				
 			}
-			println current
+			if(comp.getName().equals("Z Rotation")){
+				println "grip!"
+				
+			}
+			//println current
+			//println comp.getName()
 		}catch(Exception e){
 			e.printStackTrace(System.out)
 		}

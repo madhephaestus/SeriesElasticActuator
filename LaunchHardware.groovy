@@ -18,7 +18,7 @@ public class HephaestusArm extends HIDSimplePacketComs{
 	PacketType pidPacket = new FloatPacketType(2,64);
 	PacketType PDVelPacket = new FloatPacketType(48,64);
 	PacketType SetVelocity = new FloatPacketType(42,64);
-	PacketType gripperPacket = new BytePacketType(3,1);
+	PacketType gripperPacket = new FloatPacketType(3,64);
 	String name="hidbowler"
 	String getName(){
 		return name;
@@ -35,7 +35,7 @@ public class HephaestusArm extends HIDSimplePacketComs{
 		SetVelocity.oneShotMode();
 		SetVelocity.sendOk();
 		gripperPacket.oneShotMode();
-		gripperPacket.sendOK();
+		gripperPacket.sendOk();
 		for (PacketType pt : Arrays.asList(pollingPacket, pidPacket, PDVelPacket, SetVelocity,gripperPacket)) {
 			addPollingPacket(pt);
 		}
