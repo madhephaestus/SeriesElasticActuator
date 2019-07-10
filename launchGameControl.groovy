@@ -101,7 +101,7 @@ while(!Thread.interrupted()){
 		} catch(Exception e){
 			BowlerStudio.printStackTrace(e)
 		}
-	ThreadUtil.wait(20);
+	ThreadUtil.wait(1);
 	//dyio.flush(0)
 }
 //remove listener and exit
