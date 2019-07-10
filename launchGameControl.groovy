@@ -35,7 +35,7 @@ TransformNR current = limb.getCurrentPoseTarget();
 float xvelocity = 0.0;
 float yvelocity = 0.0;
 float zvelocity = 0.0;
-float gain = -1.0;
+float gain = -0.1;
 
 IJInputEventListener listener = new IJInputEventListener() {
 	@Override public void onEvent(Component comp, Event event1,float value, String eventString) {
@@ -64,11 +64,11 @@ IJInputEventListener listener = new IJInputEventListener() {
 				zvelocity = vel;
 				
 			}
-			if(comp.getName().equals("Z Rotation")){
+			if(comp.getName().equals("Y Rotation")){
 				println "grip!"
 				
 			}
-			//println current
+			println current
 			//println comp.getName()
 		}catch(Exception e){
 			e.printStackTrace(System.out)
