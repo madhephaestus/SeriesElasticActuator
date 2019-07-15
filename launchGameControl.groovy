@@ -65,8 +65,11 @@ IJInputEventListener listener = new IJInputEventListener() {
 				
 			}
 			if(comp.getName().equals("Y Rotation")){
+				dev.setGripperPosition(0.7);
 				println "grip!"
 				
+			} else {
+				dev.setGripperPosition((float)0.2);
 			}
 			println current
 			//println comp.getName()
