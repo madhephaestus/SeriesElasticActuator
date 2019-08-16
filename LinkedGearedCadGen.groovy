@@ -1109,7 +1109,7 @@ CSG supportRib = ribs.get(ribs.size()-2)
 			bolt = bolt.union (bolt.movex(-12))
 					.movex(-ballRadius.getMM()-8.75)
 			
-			mounStrip = new Cube(	40,// X dimention
+			def mounStrip = new Cube(	40,// X dimention
 						13.2,// Y dimention
 						boltPlateThickness//  Z dimention
 						).toCSG()
@@ -1177,7 +1177,7 @@ CSG supportRib = ribs.get(ribs.size()-2)
 					.toXMin()
 					.toZMin()
 			})
-			cupr=cup.mirrorz()
+			def cupr=cup.mirrorz()
 			cup.setManufacturing({ toMfg ->
 				return toMfg
 					.rotx(180)
