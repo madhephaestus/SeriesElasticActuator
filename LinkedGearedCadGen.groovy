@@ -29,6 +29,7 @@ class MyCadGenerator implements ICadGenerator{
 	double topOfGearToCenter
 	double distanceToTopOfGear
 	double drivenLinkThickness
+	double gearDistance
 	CSG armScrews
 	CSG screwWithNut
 	CSG gearScrew
@@ -39,16 +40,30 @@ class MyCadGenerator implements ICadGenerator{
 	StringParameter gearBParam 			
 	HashMap<String, Object>  gearAMeasurments 
 	HashMap<String, Object>  gearBMeasurments 
+	CSG gearStandoff
+	CSG gearKeepaway 
+	CSG gearA
+	 CSG gearB
 	public MyCadGenerator(def args){
-		StringParameter gearAParam 			 	= new StringParameter("Gear A","HS36T",Vitamins.listVitaminSizes("vexGear"))
-		StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
-		HashMap<String, Object>  gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
-		HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
+		gearAParam 			 	= new StringParameter("Gear A","HS36T",Vitamins.listVitaminSizes("vexGear"))
+		gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
+		gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
+		gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
 	
 		println args
+		gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
 		capPinSpacing = gearAMeasurments.diameter*0.75+encoderCapRodRadius
 		pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
 		mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
+		
+	 	gearA = Vitamins.get( "vexGear",gearAParam.getStrValue())
+					.movex(-gearDistance)
+		gearB = Vitamins.get( "vexGear",gearBParam.getStrValue());
+		gearStandoff = new Cylinder(gearA.getMaxY(),gearA.getMaxY(),motorBackSetDistance+washerThickness,20).toCSG()
+						.toZMax()
+						.movex(-gearDistance)
+						
+	 	gearKeepaway = gearStandoff.toolOffset(1).getBoundingBox()
 
 		screwSet =screwTotal
 						.movex(-pinOffset)
@@ -145,7 +160,7 @@ class MyCadGenerator implements ICadGenerator{
 	double cameraLocation =(workcellSize-20)/2
 	TransformNR cameraLocationNR = new TransformNR(cameraLocation+20,0,cameraLocation+20,new RotationNR(0,-180,-35))
 	Transform cameraLocationCSG =TransformFactory.nrToCSG(cameraLocationNR)
-	//double gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
+	
 	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
 	double springHeight = 26
 	double motorBackSetDistance =5
@@ -197,17 +212,9 @@ class MyCadGenerator implements ICadGenerator{
 					.rotz(30)
 	
 	
-	//CSG gearA = Vitamins.get( "vexGear",gearAParam.getStrValue())
-	//			.movex(-gearDistance)
-	//CSG gearB = Vitamins.get( "vexGear",gearBParam.getStrValue());
+	
 	CSG bolt = Vitamins.get( "capScrew",boltSizeParam.getStrValue());
-	/*
-	CSG gearStandoff = new Cylinder(gearA.getMaxY(),gearA.getMaxY(),motorBackSetDistance+washerThickness,20).toCSG()
-						.toZMax()
-						.movex(-gearDistance)
-						
-	CSG gearKeepaway = gearStandoff.toolOffset(1).getBoundingBox()
-	*/
+	
 	CSG previousServo = null;
 	CSG previousEncoder = null
 	CSG encoderCapCache=null
@@ -558,7 +565,7 @@ class MyCadGenerator implements ICadGenerator{
          		 //allSideHoles= allSideHoles.union(	holeset.movex(i))	
          	}
 		double etchWith =0.5
-		etchX = (workcellSize/2)-2
+		//etchX = (workcellSize/2)-2
 		//CSG etchX =new Cube((workcellSize/2)-2,etchWith,thickness.getMM()).toCSG()
 		//			.toXMin()
 		//CSG etchY =new Cube(etchWith,footingWidth-2,thickness.getMM()).toCSG()
@@ -571,13 +578,7 @@ class MyCadGenerator implements ICadGenerator{
 
 		etch=etch
 		int x =0
-		for(double i=-150;i<151;i+=gridDimention*2){
-			for(double j=0;j<etchX;j+=gridDimention){
-				etchParts.add(etch
-						.movex(j)
-						.movey(i))
-			}
-		}
+
 		
 		//def cameraParts = getCameraMount()
 		CSG basePlate = footing
@@ -595,8 +596,8 @@ class MyCadGenerator implements ICadGenerator{
 						.difference(etchParts)
 						//.union(allSideHoles)
 		
-		basePlateUpper=basePlate.intersect(footing)
-		basePlateLower=basePlate.difference(footing)	/*
+		def basePlateUpper=basePlate.intersect(footing)
+		def basePlateLower=basePlate.difference(footing)	/*
 		CSG sidePlateA=sidePlate
 				.difference(screwAcross)
 				.difference(screwAcross.movez(sidePlateclearenceHeight))
