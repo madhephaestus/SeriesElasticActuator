@@ -38,8 +38,9 @@ class MyCadGenerator implements ICadGenerator{
 	CSG loadBearingPin
 	 StringParameter gearAParam 			 	
 	StringParameter gearBParam 			
-	HashMap<String, Object>  gearAMeasurments 
-	HashMap<String, Object>  gearBMeasurments 
+	//HashMap<String, Object>  gearAMeasurments 
+	//HashMap<String, Object>  gearBMeasurments 
+	double gearHeightValue
 	CSG gearStandoff
 	CSG gearKeepaway 
 	CSG gearA
@@ -47,9 +48,9 @@ class MyCadGenerator implements ICadGenerator{
 	public MyCadGenerator(def args){
 		gearAParam 			 	= new StringParameter("Gear A","HS36T",Vitamins.listVitaminSizes("vexGear"))
 		gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
-		gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
-		gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
-	
+		HashMap<String, Object>  gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
+		HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
+		gearHeightValue=gearBMeasurments.height
 		println args
 		gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
 		capPinSpacing = gearAMeasurments.diameter*0.75+encoderCapRodRadius
@@ -745,7 +746,7 @@ class MyCadGenerator implements ICadGenerator{
 		CSG springBlockPartRaw=springBlock(drivenLinkThickness)
 		CSG springBlockPart =springBlockPartRaw
 								.rotz(-Math.toDegrees(dh.getTheta()))
-		CSG springBlockPartGear = springBlockPin(gearBMeasurments.height)
+		CSG springBlockPartGear = springBlockPin(gearHeightValue)
 								.rotx(180)
 								.rotz(-Math.toDegrees(dh.getTheta()))
 		// creating the servo
