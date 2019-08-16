@@ -9,11 +9,111 @@ import eu.mihosoft.vrl.v3d.Transform;
 import com.neuronrobotics.bowlerstudio.physics.TransformFactory;
 import eu.mihosoft.vrl.v3d.Transform;
 import javafx.scene.transform.Affine;
-
+if(args==null){
+	args=[	  [36,// Number of teeth gear a link 0
+	            84],// Number of teeth gear b link 0
+	            [36,// Number of teeth gear a link 1
+	            84],// Number of teeth gear b link 1
+	            [36,// Number of teeth gear a link 2
+	            84],// Number of teeth gear b link 2
+            ]
+}
 
 Vitamins.setGitRepoDatabase("https://github.com/madhephaestus/Hardware-Dimensions.git")
 CSGDatabase.clear()
-ICadGenerator c= new ICadGenerator(){
+class MyCadGenerator implements ICadGenerator{
+	double capPinSpacing 
+	double pinOffset  
+	double mountPlatePinAngle 	
+	CSG screwSet
+	double topOfGearToCenter
+	double distanceToTopOfGear
+	double drivenLinkThickness
+	CSG armScrews
+	CSG screwWithNut
+	CSG gearScrew
+	CSG LoadCellScrews 
+	CSG loadBearingPinBearing 
+	CSG loadBearingPin
+	 StringParameter gearAParam 			 	
+	StringParameter gearBParam 			
+	HashMap<String, Object>  gearAMeasurments 
+	HashMap<String, Object>  gearBMeasurments 
+	public MyCadGenerator(def args){
+		StringParameter gearAParam 			 	= new StringParameter("Gear A","HS36T",Vitamins.listVitaminSizes("vexGear"))
+		StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
+		HashMap<String, Object>  gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
+		HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
+	
+		println args
+		capPinSpacing = gearAMeasurments.diameter*0.75+encoderCapRodRadius
+		pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
+		mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
+
+		screwSet =screwTotal
+						.movex(-pinOffset)
+						.rotz(mountPlatePinAngle)
+						.union(screwTotal
+							.movex(-pinOffset)
+							.rotz(-mountPlatePinAngle))
+		topOfGearToCenter = (centerLinkToBearingTop-gearBMeasurments.height)
+		distanceToTopOfGear = topOfGearToCenter
+		drivenLinkThickness =centerLinkToBearingTop+topOfGearToCenter-(washerThickness*2)
+		screwWithNut = screwTotal.union(LockNutCentered.makeKeepaway(printerOffset.getMM())
+									.rotx(180)
+									.union(wrenchKeepaway)
+									.rotz(90)
+									)
+									.movez(-58)
+		armScrews = screwWithNut.rotz(-45)
+					.movey(-screwCenterLine+screwHeadKeepaway)
+					.union(screwWithNut.rotz(45)
+						.movey(screwCenterLine-screwHeadKeepaway))
+					.union(screwTotal
+							.union(new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() 
+									.movez(thirdPinStandoff-drivenLinkThickness)
+							)
+							.movez(centerLinkToBearingTop-encoderBearingHeight)
+							.movex(-thirdarmBoltBackSetDistance)
+							.roty(90)
+							)
+					.union(screwTotal
+							.movez((-centerLinkToBearingTop-encoderBearingHeight)*2)
+							.union(new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() 
+									.movez(thirdPinStandoff-drivenLinkThickness+centerLinkToBearingTop-encoderBearingHeight)
+							)
+							.movex(-thirdarmBoltBackSetDistance+22)
+							.roty(90)
+							)
+					.roty(-90)
+					.movez(centerLinkToBearingTop-screwHeadKeepaway*1.5)
+		 screwWithNut = screwTotal.union(LockNutCentered.makeKeepaway(printerOffset.getMM())
+									.rotx(180)
+									.union(wrenchKeepaway)
+									.rotz(90)
+									)
+									.movez(-58)
+		 gearScrew =screwTotal
+					.union(nutAndDriverKeepaway.roty(180))
+					.movez(-gearBMeasurments.height+washerThickness+nutInsetDistance)
+			
+		 LoadCellScrews = gearScrew
+					.movey(-screwCenterLine+screwHeadKeepaway)
+					.union(gearScrew
+						.movey(screwCenterLine-screwHeadKeepaway))
+					.movex(loadCellBoltCenter)
+					.movez(-distanceToTopOfGear+2)	
+		 loadBearingPinBearing =new Cylinder(	brassBearingRadius,
+									brassBearingRadius,
+									drivenLinkThickness+encoderBearingHeight,
+									(int)30).toCSG() 
+						.toZMin()
+						.movez(-pinLength/2)
+		 loadBearingPin =new Cylinder(pinRadius,pinRadius,pinLength,(int)30).toCSG() 
+						.movez(-pinLength/2)
+						.union(	loadBearingPinBearing)	
+		
+	}
 	double centerOfRobotToBackEdgeOfBoard = 222.357	
 	int linkResolution = 6
 	double boardX = 530*2
@@ -30,8 +130,7 @@ ICadGenerator c= new ICadGenerator(){
 	LengthParameter printerOffset 			= new LengthParameter("printerOffset",0.5,[1.2,0])
 	StringParameter boltSizeParam 			= new StringParameter("Bolt Size","M5",Vitamins.listVitaminSizes("capScrew"))
 	StringParameter bearingSizeParam 			= new StringParameter("Encoder Board Bearing","R8-60355K505",Vitamins.listVitaminSizes("ballBearing"))
-	StringParameter gearAParam 			 	= new StringParameter("Gear A","HS36T",Vitamins.listVitaminSizes("vexGear"))
-	StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
+	
 	//StringParameter gearBParam 				= new StringParameter("Gear B","HS60T",Vitamins.listVitaminSizes("vexGear"))
 	//StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
 	//StringParameter gearBParam 				= new StringParameter("Gear B","HS36T",Vitamins.listVitaminSizes("vexGear"))
@@ -41,14 +140,12 @@ ICadGenerator c= new ICadGenerator(){
 	HashMap<String, Object>  bearingData = Vitamins.getConfiguration("ballBearing",bearingSizeParam.getStrValue())			
 	HashMap<String, Object>  boltMeasurments = Vitamins.getConfiguration( "capScrew",boltSizeParam.getStrValue())
 	HashMap<String, Object>  nutMeasurments = Vitamins.getConfiguration( "nut",boltSizeParam.getStrValue())
-	HashMap<String, Object>  gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
-	HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
-	
+
 	double workcellSize = 700
 	double cameraLocation =(workcellSize-20)/2
 	TransformNR cameraLocationNR = new TransformNR(cameraLocation+20,0,cameraLocation+20,new RotationNR(0,-180,-35))
 	Transform cameraLocationCSG =TransformFactory.nrToCSG(cameraLocationNR)
-	double gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
+	//double gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
 	//println boltMeasurments.toString() +" and "+nutMeasurments.toString()
 	double springHeight = 26
 	double motorBackSetDistance =5
@@ -78,9 +175,9 @@ ICadGenerator c= new ICadGenerator(){
 	//Encoder Cap mesurments
 	double encoderCapRodRadius =7
 	double cornerRadius =1
-	double capPinSpacing = gearAMeasurments.diameter*0.75+encoderCapRodRadius
-	double pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
-	double mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
+	//double capPinSpacing = gearAMeasurments.diameter*0.75+encoderCapRodRadius
+	//double pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
+	//double mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
 	double bearingDiameter = bearingData.outerDiameter
 	double washerThickness = 2.0
 	double washerOd = 17
@@ -100,14 +197,17 @@ ICadGenerator c= new ICadGenerator(){
 					.rotz(30)
 	
 	
-	CSG gearA = Vitamins.get( "vexGear",gearAParam.getStrValue())
-				.movex(-gearDistance)
-	CSG gearB = Vitamins.get( "vexGear",gearBParam.getStrValue());
+	//CSG gearA = Vitamins.get( "vexGear",gearAParam.getStrValue())
+	//			.movex(-gearDistance)
+	//CSG gearB = Vitamins.get( "vexGear",gearBParam.getStrValue());
 	CSG bolt = Vitamins.get( "capScrew",boltSizeParam.getStrValue());
+	/*
 	CSG gearStandoff = new Cylinder(gearA.getMaxY(),gearA.getMaxY(),motorBackSetDistance+washerThickness,20).toCSG()
 						.toZMax()
 						.movex(-gearDistance)
+						
 	CSG gearKeepaway = gearStandoff.toolOffset(1).getBoundingBox()
+	*/
 	CSG previousServo = null;
 	CSG previousEncoder = null
 	CSG encoderCapCache=null
@@ -157,12 +257,7 @@ ICadGenerator c= new ICadGenerator(){
 					.toZMax()
 	CSG screwTotal = CSG.unionAll([screwHead,screwChampher,screwHoleKeepaway,screwHole])
 					//.movez()
-     CSG screwSet =screwTotal
-					.movex(-pinOffset)
-					.rotz(mountPlatePinAngle)
-					.union(screwTotal
-						.movex(-pinOffset)
-						.rotz(-mountPlatePinAngle))
+     
 					//.movez(-encoderSimple.getMaxZ())
 	double centerHoleRad=(20)/2
 	CSG centerHole =new Cylinder(centerHoleRad,centerHoleRad,20,(int)30)
@@ -175,9 +270,9 @@ ICadGenerator c= new ICadGenerator(){
 	double encoderBearingHeight = encoderSimple.getMaxZ()
 	double topPlateOffset = encoderToEncoderDistance*2-encoderBearingHeight*2
 	double centerLinkToBearingTop = encoderToEncoderDistance-encoderBearingHeight
-	double topOfGearToCenter = (centerLinkToBearingTop-gearBMeasurments.height)
+	
 	double totalSpringLength = 47.5
-	double drivenLinkThickness =centerLinkToBearingTop+topOfGearToCenter-(washerThickness*2)
+	
 	double drivenLinkWidth = screwCenterLine*1.5+encoderCapRodRadius+screwOffsetFromSides
 	double drivenLinkX = totalSpringLength+encoderCapRodRadius
 	double legLength = totalSpringLength
@@ -203,57 +298,14 @@ ICadGenerator c= new ICadGenerator(){
 							.rotx(180)	
 							.movez(1)
 							)
-	CSG screwWithNut = screwTotal.union(LockNutCentered.makeKeepaway(printerOffset.getMM())
-									.rotx(180)
-									.union(wrenchKeepaway)
-									.rotz(90)
-									)
-									.movez(-58)
+	
 	double thirdPinStandoff =37								
-	CSG armScrews = screwWithNut.rotz(-45)
-					.movey(-screwCenterLine+screwHeadKeepaway)
-					.union(screwWithNut.rotz(45)
-						.movey(screwCenterLine-screwHeadKeepaway))
-					.union(screwTotal
-							.union(new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() 
-									.movez(thirdPinStandoff-drivenLinkThickness)
-							)
-							.movez(centerLinkToBearingTop-encoderBearingHeight)
-							.movex(-thirdarmBoltBackSetDistance)
-							.roty(90)
-							)
-					.union(screwTotal
-							.movez((-centerLinkToBearingTop-encoderBearingHeight)*2)
-							.union(new Cylinder(boltHeadKeepaway/2,boltHeadKeepaway/2,screwLength*2,(int)8).toCSG() 
-									.movez(thirdPinStandoff-drivenLinkThickness+centerLinkToBearingTop-encoderBearingHeight)
-							)
-							.movex(-thirdarmBoltBackSetDistance+22)
-							.roty(90)
-							)
-					.roty(-90)
-					//.movex(legLength+encoderCapRodRadius/2)
-					.movez(centerLinkToBearingTop-screwHeadKeepaway*1.5)
+	
 	// Loading the gear bolts for the load cell
-	double distanceToTopOfGear = topOfGearToCenter
-	CSG gearScrew =screwTotal
-					.union(nutAndDriverKeepaway.roty(180))
-					.movez(-gearBMeasurments.height+washerThickness+nutInsetDistance)
-	CSG LoadCellScrews = gearScrew
-					.movey(-screwCenterLine+screwHeadKeepaway)
-					.union(gearScrew
-						.movey(screwCenterLine-screwHeadKeepaway))
-					.movex(loadCellBoltCenter)
-					.movez(-distanceToTopOfGear+2)		
+	
+	
 									
-	CSG loadBearingPinBearing =new Cylinder(	brassBearingRadius,
-										brassBearingRadius,
-										drivenLinkThickness+encoderBearingHeight,
-										(int)30).toCSG() 
-						.toZMin()
-						.movez(-pinLength/2)
-	CSG loadBearingPin =new Cylinder(pinRadius,pinRadius,pinLength,(int)30).toCSG() 
-						.movez(-pinLength/2)
-						.union(	loadBearingPinBearing)	
+
 	CSG loadCell = (CSG) ScriptingEngine
 					 .gitScriptRun(
             "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
@@ -1587,11 +1639,12 @@ CSG supportRib = ribs.get(ribs.size()-2)
 		csg.add(object);
 		//BowlerStudioController.addCsg(object);
 		if(version[0]>0 || version[1]>=11){
-			println "Name API found"
+			//println "Name API found"
 			object.setName(name)
 		}
 	}
 }
+def c=new MyCadGenerator(args)
 return c//[c.springBlock(c.drivenLinkThickness), c.springBlockPin(c.gearBMeasurments.height).movey(60)]
 
 base=DeviceManager.getSpecificDevice( "HephaestusWorkCell",{
