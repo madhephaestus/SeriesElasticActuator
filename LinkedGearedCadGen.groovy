@@ -40,26 +40,32 @@ class MyCadGenerator implements ICadGenerator{
 	StringParameter gearBParam 			
 	//HashMap<String, Object>  gearAMeasurments 
 	//HashMap<String, Object>  gearBMeasurments 
-	double gearHeightValue
+	double gearHeightValue=12.8
 	CSG gearStandoff
 	CSG gearKeepaway 
 	CSG gearA
 	CSG gearB
 	public MyCadGenerator(def args){
+
+		
 		gearAParam 			 	= new StringParameter("Gear A","HS36T",Vitamins.listVitaminSizes("vexGear"))
 		gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
 		HashMap<String, Object>  gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
 		HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
-		gearHeightValue=gearBMeasurments.height
+
 		println args
 		gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
 		capPinSpacing = gearAMeasurments.diameter*0.75+encoderCapRodRadius
 		pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
-		mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
-		
-	 	gearA = Vitamins.get( "vexGear",gearAParam.getStrValue())
+		topOfGearToCenter = (centerLinkToBearingTop-gearBMeasurments.height)
+		gearA = Vitamins.get( "vexGear",gearAParam.getStrValue())
 					.movex(-gearDistance)
 		gearB = Vitamins.get( "vexGear",gearBParam.getStrValue());
+
+		
+
+		
+		mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
 		gearStandoff = new Cylinder(gearA.getMaxY(),gearA.getMaxY(),motorBackSetDistance+washerThickness,20).toCSG()
 						.toZMax()
 						.movex(-gearDistance)
@@ -72,7 +78,7 @@ class MyCadGenerator implements ICadGenerator{
 						.union(screwTotal
 							.movex(-pinOffset)
 							.rotz(-mountPlatePinAngle))
-		topOfGearToCenter = (centerLinkToBearingTop-gearBMeasurments.height)
+		
 		distanceToTopOfGear = topOfGearToCenter
 		drivenLinkThickness =centerLinkToBearingTop+topOfGearToCenter-(washerThickness*2)
 		screwWithNut = screwTotal.union(LockNutCentered.makeKeepaway(printerOffset.getMM())
@@ -111,7 +117,7 @@ class MyCadGenerator implements ICadGenerator{
 									.movez(-58)
 		 gearScrew =screwTotal
 					.union(nutAndDriverKeepaway.roty(180))
-					.movez(-gearBMeasurments.height+washerThickness+nutInsetDistance)
+					.movez(-gearHeightValue+washerThickness+nutInsetDistance)
 			
 		 LoadCellScrews = gearScrew
 					.movey(-screwCenterLine+screwHeadKeepaway)
