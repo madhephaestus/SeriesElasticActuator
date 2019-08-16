@@ -43,7 +43,7 @@ class MyCadGenerator implements ICadGenerator{
 	CSG gearStandoff
 	CSG gearKeepaway 
 	CSG gearA
-	 CSG gearB
+	CSG gearB
 	public MyCadGenerator(def args){
 		gearAParam 			 	= new StringParameter("Gear A","HS36T",Vitamins.listVitaminSizes("vexGear"))
 		gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
@@ -810,7 +810,7 @@ class MyCadGenerator implements ICadGenerator{
 				//.rotz(90+Math.toDegrees(dh.getTheta()))
 			double gearPlacementVSMotor = -(motorBackSetDistance+washerThickness)
 
-			myGearA = getGearWithSpline( nextLink );
+			def myGearA = getGearWithSpline( nextLink );
 			if(linkIndex==0){
 				CSG baseServo = Vitamins.get(nextLink.getElectroMechanicalType(),nextLink.getElectroMechanicalSize())
 							.rotz(180)
