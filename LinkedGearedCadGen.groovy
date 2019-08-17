@@ -35,9 +35,7 @@ class MyCadGenerator implements ICadGenerator{
 	CSG gearScrew
 	CSG LoadCellScrews 
 	CSG loadBearingPinBearing 
-	CSG loadBearingPin
-	 StringParameter gearAParam 			 	
-	StringParameter gearBParam 			
+	CSG loadBearingPin	
 	//HashMap<String, Object>  gearAMeasurments 
 	//HashMap<String, Object>  gearBMeasurments 
 	double gearHeightValue=12.8
@@ -48,8 +46,8 @@ class MyCadGenerator implements ICadGenerator{
 	public MyCadGenerator(def args){
 
 		
-		gearAParam 			 	= new StringParameter("Gear A","HS36T",Vitamins.listVitaminSizes("vexGear"))
-		gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
+		StringParameter gearAParam 			 	= new StringParameter("Gear A","HS36T",Vitamins.listVitaminSizes("vexGear"))
+		StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
 		HashMap<String, Object>  gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
 		HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
 
