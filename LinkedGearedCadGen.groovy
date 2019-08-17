@@ -43,15 +43,21 @@ class MyCadGenerator implements ICadGenerator{
 	CSG gearKeepaway 
 	CSG gearA
 	CSG gearB
+	def gearRatios 
 	public MyCadGenerator(def args){
-
 		
-		StringParameter gearAParam 			 	= new StringParameter("Gear A","HS36T",Vitamins.listVitaminSizes("vexGear"))
-		StringParameter gearBParam 				= new StringParameter("Gear B","HS84T",Vitamins.listVitaminSizes("vexGear"))
+		gearRatios= args
+	
+		
+	}
+	
+	public void setGearing(def ratio){
+		println "\n\n\tSetting gearing to "+ratio+"\n\n"
+		StringParameter gearAParam 			 	= new StringParameter("Gear A","HS"+ratio[0]+"T",Vitamins.listVitaminSizes("vexGear"))
+		StringParameter gearBParam 				= new StringParameter("Gear B","HS"+ratio[1]+"T",Vitamins.listVitaminSizes("vexGear"))
 		HashMap<String, Object>  gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
 		HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
 
-		println args
 		gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
 		capPinSpacing = gearAMeasurments.diameter*0.75+encoderCapRodRadius
 		pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
@@ -132,7 +138,6 @@ class MyCadGenerator implements ICadGenerator{
 		 loadBearingPin =new Cylinder(pinRadius,pinRadius,pinLength,(int)30).toCSG() 
 						.movez(-pinLength/2)
 						.union(	loadBearingPinBearing)	
-		
 	}
 	double centerOfRobotToBackEdgeOfBoard = 222.357	
 	int linkResolution = 6
@@ -348,6 +353,8 @@ class MyCadGenerator implements ICadGenerator{
 	}
 	@Override 
 	public ArrayList<CSG> generateBody(MobileBase base ){
+		setGearing(gearRatios[0])
+		
 		ArrayList<CSG> attachmentParts = new ArrayList<CSG>()
 		double maxz = 0.001
 		
@@ -709,6 +716,8 @@ class MyCadGenerator implements ICadGenerator{
 	}
 	@Override 
 	public ArrayList<CSG> generateCad(DHParameterKinematics sourceLimb, int linkIndex) {
+		
+		
 		def parts =(ArrayList<CSG>)ScriptingEngine
 					 .gitScriptRun(
             "https://github.com/WPIRoboticsEngineering/RBELabCustomParts.git", // git location of the library
@@ -727,6 +736,8 @@ class MyCadGenerator implements ICadGenerator{
 		if(linkIndex<dhLinks.size()-1){
 			nextLink=sourceLimb.getLinkConfiguration(linkIndex+1);
 		}
+			
+		setGearing(gearRatios[linkIndex])
 		
 		String linkStr =conf.getXml()
 		ArrayList<CSG> csg = null;
