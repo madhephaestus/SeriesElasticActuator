@@ -84,7 +84,7 @@ class MyCadGenerator implements ICadGenerator{
 		gearDistance  = (bevelGears[2]/2)+(bevelGears[3]/2) +2.75
 		capPinSpacing = bevelGears[2]*0.75+encoderCapRodRadius
 		pinOffset  =bevelGears[3]/2+encoderCapRodRadius*2
-		topOfGearToCenter = (centerLinkToBearingTop-gearBMeasurments.height)
+		topOfGearToCenter = (centerLinkToBearingTop-gearHeightValue)//gearBMeasurments.height
 		gearA = bevelGears[0].movex(-gearDistance)
 		gearB = bevelGears[1]
 		
