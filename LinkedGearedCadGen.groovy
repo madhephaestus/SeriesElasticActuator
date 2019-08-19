@@ -801,10 +801,10 @@ class MyCadGenerator implements ICadGenerator{
 					.union(washer.toZMax())
 					.movez(-centerLinkToBearingTop+washerThickness)
 		tmpMyGear = 	tmpMyGear	
-					.difference(springBlockPartGear
-								.intersect(tmpMyGear)
-								.hull()
-					)
+					//.difference(springBlockPartGear
+					//			.intersect(tmpMyGear)
+					//			.hull()
+					//)
 					.union(springBlockPartGear)
 		CSG loadCellBolts = moveDHValues(LoadCellScrews
 							.rotz(-Math.toDegrees(dh.getTheta()))
