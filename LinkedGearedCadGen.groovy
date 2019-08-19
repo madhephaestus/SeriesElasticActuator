@@ -245,19 +245,19 @@ class MyCadGenerator implements ICadGenerator{
 				
 	CSG encoderSimple = (CSG) ScriptingEngine
 					 .gitScriptRun(
-            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+            "https://github.com/NotOctogonapus/SeriesElasticActuator.git", // git location of the library
             "encoderBoard.groovy" , // file to load
             null// no parameters (see next tutorial)
             )
       List<CSG> nucleo = (List<CSG>) ScriptingEngine
 					 .gitScriptRun(
-			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+			            "https://github.com/NotOctogonapus/SeriesElasticActuator.git", // git location of the library
 			            "nucleo-144.groovy" , // file to load
 			            null
 			            ) 
      CSG encoderKeepaway = (CSG) ScriptingEngine
 					 .gitScriptRun(
-			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+			            "https://github.com/NotOctogonapus/SeriesElasticActuator.git", // git location of the library
 			            "encoderBoard.groovy" , // file to load
 			            [10]// create a keepaway version
 			            )
@@ -325,7 +325,7 @@ class MyCadGenerator implements ICadGenerator{
 
 	CSG loadCell = (CSG) ScriptingEngine
 					 .gitScriptRun(
-            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+            "https://github.com/NotOctogonapus/SeriesElasticActuator.git", // git location of the library
             "loadCell.groovy" , // file to load
             null// no parameters (see next tutorial)
             )
@@ -408,7 +408,7 @@ class MyCadGenerator implements ICadGenerator{
 				
 		CSG encoderBaseKeepaway = (CSG) ScriptingEngine
 					 .gitScriptRun(
-			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+			            "https://github.com/NotOctogonapus/SeriesElasticActuator.git", // git location of the library
 			            "encoderBoard.groovy" , // file to load
 			            [topLevel+5]// create a keepaway version
 			            )
@@ -1104,15 +1104,15 @@ CSG supportRib = ribs.get(ribs.size()-2)
 			handMountPart = handMount()
 			CSG tipCalibrationPart= tipCalibration()
 			File gripBaseFile = ScriptingEngine.fileFromGit(
-				"https://github.com/madhephaestus/SeriesElasticActuator.git",
+				"https://github.com/NotOctogonapus/SeriesElasticActuator.git",
 				"gripper/all.stl");
 				/*
 			File gripLeftFile = ScriptingEngine.fileFromGit(
-				"https://github.com/madhephaestus/SeriesElasticActuator.git",
+				"https://github.com/NotOctogonapus/SeriesElasticActuator.git",
 				"gripper/left.stl");
 			// Load the .CSG from the disk and cache it in memory
 			File gripRightFile = ScriptingEngine.fileFromGit(
-				"https://github.com/madhephaestus/SeriesElasticActuator.git",
+				"https://github.com/NotOctogonapus/SeriesElasticActuator.git",
 				"gripper/right.stl");
 				*/
 			// Load the .CSG from the disk and cache it in memory
@@ -1515,7 +1515,7 @@ CSG supportRib = ribs.get(ribs.size()-2)
 		/*
 		CSG camera = (CSG) ScriptingEngine
 					 .gitScriptRun(
-			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+			            "https://github.com/NotOctogonapus/SeriesElasticActuator.git", // git location of the library
 			            "camera.groovy" , // file to load
 			            null// create a keepaway version
 			            )
@@ -1668,7 +1668,7 @@ base=DeviceManager.getSpecificDevice( "HephaestusWorkCell",{
 			//If the device does not exist, prompt for the connection
 			
 			MobileBase m = MobileBaseLoader.fromGit(
-				"https://github.com/madhephaestus/SeriesElasticActuator.git",
+				"https://github.com/NotOctogonapus/SeriesElasticActuator.git",
 				"seaArm.xml"
 				)
 			if(m==null)
