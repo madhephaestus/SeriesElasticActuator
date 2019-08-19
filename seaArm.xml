@@ -5,7 +5,7 @@
 		<file>seaLinkGen.groovy</file>
 	</cadEngine>
 	<driveEngine>
-		<git>https://github.com/NotOctogonapus/carl-the-hexapod.git</git>
+		<git>https://github.com/madhephaestus/carl-the-hexapod.git</git>
 		<file>WalkingDriveEngine.groovy</file>
 	</driveEngine>
 
@@ -18,7 +18,7 @@
 		<file>seaLinkGen.groovy</file>
 	</cadEngine>
 	<kinematics>
-		<git>https://github.com/NotOctogonapus/carl-the-hexapod.git</git>
+		<git>https://github.com/madhephaestus/carl-the-hexapod.git</git>
 		<file>DefaultDhSolver.groovy</file>
 	</kinematics>
 <link>
