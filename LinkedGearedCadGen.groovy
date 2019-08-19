@@ -85,8 +85,8 @@ class MyCadGenerator implements ICadGenerator{
 		capPinSpacing = bevelGears[2]*0.75+encoderCapRodRadius
 		pinOffset  =bevelGears[3]/2+encoderCapRodRadius*2
 		topOfGearToCenter = (centerLinkToBearingTop-gearHeightValue)//gearBMeasurments.height
-		gearA = bevelGears[0].movex(-gearDistance)
-		gearB = bevelGears[1]
+		gearA = bevelGears[0]
+		gearB = bevelGears[1].movex(gearDistance)
 		
 		mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
 		gearStandoff = new Cylinder(gearA.getMaxY(),gearA.getMaxY(),motorBackSetDistance+washerThickness,20).toCSG()
