@@ -40,8 +40,8 @@
 	<vitamins>
 		<vitamin>
 			<name>electroMechanical</name>
-			<type>hobbyServo</type>
-			<id>hv5932mg</id>
+			<type>vexMotor</type>
+			<id>393</id>
 		</vitamin>
 		<vitamin>
 			<name>shaft</name>
@@ -70,7 +70,7 @@
 	<DHParameters>
 		<Delta>135.0</Delta>
 		<Theta>0.0</Theta>
-		<Radius>0.0</Radius>
+		<Radius>100.0</Radius>
 		<Alpha>-90.0</Alpha>
 	</DHParameters>
 
@@ -94,8 +94,8 @@
 	<vitamins>
 		<vitamin>
 			<name>electroMechanical</name>
-			<type>hobbyServo</type>
-			<id>hv5932mg</id>
+			<type>vexMotor</type>
+			<id>393</id>
 		</vitamin>
 		<vitamin>
 			<name>shaft</name>
@@ -124,7 +124,7 @@
 	<DHParameters>
 		<Delta>0.0</Delta>
 		<Theta>0.0</Theta>
-		<Radius>175.0</Radius>
+		<Radius>170.0</Radius>
 		<Alpha>0.0</Alpha>
 	</DHParameters>
 
@@ -148,8 +148,8 @@
 	<vitamins>
 		<vitamin>
 			<name>electroMechanical</name>
-			<type>hobbyServo</type>
-			<id>hv5932mg</id>
+			<type>stepperMotor</type>
+			<id>Pololu35x26</id>
 		</vitamin>
 		<vitamin>
 			<name>shaft</name>
@@ -178,7 +178,7 @@
 	<DHParameters>
 		<Delta>0.0</Delta>
 		<Theta>90.0</Theta>
-		<Radius>169.28</Radius>
+		<Radius>130.0</Radius>
 		<Alpha>0.0</Alpha>
 	</DHParameters>
 
