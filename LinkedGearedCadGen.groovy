@@ -76,7 +76,7 @@ class MyCadGenerator implements ICadGenerator{
 			    ratio[1],// Number of teeth gear b
 			    gearHeightValue,// thickness of gear A
 			    3.42303,//computeGearPitch(26.15,24),// gear pitch in arc length mm
-			   60,// shaft angle, can be from 0 to 100 degrees
+			   0,// shaft angle, can be from 0 to 100 degrees
 			    0// helical angle, only used for 0 degree bevels
 		    ]
 		    )
