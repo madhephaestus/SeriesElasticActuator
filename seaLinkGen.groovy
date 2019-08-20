@@ -4,8 +4,8 @@ return ScriptingEngine.gitScriptRun(
             // Parameters passed to the funcetion
             [	  [36,// Number of teeth gear a link 0
 	            84],// Number of teeth gear b link 0
-	            [60,// Number of teeth gear a link 1
-	            60],// Number of teeth gear b link 1
+	            [36,// Number of teeth gear a link 1
+	            84],// Number of teeth gear b link 1
 	            [36,// Number of teeth gear a link 2
 	            84],// Number of teeth gear b link 2
             ]
