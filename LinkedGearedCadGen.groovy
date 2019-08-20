@@ -53,6 +53,7 @@ class MyCadGenerator implements ICadGenerator{
 	
 	public void setGearing(def ratio){
 		println "\n\n\tSetting gearing to "+ratio+"\n\n"
+		/*
 		StringParameter gearAParam 			 	= new StringParameter("Gear A","HS"+ratio[0]+"T",Vitamins.listVitaminSizes("vexGear"))
 		StringParameter gearBParam 				= new StringParameter("Gear B","HS"+ratio[1]+"T",Vitamins.listVitaminSizes("vexGear"))
 		HashMap<String, Object>  gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
@@ -65,9 +66,27 @@ class MyCadGenerator implements ICadGenerator{
 		gearA = Vitamins.get( "vexGear",gearAParam.getStrValue())
 					.movex(-gearDistance)
 		gearB = Vitamins.get( "vexGear",gearBParam.getStrValue());
+		*/
 
+		def bevelGears = ScriptingEngine.gitScriptRun(
+		    "https://github.com/madhephaestus/GearGenerator.git", // git location of the library
+		    "bevelGear.groovy" , // file to load
+		    // Parameters passed to the funcetion
+		    [	  ratio[0],// Number of teeth gear a
+			    ratio[1],// Number of teeth gear b
+			    gearHeightValue,// thickness of gear A
+			    3.42303,//computeGearPitch(26.15,24),// gear pitch in arc length mm
+			   0,// shaft angle, can be from 0 to 100 degrees
+			    0// helical angle, only used for 0 degree bevels
+		    ]
+		    )
 		
-
+		gearDistance  = (bevelGears[2]/2)+(bevelGears[3]/2) +2.75
+		capPinSpacing = bevelGears[2]*0.75+encoderCapRodRadius
+		pinOffset  =bevelGears[3]/2+encoderCapRodRadius*2
+		topOfGearToCenter = (centerLinkToBearingTop-gearHeightValue)//gearBMeasurments.height
+		gearA = bevelGears[0]//.movex(gearDistance)
+		gearB = bevelGears[1]//.movex(-gearDistance)
 		
 		mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
 		gearStandoff = new Cylinder(gearA.getMaxY(),gearA.getMaxY(),motorBackSetDistance+washerThickness,20).toCSG()
@@ -245,19 +264,19 @@ class MyCadGenerator implements ICadGenerator{
 				
 	CSG encoderSimple = (CSG) ScriptingEngine
 					 .gitScriptRun(
-            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+            "https://github.com/NotOctogonapus/SeriesElasticActuator.git", // git location of the library
             "encoderBoard.groovy" , // file to load
             null// no parameters (see next tutorial)
             )
       List<CSG> nucleo = (List<CSG>) ScriptingEngine
 					 .gitScriptRun(
-			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+			            "https://github.com/NotOctogonapus/SeriesElasticActuator.git", // git location of the library
 			            "nucleo-144.groovy" , // file to load
 			            null
 			            ) 
      CSG encoderKeepaway = (CSG) ScriptingEngine
 					 .gitScriptRun(
-			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+			            "https://github.com/NotOctogonapus/SeriesElasticActuator.git", // git location of the library
 			            "encoderBoard.groovy" , // file to load
 			            [10]// create a keepaway version
 			            )
@@ -325,7 +344,7 @@ class MyCadGenerator implements ICadGenerator{
 
 	CSG loadCell = (CSG) ScriptingEngine
 					 .gitScriptRun(
-            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+            "https://github.com/NotOctogonapus/SeriesElasticActuator.git", // git location of the library
             "loadCell.groovy" , // file to load
             null// no parameters (see next tutorial)
             )
@@ -408,7 +427,7 @@ class MyCadGenerator implements ICadGenerator{
 				
 		CSG encoderBaseKeepaway = (CSG) ScriptingEngine
 					 .gitScriptRun(
-			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+			            "https://github.com/NotOctogonapus/SeriesElasticActuator.git", // git location of the library
 			            "encoderBoard.groovy" , // file to load
 			            [topLevel+5]// create a keepaway version
 			            )
@@ -782,10 +801,10 @@ class MyCadGenerator implements ICadGenerator{
 					.union(washer.toZMax())
 					.movez(-centerLinkToBearingTop+washerThickness)
 		tmpMyGear = 	tmpMyGear	
-					.difference(springBlockPartGear
-								.intersect(tmpMyGear)
-								.hull()
-					)
+					//.difference(springBlockPartGear
+					//			.intersect(tmpMyGear)
+					//			.hull()
+					//)
 					.union(springBlockPartGear)
 		CSG loadCellBolts = moveDHValues(LoadCellScrews
 							.rotz(-Math.toDegrees(dh.getTheta()))
@@ -1104,15 +1123,15 @@ CSG supportRib = ribs.get(ribs.size()-2)
 			handMountPart = handMount()
 			CSG tipCalibrationPart= tipCalibration()
 			File gripBaseFile = ScriptingEngine.fileFromGit(
-				"https://github.com/madhephaestus/SeriesElasticActuator.git",
+				"https://github.com/NotOctogonapus/SeriesElasticActuator.git",
 				"gripper/all.stl");
 				/*
 			File gripLeftFile = ScriptingEngine.fileFromGit(
-				"https://github.com/madhephaestus/SeriesElasticActuator.git",
+				"https://github.com/NotOctogonapus/SeriesElasticActuator.git",
 				"gripper/left.stl");
 			// Load the .CSG from the disk and cache it in memory
 			File gripRightFile = ScriptingEngine.fileFromGit(
-				"https://github.com/madhephaestus/SeriesElasticActuator.git",
+				"https://github.com/NotOctogonapus/SeriesElasticActuator.git",
 				"gripper/right.stl");
 				*/
 			// Load the .CSG from the disk and cache it in memory
@@ -1515,7 +1534,7 @@ CSG supportRib = ribs.get(ribs.size()-2)
 		/*
 		CSG camera = (CSG) ScriptingEngine
 					 .gitScriptRun(
-			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+			            "https://github.com/NotOctogonapus/SeriesElasticActuator.git", // git location of the library
 			            "camera.groovy" , // file to load
 			            null// create a keepaway version
 			            )
@@ -1668,7 +1687,7 @@ base=DeviceManager.getSpecificDevice( "HephaestusWorkCell",{
 			//If the device does not exist, prompt for the connection
 			
 			MobileBase m = MobileBaseLoader.fromGit(
-				"https://github.com/madhephaestus/SeriesElasticActuator.git",
+				"https://github.com/NotOctogonapus/SeriesElasticActuator.git",
 				"seaArm.xml"
 				)
 			if(m==null)
