@@ -45,8 +45,8 @@
 		</vitamin>
 		<vitamin>
 			<name>shaft</name>
-			<type>hobbyServoHorn</type>
-			<id>hv6214mg_6</id>
+			<type>vexShaft</type>
+			<id>2-inch</id>
 		</vitamin>
 
 	</vitamins>
@@ -99,8 +99,8 @@
 		</vitamin>
 		<vitamin>
 			<name>shaft</name>
-			<type>hobbyServoHorn</type>
-			<id>hv6214mg_6</id>
+			<type>vexShaft</type>
+			<id>2-inch</id>
 		</vitamin>
 
 	</vitamins>
@@ -153,8 +153,8 @@
 		</vitamin>
 		<vitamin>
 			<name>shaft</name>
-			<type>hobbyServoHorn</type>
-			<id>hv6214mg_6</id>
+			<type>dShaft</type>
+			<id>5mm</id>
 		</vitamin>
 
 	</vitamins>
