@@ -1,7 +1,7 @@
 <root>
 <mobilebase>
 	<cadEngine>
-		<git>https://github.com/madhephaestus/SeriesElasticActuator.git</git>
+		<git>https://github.com/NotOctogonapus/SeriesElasticActuator.git</git>
 		<file>seaLinkGen.groovy</file>
 	</cadEngine>
 	<driveEngine>
@@ -14,7 +14,7 @@
 
 <name>HephaestustArm</name>
 	<cadEngine>
-		<git>https://github.com/madhephaestus/SeriesElasticActuator.git</git>
+		<git>https://github.com/NotOctogonapus/SeriesElasticActuator.git</git>
 		<file>seaLinkGen.groovy</file>
 	</cadEngine>
 	<kinematics>
