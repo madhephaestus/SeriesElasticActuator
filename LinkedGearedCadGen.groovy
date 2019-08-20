@@ -53,19 +53,27 @@ class MyCadGenerator implements ICadGenerator{
 	
 	public void setGearing(def ratio){
 		println "\n\n\tSetting gearing to "+ratio+"\n\n"
-		StringParameter gearAParam 			 	= new StringParameter("Gear A","HS"+ratio[0]+"T",Vitamins.listVitaminSizes("vexGear"))
-		StringParameter gearBParam 				= new StringParameter("Gear B","HS"+ratio[1]+"T",Vitamins.listVitaminSizes("vexGear"))
-		HashMap<String, Object>  gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
-		HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
-
-		gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
-		capPinSpacing = gearAMeasurments.diameter*0.75+encoderCapRodRadius
-		pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
-		topOfGearToCenter = (centerLinkToBearingTop-gearBMeasurments.height)
-		gearA = Vitamins.get( "vexGear",gearAParam.getStrValue())
-					.movex(-gearDistance)
-		gearB = Vitamins.get( "vexGear",gearBParam.getStrValue());
-
+		
+		def bevelGears = ScriptingEngine.gitScriptRun(
+		    "https://github.com/madhephaestus/GearGenerator.git", // git location of the library
+		    "bevelGear.groovy" , // file to load
+		    // Parameters passed to the funcetion
+		    [	  ratio[0],// Number of teeth gear a
+			    ratio[1],// Number of teeth gear b
+			    gearHeightValue,// thickness of gear A
+			    3.42303,//computeGearPitch(26.15,24),// gear pitch in arc length mm
+			   0,// shaft angle, can be from 0 to 100 degrees
+			    0// helical angle, only used for 0 degree bevels
+		    ]
+		    )
+		
+		gearDistance  = bevelGears[2]
+		capPinSpacing = (bevelGears[11]*2)*0.75+encoderCapRodRadius
+		pinOffset  =bevelGears[12]+encoderCapRodRadius*2
+		topOfGearToCenter = (centerLinkToBearingTop-gearHeightValue)//gearBMeasurments.height
+		gearA = bevelGears[0].rotz(180).movex(-gearDistance)
+		gearB = bevelGears[1].rotz(180).movex(-gearDistance)
+		
 		
 
 		
