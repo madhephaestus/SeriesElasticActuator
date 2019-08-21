@@ -53,21 +53,7 @@ class MyCadGenerator implements ICadGenerator{
 	
 	public void setGearing(def ratio){
 		println "\n\n\tSetting gearing to "+ratio+"\n\n"
-		/*
-		StringParameter gearAParam 			 	= new StringParameter("Gear A","HS"+ratio[0]+"T",Vitamins.listVitaminSizes("vexGear"))
-		StringParameter gearBParam 				= new StringParameter("Gear B","HS"+ratio[1]+"T",Vitamins.listVitaminSizes("vexGear"))
-		HashMap<String, Object>  gearAMeasurments = Vitamins.getConfiguration( "vexGear",gearAParam.getStrValue())
-		HashMap<String, Object>  gearBMeasurments = Vitamins.getConfiguration( "vexGear",gearBParam.getStrValue())
-
-		gearDistance  = (gearAMeasurments.diameter/2)+(gearBMeasurments.diameter/2) +2.75
-		capPinSpacing = gearAMeasurments.diameter*0.75+encoderCapRodRadius
-		pinOffset  =gearBMeasurments.diameter/2+encoderCapRodRadius*2
-		topOfGearToCenter = (centerLinkToBearingTop-gearBMeasurments.height)
-		gearA = Vitamins.get( "vexGear",gearAParam.getStrValue())
-					.movex(-gearDistance)
-		gearB = Vitamins.get( "vexGear",gearBParam.getStrValue());
-		*/
-
+		
 		def bevelGears = ScriptingEngine.gitScriptRun(
 		    "https://github.com/madhephaestus/GearGenerator.git", // git location of the library
 		    "bevelGear.groovy" , // file to load
@@ -81,12 +67,15 @@ class MyCadGenerator implements ICadGenerator{
 		    ]
 		    )
 		
-		gearDistance  = (bevelGears[2]/2)+(bevelGears[3]/2) +2.75
-		capPinSpacing = bevelGears[2]*0.75+encoderCapRodRadius
-		pinOffset  =bevelGears[3]/2+encoderCapRodRadius*2
+		gearDistance  = bevelGears[2]
+		capPinSpacing = (bevelGears[11]*2)*0.75+encoderCapRodRadius
+		pinOffset  =bevelGears[12]+encoderCapRodRadius*2
 		topOfGearToCenter = (centerLinkToBearingTop-gearHeightValue)//gearBMeasurments.height
-		gearA = bevelGears[0]//.movex(gearDistance)
-		gearB = bevelGears[1]//.movex(-gearDistance)
+		gearA = bevelGears[0].rotz(180).movex(-gearDistance)
+		gearB = bevelGears[1].rotz(180).movex(-gearDistance)
+		
+		
+
 		
 		mountPlatePinAngle 	=Math.toDegrees(Math.atan2(capPinSpacing,pinOffset))
 		gearStandoff = new Cylinder(gearA.getMaxY(),gearA.getMaxY(),motorBackSetDistance+washerThickness,20).toCSG()
@@ -264,19 +253,19 @@ class MyCadGenerator implements ICadGenerator{
 				
 	CSG encoderSimple = (CSG) ScriptingEngine
 					 .gitScriptRun(
-            "https://github.com/NotOctogonapus/SeriesElasticActuator.git", // git location of the library
+            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
             "encoderBoard.groovy" , // file to load
             null// no parameters (see next tutorial)
             )
       List<CSG> nucleo = (List<CSG>) ScriptingEngine
 					 .gitScriptRun(
-			            "https://github.com/NotOctogonapus/SeriesElasticActuator.git", // git location of the library
+			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
 			            "nucleo-144.groovy" , // file to load
 			            null
 			            ) 
      CSG encoderKeepaway = (CSG) ScriptingEngine
 					 .gitScriptRun(
-			            "https://github.com/NotOctogonapus/SeriesElasticActuator.git", // git location of the library
+			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
 			            "encoderBoard.groovy" , // file to load
 			            [10]// create a keepaway version
 			            )
@@ -344,7 +333,7 @@ class MyCadGenerator implements ICadGenerator{
 
 	CSG loadCell = (CSG) ScriptingEngine
 					 .gitScriptRun(
-            "https://github.com/NotOctogonapus/SeriesElasticActuator.git", // git location of the library
+            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
             "loadCell.groovy" , // file to load
             null// no parameters (see next tutorial)
             )
@@ -391,9 +380,9 @@ class MyCadGenerator implements ICadGenerator{
 		LinkConfiguration conf = sourceLimb.getLinkConfiguration(0);
 		ArrayList<DHLink> dhLinks=sourceLimb.getChain().getLinks();
 		DHLink dh = dhLinks.get(0);
-		HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
-		double totalFlangLen = (servoMeasurments.flangeLongDimention-servoMeasurments.servoThickDimentionThickness)/2
-		double shaftToShortSideFlandgeEdge = servoMeasurments.shaftToShortSideDistance+totalFlangLen
+		//HashMap<String, Object> servoMeasurments = Vitamins.getConfiguration(conf.getElectroMechanicalType(),conf.getElectroMechanicalSize())
+		double totalFlangLen = (56.6-40.5)/2
+		double shaftToShortSideFlandgeEdge = 10+totalFlangLen
 		
 		LengthParameter tailLength		= new LengthParameter("Cable Cut Out Length",maxz,[500,0.01])
 		tailLength.setMM(maxz)
@@ -401,14 +390,14 @@ class MyCadGenerator implements ICadGenerator{
 		//						.rotz(180+Math.toDegrees(dh.getTheta()))
 		//						.movez(-motorBackSetDistance)
 		
-		double servoNub = servoMeasurments.tipOfShaftToBottomOfFlange - servoMeasurments.bottomOfFlangeToTopOfBody
+		double servoNub = 17.04 - 12.4
 		//double servoTop = servoReference.getMaxZ()-servoNub
 		double topLevel = maxz -(springHeight/2)-linkMaterialThickness +encoderBearingHeight-(washerThickness*2)
-		double servoPlane = topLevel - servoMeasurments.bottomOfFlangeToTopOfBody
+		double servoPlane = topLevel - 12.4
 		double servoEncoderPlane = topLevel - encoderBearingHeight
 		double basexLength = gearDistance + servoMeasurments.servoThinDimentionThickness/2
 		//double baseyLength = servoMeasurments.flangeLongDimention 
-		double servoCentering = servoMeasurments.flangeLongDimention -shaftToShortSideFlandgeEdge
+		double servoCentering = 56.6 -shaftToShortSideFlandgeEdge
 		double minimumWidth = (capPinSpacing-encoderCapRodRadius-cornerRadius)
 		if(servoCentering<minimumWidth)
 			servoCentering=minimumWidth
@@ -427,7 +416,7 @@ class MyCadGenerator implements ICadGenerator{
 				
 		CSG encoderBaseKeepaway = (CSG) ScriptingEngine
 					 .gitScriptRun(
-			            "https://github.com/NotOctogonapus/SeriesElasticActuator.git", // git location of the library
+			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
 			            "encoderBoard.groovy" , // file to load
 			            [topLevel+5]// create a keepaway version
 			            )
@@ -801,10 +790,10 @@ class MyCadGenerator implements ICadGenerator{
 					.union(washer.toZMax())
 					.movez(-centerLinkToBearingTop+washerThickness)
 		tmpMyGear = 	tmpMyGear	
-					//.difference(springBlockPartGear
-					//			.intersect(tmpMyGear)
-					//			.hull()
-					//)
+					.difference(springBlockPartGear
+								.intersect(tmpMyGear)
+								.hull()
+					)
 					.union(springBlockPartGear)
 		CSG loadCellBolts = moveDHValues(LoadCellScrews
 							.rotz(-Math.toDegrees(dh.getTheta()))
@@ -1123,15 +1112,15 @@ CSG supportRib = ribs.get(ribs.size()-2)
 			handMountPart = handMount()
 			CSG tipCalibrationPart= tipCalibration()
 			File gripBaseFile = ScriptingEngine.fileFromGit(
-				"https://github.com/NotOctogonapus/SeriesElasticActuator.git",
+				"https://github.com/madhephaestus/SeriesElasticActuator.git",
 				"gripper/all.stl");
 				/*
 			File gripLeftFile = ScriptingEngine.fileFromGit(
-				"https://github.com/NotOctogonapus/SeriesElasticActuator.git",
+				"https://github.com/madhephaestus/SeriesElasticActuator.git",
 				"gripper/left.stl");
 			// Load the .CSG from the disk and cache it in memory
 			File gripRightFile = ScriptingEngine.fileFromGit(
-				"https://github.com/NotOctogonapus/SeriesElasticActuator.git",
+				"https://github.com/madhephaestus/SeriesElasticActuator.git",
 				"gripper/right.stl");
 				*/
 			// Load the .CSG from the disk and cache it in memory
@@ -1534,7 +1523,7 @@ CSG supportRib = ribs.get(ribs.size()-2)
 		/*
 		CSG camera = (CSG) ScriptingEngine
 					 .gitScriptRun(
-			            "https://github.com/NotOctogonapus/SeriesElasticActuator.git", // git location of the library
+			            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
 			            "camera.groovy" , // file to load
 			            null// create a keepaway version
 			            )
@@ -1687,7 +1676,7 @@ base=DeviceManager.getSpecificDevice( "HephaestusWorkCell",{
 			//If the device does not exist, prompt for the connection
 			
 			MobileBase m = MobileBaseLoader.fromGit(
-				"https://github.com/NotOctogonapus/SeriesElasticActuator.git",
+				"https://github.com/madhephaestus/SeriesElasticActuator.git",
 				"seaArm.xml"
 				)
 			if(m==null)
