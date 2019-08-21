@@ -395,7 +395,7 @@ class MyCadGenerator implements ICadGenerator{
 		double topLevel = maxz -(springHeight/2)-linkMaterialThickness +encoderBearingHeight-(washerThickness*2)
 		double servoPlane = topLevel - 12.4
 		double servoEncoderPlane = topLevel - encoderBearingHeight
-		double basexLength = gearDistance + servoMeasurments.servoThinDimentionThickness/2
+		double basexLength = gearDistance + 20.3/2
 		//double baseyLength = servoMeasurments.flangeLongDimention 
 		double servoCentering = 56.6 -shaftToShortSideFlandgeEdge
 		double minimumWidth = (capPinSpacing-encoderCapRodRadius-cornerRadius)
