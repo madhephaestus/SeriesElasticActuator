@@ -1,5 +1,5 @@
 return ScriptingEngine.gitScriptRun(
-            "https://github.com/madhephaestus/SeriesElasticActuator.git", // git location of the library
+            "https://github.com/NotOctogonapus/SeriesElasticActuator.git", // git location of the library
             "LinkedGearedCadGen.groovy" , // file to load
             // Parameters passed to the funcetion
             [	  [36,// Number of teeth gear a link 0
