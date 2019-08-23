@@ -658,7 +658,7 @@ class MyCadGenerator implements ICadGenerator{
 			})
 		
 		basePlateUpper.setManufacturing({ toMfg ->
-				p= toMfg
+				def p= toMfg
 						.toXMin()
 						.toYMin()
 						.toZMin()
@@ -667,7 +667,7 @@ class MyCadGenerator implements ICadGenerator{
 				return p
 			})
 		basePlateLower.setManufacturing({ toMfg ->
-				p= toMfg
+				def p= toMfg
 						.toXMin()
 						.toYMin()
 						.toZMin()
