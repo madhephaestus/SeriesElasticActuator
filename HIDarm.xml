@@ -40,13 +40,13 @@
 	<vitamins>
 		<vitamin>
 			<name>electroMechanical</name>
-			<type>hobbyServo</type>
-			<id>hv5932mg</id>
+			<type>roundMotor</type>
+			<id>WPI-gb37y3530-50en</id>
 		</vitamin>
 		<vitamin>
 			<name>shaft</name>
-			<type>hobbyServoHorn</type>
-			<id>hv6214mg_6</id>
+			<type>dShaft</type>
+			<id>WPI-gb37y3530-50en</id>
 		</vitamin>
 
 	</vitamins>
@@ -94,13 +94,13 @@
 	<vitamins>
 		<vitamin>
 			<name>electroMechanical</name>
-			<type>hobbyServo</type>
-			<id>hv5932mg</id>
+			<type>roundMotor</type>
+			<id>WPI-gb37y3530-50en</id>
 		</vitamin>
 		<vitamin>
 			<name>shaft</name>
-			<type>hobbyServoHorn</type>
-			<id>hv6214mg_6</id>
+			<type>dShaft</type>
+			<id>WPI-gb37y3530-50en</id>
 		</vitamin>
 
 	</vitamins>
@@ -148,13 +148,13 @@
 	<vitamins>
 		<vitamin>
 			<name>electroMechanical</name>
-			<type>hobbyServo</type>
-			<id>hv5932mg</id>
+			<type>roundMotor</type>
+			<id>WPI-gb37y3530-50en</id>
 		</vitamin>
 		<vitamin>
 			<name>shaft</name>
-			<type>hobbyServoHorn</type>
-			<id>hv6214mg_6</id>
+			<type>dShaft</type>
+			<id>WPI-gb37y3530-50en</id>
 		</vitamin>
 
 	</vitamins>

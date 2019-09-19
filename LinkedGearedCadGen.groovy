@@ -431,6 +431,7 @@ class MyCadGenerator implements ICadGenerator{
 								.movez(servoMeasurments.flangeThickness*i))
 		}
 		*/
+		println "Base cross height "+(baseyLength+(keepAwayDistance*3))
 		CSG keepawayBottomX = new Cube(basexLength+(keepAwayDistance*3)+encoderKeepawayDistance,
 							baseyLength-(keepAwayDistance*2),
 							keepAwayDistance)
